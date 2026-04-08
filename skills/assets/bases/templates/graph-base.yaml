@@ -1,0 +1,71 @@
+# Per-project knowledge graph dashboard
+# Location: Memory/{project}/graph.base
+
+filters:
+  or:
+    - file.inFolder("Memory/{project}/entities")
+    - file.inFolder("Memory/{project}/concepts")
+    - file.inFolder("Memory/{project}/decisions")
+    - file.inFolder("Memory/{project}/constraints")
+    - file.inFolder("Memory/{project}/processes")
+
+formulas:
+  days_since_used: 'if(usage.last_used, (now() - date(usage.last_used)).days.round(), "never")'
+  health_status: 'if(health.needs_delete, "Delete", if(health.needs_update, "Update", "OK"))'
+  activity_level: 'if(usage.use_count > 5, "Active", if(usage.use_count > 0, "Used", "Never"))'
+
+properties:
+  type:
+    displayName: "Type"
+  importance:
+    displayName: "Importance"
+  status:
+    displayName: "Status"
+  formula.health_status:
+    displayName: "Health"
+  formula.days_since_used:
+    displayName: "Days Since Used"
+  formula.activity_level:
+    displayName: "Activity"
+  usage.use_count:
+    displayName: "Use Count"
+
+views:
+  - type: table
+    name: "Overview"
+    order:
+      - file.name
+      - type
+      - importance
+      - formula.health_status
+      - formula.days_since_used
+
+  - type: table
+    name: "Needs Attention"
+    filters:
+      or:
+        - 'health.needs_update == true'
+        - 'health.needs_delete == true'
+    order:
+      - file.name
+      - type
+      - formula.health_status
+      - usage.use_count
+
+  - type: cards
+    name: "By Category"
+    groupBy:
+      property: type
+      direction: ASC
+    order:
+      - file.name
+      - importance
+      - status
+
+  - type: table
+    name: "Recent Activity"
+    order:
+      - file.name
+      - usage.last_used
+      - formula.activity_level
+    limit: 20
