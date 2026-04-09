@@ -1,5 +1,6 @@
 ---
 type: concept
+name: {kebab-case-identifier}  # Programmatic identifier for API access
 category: {pattern|convention|principle|style-guide}
 importance: {high|medium|low}
 status: active

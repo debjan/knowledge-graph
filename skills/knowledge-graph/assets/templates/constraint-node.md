@@ -1,5 +1,6 @@
 ---
 type: constraint
+name: {kebab-case-identifier}  # Programmatic identifier for API access
 category: {gotcha|limitation|warning|edge-case}
 importance: {high|medium|low}
 status: active

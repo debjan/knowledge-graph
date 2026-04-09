@@ -1,5 +1,6 @@
 ---
 type: process
+name: {kebab-case-identifier}  # Programmatic identifier for API access
 category: {workflow|algorithm|lifecycle|sequence}
 importance: {high|medium|low}
 status: active

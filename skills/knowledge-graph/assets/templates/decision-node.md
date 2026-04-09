@@ -1,5 +1,6 @@
 ---
 type: decision
+name: {kebab-case-identifier}  # Programmatic identifier for API access
 category: {adr|choice|tradeoff}
 importance: {high|medium|low}
 status: active

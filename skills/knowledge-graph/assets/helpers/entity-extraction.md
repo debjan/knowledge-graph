@@ -20,6 +20,7 @@ Extract metadata from code files to create entity node documents.
 
 | Field     | Source                                     | Example                       |
 | --------- | ------------------------------------------ | ----------------------------- |
+| `name`    | Kebab-case from filename (no extension)    | `auth-service`                |
 | `title`   | First `#` heading, class name, or filename | `AuthService`                 |
 | `project` | CWD basename or git repo name              | `inference_api`               |
 | `agents`  | Current agent model                        | `deepseek`, `claude-opus-4-6` |

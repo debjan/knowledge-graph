@@ -1,5 +1,6 @@
 ---
 type: entity
+name: {kebab-case-identifier}  # Programmatic identifier for API access
 category: {module|class|function|api-endpoint|component}
 importance: {high|medium|low}
 status: active
