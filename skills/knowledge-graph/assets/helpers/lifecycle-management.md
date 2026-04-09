@@ -32,7 +32,7 @@ For each entity loaded in QUERY:
         If not file.exists():
             Add file to health.stale_files
             Set health.needs_update = true
-            Update health.last_verified = today
+            Update health.last_verified = {today}
 ```
 
 ### Stale Detection Flow

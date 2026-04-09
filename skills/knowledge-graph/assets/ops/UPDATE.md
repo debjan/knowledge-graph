@@ -111,11 +111,11 @@ Present the diff between existing and new:
 On confirmation:
 
 1. Merge frontmatter (preserve usage; update metadata)
-2. Update `updated` to today
+2. Update `updated` to {today}
 3. Increment changelog version
 4. Clear `health.stale_files`
 5. Set `health.needs_update = false`
-6. Set `health.last_verified = today`
+6. Set `health.last_verified = {today}`
 7. Write updated entity
 
 **Error handling:** If `Write()` fails (disk full, permissions):

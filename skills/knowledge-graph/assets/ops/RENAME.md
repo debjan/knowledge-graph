@@ -93,7 +93,7 @@ Prepare new entity document with:
 
 - Same content as old entity
 - `name` updated to `{new-name}`
-- `updated` set to today
+- `updated` set to {today}
 - Changelog entry added: "Renamed from {old-name} on {today}"
 - Keep all `usage.*` fields unchanged
 - Keep all `health.*` fields (will be cleared after successful rename)
@@ -190,7 +190,7 @@ rm "{graph_path}/entities/{old-name}.md"
 
 Mark rename as complete in new entity:
 
-1. Set `health.last_verified = today`
+1. Set `health.last_verified = {today}`
 2. Set `health.needs_update = false`
 3. Set `health.needs_delete = false`
 4. Set `health.stale_files = []`
@@ -286,7 +286,7 @@ If tombstone exists, schedule it for cleanup after 30 days:
 
 ```python
 if tombstone.exists():
-    tombstone.health.auto_delete_after = today + 30_days
+    tombstone.health.auto_delete_after = {today} + 30_days
     Write(tombstone)
 ```
 
