@@ -274,6 +274,31 @@ if config.show_health_summary:
 | `verify_on_query`       | true    | Check health when entity is loaded   |
 | `batch_size`            | 10      | Max entities to show in health check |
 
+## Bases Integration
+
+### Computed Lifecycle State
+
+The `graph.base` dashboard computes entity lifecycle state dynamically using the `lifecycle_state` formula:
+
+```yaml
+lifecycle_state: |
+  if(health.needs_delete, "DEPRECATED",
+    if(health.needs_update || health.stale_files.length > 0, "STALE",
+      if(!usage.last_used || usage.use_count == 0, "CREATED",
+        if((now() - date(usage.last_used)).days > 90, "STALE", "ACTIVE"))))
+```
+
+### State Transitions
+
+| State      | Entry Condition                                       | Exit Condition           | Action in Bases                 |
+| ---------- | ----------------------------------------------------- | ------------------------ | ------------------------------- |
+| NONE       | New entity                                            | Always passes to CREATED | (Internal, not displayed)       |
+| CREATED    | Entity exists, never used                             | First QUERY or UPDATE    | Show as "New"                   |
+| ACTIVE     | Recently used (within 90 days)                        | 90+ days unused          | Show as "Active"                |
+| STALE      | Files missing OR needs_update flag OR 90+ days unused | User verifies entity     | Show "🔄 Update" or "⏰ Verify" |
+| DEPRECATED | needs_delete flag set                                 | Entity deleted           | Show "⚠️ Delete"                |
+| DELETED    | Entity file removed                                   | —                        | Removed from base               |
+
 ## Best Practices
 
 1. **Don't auto-delete:** Always require user confirmation
