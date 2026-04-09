@@ -171,13 +171,11 @@ If [bases](assets/bases) exists:
 If [mermaid](assets/mermaid) exists:
 > graph-sequence.md — Mermaid sequence diagrams showing entity relationships
 
-**Assets to read now:** [ADD.md](./assets/ops/ADD.md) (Steps 9-10)
-
 ## Dependencies
 
-| Dependency   | Required | Purpose                                  |
-| ------------ | -------- | ---------------------------------------- |
-| Obsidian     | Yes      | Markdown storage and graph visualization |
-| ripgrep (rg) | No       | Proactive keyword-based retrieval        |
+| Dependency   | Required   | Purpose                                  |
+| ------------ | ---------- | ---------------------------------------- |
+| Obsidian     | Preferable | Markdown storage and graph visualization |
+| ripgrep (rg) | No         | Proactive keyword-based retrieval        |
 
 **Without ripgrep:** Falls back to glob-only matching. Proactive retrieval still works but less comprehensive.
