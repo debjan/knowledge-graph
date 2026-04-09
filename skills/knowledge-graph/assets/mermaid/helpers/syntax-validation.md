@@ -112,3 +112,23 @@ function validateMermaid(code):
 | "Unsupported markdown: list" | `[1. Item]` syntax              | Use `[1.Item]`            |
 | "Expecting 'SUBGRAPH'"       | Missing quotes in subgraph name | Use `subgraph id["Name"]` |
 | "Unknown node reference"     | Referencing display name        | Use node ID               |
+
+### Rule 6: Missing Participant Keyword
+
+In sequence diagrams, every participant declaration MUST start with `participant` or `actor`.
+
+**Invalid:**
+
+```
+    API as MOEPP API  # WRONG!
+    DB as DuckDB      # WRONG!
+```
+
+**Valid:**
+
+```
+    participant API as MOEPP API
+    participant DB as DuckDB
+```
+
+**Detection:** Lines with ` as ` that don't start with `participant`, `actor`, or message arrows.

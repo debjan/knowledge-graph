@@ -64,11 +64,20 @@ Output to: `{graph_path}/graph-sequence.md`
 Before writing, validate Mermaid syntax:
 
 1. **No list syntax conflicts**: Check for `[N. Item]` patterns
-2. **Proper participant naming**: Use `participant ID as Display Name` format
+2. **REQUIRED participant prefix**: Every line with `as "Name"` MUST start with `participant` or `actor`
+   - **FAIL:** `API as MOEPP API` has no keyword!
+   - **PASS:** `participant API as MOEPP API`
 3. **Valid arrow syntax**: Use `->>`, `-->>`, `--x`
 4. **No emoji**: Replace with text labels
 
-Reference: `knowledge-graph/assets/mermaid/helpers/syntax-validation.md`
+**Auto-validation code (run before write):**
+
+```python
+# Check for missing participant keywords
+for line in mermaid_code.split('\\n'):
+    if ' as "' in line and not line.strip().startswith('participant') and '->>' not in line and '-->>' not in line:
+        raise ValidationError(f"Missing 'participant': {line}")
+```
 
 ### Step 5: Write with Timestamp
 
