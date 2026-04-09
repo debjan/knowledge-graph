@@ -104,3 +104,79 @@ Generated sequence diagrams should be written to:
 
 Include generation timestamp as HTML comment:
 `<!-- Generated: YYYY-MM-DD HH:MM:SS -->`
+
+## Cycle Visualization
+
+### When to Show Cycles
+
+When QUERY detects circular references (A ↔ B), note them in the diagram.
+
+### Sequence Diagram Token
+
+For sequence diagrams, add a note when participants form a cycle:
+
+```mermaid
+sequenceDiagram
+    participant A
+    participant B
+    participant C
+
+    Note over A,C: ⚠️ Circular dependency detected
+
+    A->>B: references
+    B->>C: references
+    C->>A: ⚠️ back-reference (cycle)
+```
+
+### Relationship Graph (Better for Cycles)
+
+For explicit cycle visualization, generate a **separate relationship graph** using `graph TD` or `graph LR`:
+
+```mermaid
+graph LR
+    A[auth-module] --> B[session-manager]
+    B --> C[jwt-handler]
+    C --> A
+
+    %% Cycle indicator: use different styling
+    style A fill:#ffcccc
+    style C stroke:#ff0000,stroke-width:3px
+    linkStyle 0,1 stroke:#333
+    linkStyle 2 stroke:#ff0000,stroke-width:3px,stroke-dasharray: 5 5
+```
+
+### Cycle Detection in Generation
+
+When generating sequence diagrams from entity data:
+
+1. Check for circular references in `related` fields
+2. If cycle detected (A ↔ B or A → B → C → A):
+   - Add `Note over A,B: ⚠️ Circular dependency`
+   - Style flow arrows differently for cycle edges
+   - Consider generating relationship graph alongside sequence diagram
+
+### Code Example
+
+```python
+def detect_cycles(entities: List[Entity]) -> List[Tuple[str, str]]:
+    cycles = []
+    for entity in entities:
+        for related in entity.related:
+            related_entity = load_entity(related)
+            if entity.name in related_entity.related:
+                cycles.append((entity.name, related))
+    return cycles
+
+def add_cycle_indicators(mermaid_code: str, cycles: List[Tuple[str, str]]) -> str:
+    for A, B in cycles:
+        mermaid_code += f""\n    Note over {A},{B}: ⚠️ Circular dependency"""
+    return mermaid_code
+```
+
+### Styling for Cycles
+
+| Element            | Style                                  | Meaning                     |
+| ------------------ | -------------------------------------- | --------------------------- |
+| Cycle arrow        | `stroke:#ff0000,stroke-dasharray: 5 5` | Completion of cycle         |
+| Cycle note         | `Note over` with ⚠️ emblem             | Warning indicator           |
+| Cycle participants | `fill:#ffcccc`                         | Highlight involved entities |
