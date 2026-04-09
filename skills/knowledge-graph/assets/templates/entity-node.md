@@ -9,6 +9,8 @@ created: {YYYY-MM-DD}
 updated: {YYYY-MM-DD}
 agents:
   - {agent-model}
+alias:  # Alternative names for search/linking
+  - "{alternative-name}"  # e.g., acronym, common name
 tags:
   - {tag1}
   - {tag2}
