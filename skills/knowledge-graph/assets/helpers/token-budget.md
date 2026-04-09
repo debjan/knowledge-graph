@@ -60,6 +60,8 @@ def count_tokens(content: str, content_type: str = "mixed") -> int:
     return len(content) // ratio
 ```
 
+**Calibration Note:** The ratios are estimates. Calibrate with tiktoken: `len(text) / len(tiktoken.encode(text))`. Adjust ratios dict if systematically off.
+
 ### Entity Token Count
 
 ```python
@@ -159,6 +161,17 @@ def count_summary_tokens(entity: Entity) -> int:
     # Summary is ~100-150 tokens
     return 150  # Fixed estimate
 ```
+
+## Tiered Compression
+
+**Four compression levels for better budget utilization:**
+
+| Tier           | Size | Content                           |
+| -------------- | ---- | --------------------------------- |
+| **Full**       | 100% | Complete entity with all sections |
+| **Mini**       | 50%  | Key sections only                 |
+| **Micro**      | 20%  | One-liner summary                 |
+| **Title-only** | ~5%  | Name + type + relevance           |
 
 ### Most Important Constraint Selection
 

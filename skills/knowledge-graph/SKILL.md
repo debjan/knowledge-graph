@@ -19,7 +19,7 @@ auto_invoke:
  # DELETE
  - "delete entity"
  - "remove entity"
-# RENAME
+ # RENAME
  - "rename entity"
  - "move entity"
  # QUERY
