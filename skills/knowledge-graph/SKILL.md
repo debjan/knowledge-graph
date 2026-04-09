@@ -97,11 +97,17 @@ A collection of markdown documents representing entities, concepts, decisions, c
 
 > Resolve `{vault}` and `{project}` once per session. Don't re-ask unless the user wants to change paths.
 
-**RULE 5 — RESPECT TOKEN BUDGET**
+**RULE 5 — ATOMIC OPERATIONS**
+
+> ADD, UPDATE, DELETE, and RENAME operations must be atomic.
+> If bidirectional reference updates fail, roll back or report partial success.
+> Never leave the graph in an inconsistent state.
+
+**RULE 6 — RESPECT TOKEN BUDGET**
 
 > In QUERY operation, load context within token budget. Prioritize high-relevance entities. Summarize overflow.
 
-**RULE 6 — VISUALIZATION ARTIFACTS**
+**RULE 7 — VISUALIZATION ARTIFACTS**
 
 > When initializing a new project knowledge graph, ALWAYS create both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md` (Mermaid diagrams). These visualizations are essential for human navigation and understanding.
 

@@ -73,6 +73,20 @@ Wait for user confirmation. If user cancels, abort without changes.
 
 ### Step D3: Clean Bidirectional References
 
+**⚠️ ATOMICITY REQUIREMENT:**
+
+Bidirectional ref cleanup and file deletion should be atomic.
+If file deletion fails after refs are cleaned, entity file exists but has no relations (orphaned).
+
+**Recommended approach:**
+
+1. Mark entity: Set `health.pending_deletion = true` before cleaning refs
+2. Clean refs: Remove bidirectional references (safe to retry)
+3. Delete file: Only after refs cleaned
+4. On file delete failure: Entity orphaned — refs gone, file remains
+
+**Note:** DELETE cannot be fully rolled back once refs are cleaned.
+
 For each related entity:
 
 1. Load the related entity: `Read("{graph_path}/entities/{related}.md")`

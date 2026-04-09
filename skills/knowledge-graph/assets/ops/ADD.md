@@ -143,6 +143,12 @@ Write(file_path: "{graph_path}/entities/{entity-name}.md", content: {prepared_co
 
 ### Step 7: Maintain Bidirectional References
 
+**Two-phase approach (Recommended):**
+
+1. **Collect Phase:** Build list of entities to update (with dry-run validation)
+2. **Update Phase:** If all can be reached, apply all updates atomically
+3. **On failure:** Rollback entity file, report which refs would have been created
+
 For each entity in `related`:
 
 1. Read the related entity: `Read("{graph_path}/entities/{related}.md")`
