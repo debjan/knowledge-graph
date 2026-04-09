@@ -13,32 +13,29 @@ formulas:
   days_since_used: 'if(usage.last_used, (now() - date(usage.last_used)).days.round(), "never")'
 
   # Lifecycle state: NONE → CREATED → ACTIVE → STALE → DEPRECATED → DELETED
-  # Maps entity to its position in the lifecycle (immutable)
   lifecycle_state: |
-    if(health.needs_delete,
-      "DEPRECATED",
-      if(health.needs_update || health.stale_files && health.stale_files.length > 0,
-        "STALE",
-        if(!usage.last_used || usage.use_count == 0,
-          "CREATED",
-          if((now() - date(usage.last_used)).days > 90,
-            "STALE",
-            "ACTIVE"))))
+    if(health.needs_delete, "DEPRECATED",
+      if(health.needs_update || health.stale_files && health.stale_files.length > 0, "STALE",
+        if(!usage.last_used || usage.use_count == 0, "CREATED",
+          if((now() - date(usage.last_used)).days > 90, "STALE", "ACTIVE"))))
 
   # Health action status: what action is needed
   health_action: |
-    if(health.needs_delete,
-      "⚠️ Delete",
-      if(health.needs_update,
-        "🔄 Update",
-        if(health.stale_files && health.stale_files.length > 0,
-          "⏰ Verify Stale Files",
-          if(usage.last_used && (now() - date(usage.last_used)).days > 60,
-            "📅 Aging",
-            "✓ OK"))))
+    if(health.needs_delete, "⚠️ Delete",
+      if(health.needs_update, "🔄 Update",
+        if(health.stale_files && health.stale_files.length > 0, "⏰ Verify Stale Files",
+          if(usage.last_used && (now() - date(usage.last_used)).days > 60, "📅 Aging", "✓ OK"))))
 
   # Legacy health_status for backward compatibility
   health_status: 'if(health.needs_delete, "Delete", if(health.needs_update, "Update", "OK"))'
+
+  # Relevance scoring: importance × recency × usage
+  relevance_score: |
+    let importance_weight = if(importance == "high", 1.0, if(importance == "medium", 0.7, 0.4))
+    let days_old = if(usage.last_used, (now() - date(usage.last_used)).days, 90)
+    let recency_factor = 1.0 / (1.0 + days_old / 30.0)
+    let usage_norm = min(usage.use_count / 5.0, 1.0)
+    round(importance_weight * recency_factor * usage_norm, 2)
 
   activity_level: 'if(usage.use_count > 5, "Active", if(usage.use_count > 0, "Used", "Never"))'
 
@@ -59,6 +56,8 @@ properties:
     displayName: "Days Since Used"
   formula.activity_level:
     displayName: "Activity"
+  formula.relevance_score:
+    displayName: "Relevance"
   usage.use_count:
     displayName: "Use Count"
 
@@ -116,3 +115,12 @@ views:
       - usage.last_used
       - formula.activity_level
     limit: 20
+
+  - type: table
+    name: "By Relevance"
+    order:
+      - file.name
+      - formula.relevance_score DESC
+      - importance
+      - formula.lifecycle_state
+      - usage.last_used
