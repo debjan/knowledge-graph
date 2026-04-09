@@ -19,6 +19,9 @@ auto_invoke:
  # DELETE
  - "delete entity"
  - "remove entity"
+# RENAME
+ - "rename entity"
+ - "move entity"
  # QUERY
  - "load context for"
  - "what do we know about"
@@ -110,6 +113,7 @@ A collection of markdown documents representing entities, concepts, decisions, c
 | **ADD**        | "remember this", "save to memory", "create entity", "this is important"  | Create new entity nodes                                |
 | **UPDATE**     | "update entity", "refresh entity", "update the graph"                    | Modify existing entity nodes                           |
 | **DELETE**     | "delete entity", "remove entity"                                         | Remove entity nodes with reference cleanup             |
+| **RENAME**     | "rename entity", "move entity"                                           | Rename entity while preserving history                 |
 | **QUERY**      | "load context", "what do we know", "check graph", "show knowledge graph" | Load entities matching current work (within budget)    |
 | **HEALTH**     | "check health", "review stale", "cleanup"                                | Scan for stale/unused entities, offer batch operations |
 

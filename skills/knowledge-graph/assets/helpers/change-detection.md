@@ -27,6 +27,7 @@ Detect non-trivial code changes and determine which operation to trigger: ADD, U
 | Comments           | Only comment lines changed  | `# Added docstring`                           |
 | Renaming local var | Single-file, limited scope  | `user_id = user_id_ref` → `uid = user_id_ref` |
 | Version bump       | Only version number changed | `version = "1.0"` → `version = "1.1"`         |
+| File renamed       | Same content, new path      | `auth.py` → `authentication.py`               |
 
 ### Non-Trivial Changes (Trigger Operation)
 
@@ -196,3 +197,24 @@ Files matching these patterns are never analyzed:
 3. Check entity existence before deciding ADD vs UPDATE
 4. Keep heuristics conservative — better to miss than over-capture
 5. Log all detections for debugging (don't prompt for low-confidence)
+
+## When to Use RENAME
+
+**RENAME is triggered when:**
+
+1. **User explicitly requests rename** — "rename entity X to Y", "move entity X"
+2. **File renamed with same content** — git shows `git mv` or content similarity >0.8
+3. **Entity name is misleading** — rename for clarity
+
+**RENAME vs DELETE+ADD:**
+
+| Criterion             | Use RENAME | Use DELETE+ADD       |
+| --------------------- | ---------- | -------------------- |
+| Same entity, new name | ✓ Yes      | ✗ No (loses history) |
+| Different entity      | ✗ No       | ✓ Yes                |
+| Preserve usage        | ✓ Yes      | ✗ No                 |
+| Preserve changelog    | ✓ Yes      | ✗ No                 |
+
+**RENAME workflow:**
+
+See [RENAME.md](../ops/RENAME.md)

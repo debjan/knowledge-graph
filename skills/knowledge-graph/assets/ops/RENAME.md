@@ -1,0 +1,329 @@
+# RENAME Operation — Rename Entity in Knowledge Graph
+
+Rename an entity while preserving its history, usage metadata, and relationships.
+
+## When to Use This Operation
+
+- User says "rename entity X to Y", "move entity X" (conceptual rename)
+- File or module has been renamed in the codebase
+- Entity name is no longer accurate or needs clarification
+- Consolidating duplicate or overlapping entities
+
+## When NOT to Use This Operation
+
+- User wants to create a new entity (use ADD operation)
+- User wants to update entity content without changing its identity (use UPDATE operation)
+- User wants to delete and start fresh (use DELETE then ADD — loses history intentionally)
+- Entity doesn't exist (entity must exist to be renamed)
+
+## Critical Rules
+
+**RULE 1 — USER CONFIRMATION REQUIRED**
+> Always present the rename operation to the user before executing. Never rename without confirmation.
+
+**RULE 2 — HISTORY PRESERVATION**
+> The RENAME operation MUST preserve all usage statistics, changelog, and health metadata. Do not reset these values.
+
+**RULE 3 — BIDIRECTIONAL REFERENCE UPDATE**
+> All entities that reference the old name MUST be updated to reference the new name.
+
+**RULE 4 — TOMBSTONE REDIRECT**
+> Leave a tombstone at the old path that redirects to the new entity for backward compatibility.
+
+**RULE 5 — ATOMIC OPERATION**
+> Either complete all steps successfully, or rollback to original state. Do not leave the graph in an inconsistent state.
+
+## Workflow
+
+### Step R0: Resolve Paths
+
+Resolve `{vault}` and `{project}`:
+
+1. Check user message for explicit paths
+2. Auto-discover vault path (common locations)
+3. Extract project name from `{cwd}` basename or git repo
+4. If ambiguous, ask user
+
+Set `{graph_path}` = `{vault}/Memory/{project}/`
+
+### Step R1: Load Existing Entity
+
+```
+Read("{graph_path}/entities/{old-name}.md")
+```
+
+**Error handling:** If entity file cannot be read (corrupted, permissions, I/O error):
+
+- Report: "Cannot read entity file: {error}"
+- Check if file is corrupted: attempt backup recovery
+- If unrecoverable: Offer to DELETE and re-ADD (loses history)
+- Abort RENAME operation
+
+Validate entity is healthy enough to rename:
+
+- If entity has `needs_delete: true`, warn: "Entity flagged for deletion. Proceed?"
+- If entity is stale, proceed but note: "Entity is stale; consider UPDATE first"
+
+### Step R2: Check Target Name Availability
+
+Check if target name already exists:
+
+```
+Read("{graph_path}/entities/{new-name}.md")
+```
+
+If target exists:
+
+- **If target is the same entity:** Error: "Cannot rename entity to itself"
+- **If target is different entity:** Error: "Target name already exists. Choose different name or merge entities"
+- **If target file unreadable:** Warn and ask: "Target file exists but cannot be read. Replace? [Yes/No]"
+
+### Step R3: Extract and Prepare
+
+Extract from old entity:
+
+- All frontmatter fields (preserve exactly)
+- Full document content
+- Usage statistics (`usage.last_used`, `usage.use_count` — do NOT reset)
+- Changelog (preserve full history)
+- Health flags (note current state, clear after successful rename)
+- Bidirectional references (`related` field — list of entities pointing to old name)
+
+Prepare new entity document with:
+
+- Same content as old entity
+- `name` updated to `{new-name}`
+- `updated` set to today
+- Changelog entry added: "Renamed from {old-name} on {today}"
+- Keep all `usage.*` fields unchanged
+- Keep all `health.*` fields (will be cleared after successful rename)
+
+### Step R4: Update Bidirectional References
+
+Collect all entities that reference `{old-name}`:
+
+```bash
+Grep(pattern: "\[\[{old-name}\]\]", path: "{graph_path}/entities", type: "md")
+```
+
+For each referencing entity:
+
+1. Load the entity: `Read("{graph_path}/entities/{referrer}.md")`
+2. Replace `[[{old-name}]]` with `[[{new-name}]]` in `related` field
+3. Update timestamp: mention "Updated references: {old-name} → {new-name}"
+4. Write updated entity
+
+**Error handling:** If updating a referencing entity fails:
+
+- Log which entities succeeded/failed
+- Continue with remaining entities
+- Report partial success with list of failed updates
+- User must manually fix remaining refs after rename completes
+
+### Step R5: Write New Entity
+
+Create new entity file:
+
+```bash
+mkdir -p "{graph_path}/entities/"
+Write("{graph_path}/entities/{new-name}.md", {prepared_content})
+```
+
+**Error handling:** If `Write()` fails:
+
+- Report: "Failed to create new entity file: {error}"
+- DO NOT delete old entity — preserve original
+- Abort operation without changing bidirectional refs
+- Rollback any bidirectional ref updates if possible
+- User must resolve file system issue and retry
+
+### Step R6: Create Tombstone
+
+Create tombstone file at old path with redirect:
+
+```markdown
+---
+name: {old-name}
+type: tombstone
+redirect_to: [[{new-name}]]
+created: {today}
+---
+
+# Entity Moved
+
+**{old-name}** has been renamed to **[[{new-name}]]**.
+
+See: [[{new-name}]] for current entity information.
+
+---
+
+*This file is automatically generated by RENAME operation.*
+*Remove this file after 30 days or when all references are updated.*
+```
+
+**Error handling:** If tombstone write fails:
+
+- Warn: "Could not create tombstone at {old-path}"
+- Rename operation succeeded but old location is empty
+- Note in report: "Manual tombstone creation may be needed"
+- Continue operation
+
+### Step R7: Delete Old Entity (Optional Cleanup)
+
+If tombstone created successfully:
+
+Remove old entity file (replaced by tombstone):
+
+```bash
+rm "{graph_path}/entities/{old-name}.md"
+```
+
+**Note:** Only delete if tombstone exists. If tombstone failed, keep old file and note: "Old entity kept due to tombstone failure".
+
+**Error handling:** If `rm` fails (permissions, file locked):
+
+- Warn: "Could not remove old entity file: {error}"
+- Tombstone exists, so old file shouldn't be accessed
+- Note: "Manual cleanup may be needed"
+
+### Step R8: Clear Health Flags
+
+Mark rename as complete in new entity:
+
+1. Set `health.last_verified = today`
+2. Set `health.needs_update = false`
+3. Set `health.needs_delete = false`
+4. Set `health.stale_files = []`
+
+**Note:** Preserve `usage.*` fields — do not modify.
+
+### Step R9: Propagate Rename to Visualizations
+
+Update visualization artifacts:
+
+#### Mermaid Diagrams
+
+1. Check if `graph-sequence.md` exists
+2. Regenerate: Replace `{old-name}` with `{new-name}` in diagram
+3. Update sequence flows where entity participates
+4. Include note: "Entity renamed: {old-name} → {new-name}"
+
+#### Obsidian Bases Dashboard
+
+1. `graph.base` will auto-reflect (file-based)
+2. No manual update needed for Bases
+
+#### Index File
+
+1. Update entity counts
+2. Update any direct references to old name
+
+### Step R10: Report RENAME
+
+```markdown
+### RENAME Complete
+
+**Entity:** {old-name} → {new-name}
+
+**History preserved:**
+- Usage count: {use_count}
+- Last used: {last_used}
+- Changelog entries: {changelog_count}
+
+**New path:** `{graph_path}/entities/{new-name}.md`
+**Old path (tombstone):** `{graph_path}/entities/{old-name}.md`
+
+**Bidirectional references updated:**
+- [[referrer-a]] → Updated ✓
+- [[referrer-b]] → Updated ✓
+
+**Visualizations:**
+- ✓ graph-sequence.md — entity renamed in diagrams
+- ✓ graph.base — automatically updated
+- ✓ index.md — references updated
+
+**Tombstone:** Created at old path (redirects to new entity)
+```
+
+If partial success:
+
+```markdown
+### RENAME Complete (Partial)
+
+**Entity:** {old-name} → {new-name} ✓ Created
+
+**Warnings:**
+- Bidirectional refs incomplete: [[failed-referrer]] could not be updated
+- Tombstone not created: manual redirect needed
+
+**Action required:**
+1. Check file permissions in {graph_path}/entities/
+2. Manually update [[failed-referrer]] to reference [[{new-name}]]
+3. Consider creating tombstone at {old-path}
+```
+
+## Health
+
+ Check Integration
+
+Use [lifecycle-management.md](../helpers/lifecycle-management.md) to update entity lifecycle.
+
+### After RENAME
+
+Verify references are correctly updated:
+
+```python
+new_entity = Read("{graph_path}/entities/{new-name}.md")
+for ref in new_entity.related:
+    ref_entity = Read("{graph_path}/entities/{ref}.md")
+    if "{new-name}" not in ref_entity.related:
+        warn(f"Bidirectional ref broken: {ref} doesn't reference {new-name}")
+        ref_entity.related.append("{new-name}")
+        Write(ref_entity)
+```
+
+If tombstone exists, schedule it for cleanup after 30 days:
+
+```python
+if tombstone.exists():
+    tombstone.health.auto_delete_after = today + 30_days
+    Write(tombstone)
+```
+
+## Best Practices
+
+- Always confirm before renaming — user must explicitly approve
+- **RESERVED:** Never rename core system entities (ADD, UPDATE, DELETE, QUERY, RENAME) — could break operation detection
+- Rename early in project lifecycle to minimize broken references
+- Use tombstone redirects for graceful migration over time
+- After rename, do a quick grep to find any remaining hardcoded references
+- Consider keeping tombstones for at least 30 days or until all external references updated
+- When to use RENAME vs DELETE+ADD:
+  - **Use RENAME:** Same entity, different name; preserve history
+  - **Use DELETE+ADD:** Fundamentally different entity; intentional history reset
+- Update any external documentation or README files referencing old name
+
+## Change Detection Integration
+
+Update [change-detection.md](../helpers/change-detection.md) to detect renames:
+
+```python
+# File rename detection
+if old_file.exists() and not new_file.exists() and content_similarity > 0.8:
+    trigger "RENAME operation"  # Instead of DELETE+ADD
+```
+
+### Rename Confidence Levels
+
+| Confidence | Trigger                          | Action                      |
+| ---------- | -------------------------------- | --------------------------- |
+| **High**   | File renamed, same content       | Suggest RENAME operation    |
+| **Medium** | File renamed, minor changes      | Suggest UPDATE after rename |
+| **Low**    | File not found, new file present | Treat as DELETE+ADD         |
+
+## Related Operations
+
+Read [ADD.md](./ADD.md) — Creating entities
+Read [UPDATE.md](./UPDATE.md) — Modifying entity content
+Read [DELETE.md](./DELETE.md) — Removing entities
+Read [QUERY.md](./QUERY.md) — Finding entities to rename
