@@ -371,3 +371,90 @@ If user accepts:
 - Warn about stale entities but don't auto-fix (use ADD/UPDATE)
 - Compute relevance before loading to prioritize
 - Respect token budget to avoid context explosion
+
+## Query Result Caching
+
+### Purpose
+
+Cache query results to avoid recomputing identical queries within a session.
+
+### Cache Key
+
+Cache key = hash of: query type + query term + depth + budget
+
+```python
+cache_key = f"{query_type}:{query_term}:{depth}:{budget}"
+```
+
+### Cache Storage
+
+Store in session state (memory only, not persisted):
+
+```python
+query_cache: Dict[str, CachedResult] = {}
+
+class CachedResult:
+    entities: List[Entity]
+    timestamp: datetime
+    ttl_seconds: int = 300  # 5 minutes
+```
+
+### Cache Lookup (Step 0.5: Check Cache)
+
+Before running QUERY workflow:
+
+```python
+def check_query_cache(query_params) -> Optional[CachedResult]:
+    key = generate_cache_key(query_params)
+    if key in query_cache:
+        cached = query_cache[key]
+        if (now() - cached.timestamp).seconds < cached.ttl_seconds:
+            return cached.entities
+        else:
+            del query_cache[key]  # Expired
+    return None
+```
+
+### Cache Population (After Step 9)
+
+After computing final results:
+
+```python
+def cache_query_result(query_params, entities):
+    key = generate_cache_key(query_params)
+    query_cache[key] = CachedResult(
+        entities=entities,
+        timestamp=now()
+        ttl_seconds=300
+    )
+    # Prune old entries if cache > 100 items
+    if len(query_cache) > 100:
+        oldest = min(query_cache.items(), key=lambda x: x[1].timestamp)
+        del query_cache[oldest[0]]
+```
+
+### Cache Hit Reporting
+
+If cache hit, indicate in results:
+
+```markdown
+### QUERY Complete (Cached)
+**Cached:** Results from {cache_age} seconds ago
+**Loaded:** {count} entities ({tokens} tokens)
+```
+
+### When to Cache
+
+| Query Type  | Cacheable | TTL    |
+| ----------- | --------- | ------ |
+| Auto-query  | Yes       | 5 min  |
+| File match  | Yes       | 2 min  |
+| Entity name | Yes       | 10 min |
+| Search      | Yes       | 5 min  |
+| Explore     | No        | —      |
+
+### When NOT to Cache
+
+- **Health check queries**: Real-time stale detection
+- **User override "fresh"**: Explicit "fresh" or "reload" in query
+- **Budget change**: Different token budget = different results
