@@ -84,7 +84,7 @@ checks:
 - [[jwt-handler]] — Token creation/validation
 - [[rate-limiter]] — Request throttling
 
-## Referencias
+## References
 
 **Parent:** [[index]]
 **Depends on:** [[redis-cache]]

@@ -93,6 +93,6 @@ constraints:
 - [[auth-module]] — Uses sessions for auth
 - [[session-manager]] — Redis session implementation
 
-## Referencias
+## References
 
 **Related:** [[ADR-001-database-choice]]

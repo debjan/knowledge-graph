@@ -71,7 +71,7 @@ patterns:
 - [[implementing-entity]] — Entity that implements this concept
 - [[related-concept]] — Related concept
 
-## Referencias
+## References
 
 **Applies to:** [[entity-a]], [[entity-b]]
 **Related concepts:** [[concept-x]]

@@ -106,6 +106,13 @@ For each matching entity:
 2. Parse `agent-context` code block (YAML)
 3. Extract wiki-links from `related` field
 
+**Error handling:** If frontmatter is malformed (missing `---`, invalid YAML):
+
+- Log: "Malformed frontmatter in [[{entity}]]: {error}"
+- Skip parsing for this entity
+- Continue with remaining entities
+- Note in report: "Skipped {entity} — malformed frontmatter"
+
 ### Step 5: Traverse Related Entities
 
 Use [graph-traversal.md](../helpers/graph-traversal.md):
@@ -183,6 +190,12 @@ For each implementation file listed:
    - Add to `health.stale_files`
    - Set `health.needs_update = true`
    - Warn: "⚠ [[{entity}]] may be stale: {file} not found"
+
+**Error handling:** If `test -f` command fails (permissions, invalid path):
+
+- Log: "Cannot check file existence: {error}"
+- Mark file as "unknown status" rather than stale
+- Warn: "⚠ Cannot verify [[{entity}]] implementation file"
 
 ### Step 9: Update Usage Metadata
 

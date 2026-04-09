@@ -165,17 +165,17 @@ Created automatically when initializing a new project knowledge graph:
 
 > index.md — Human-readable landing page with quick stats and navigation
 
-If [bases](assets/bases) exists:
-> graph.base — Obsidian Bases dashboard with tables, cards, and filters
+### Dashboards
 
-If [mermaid](assets/mermaid) exists:
-> graph-sequence.md — Mermaid sequence diagrams showing entity relationships
+**Assets to read now:** [bases](./assets/bases/README.md) if it exists, use for managing Obsidian Bases dashboard with tables, cards, and filters
+
+**Assets to read now:** [mermaid](./assets/mermaid/README.md) if it exists, use for managing Mermaid sequence diagrams showing entity relationships
 
 ## Dependencies
 
 | Dependency   | Required   | Purpose                                  |
 | ------------ | ---------- | ---------------------------------------- |
 | Obsidian     | Preferable | Markdown storage and graph visualization |
-| ripgrep (rg) | No         | Proactive keyword-based retrieval        |
+| ripgrep (rg) | Preferable | Proactive keyword-based retrieval        |
 
 **Without ripgrep:** Falls back to glob-only matching. Proactive retrieval still works but less comprehensive.

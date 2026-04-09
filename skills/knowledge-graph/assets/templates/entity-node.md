@@ -67,7 +67,7 @@ checks:
 - [[related-entity-1]] — {Brief description of relationship}
 - [[related-entity-2]] — {Brief description of relationship}
 
-## Referencias
+## References
 
 **Parent:** [[index]] (if exists)
 **Depends on:** [[dependency-entity]]

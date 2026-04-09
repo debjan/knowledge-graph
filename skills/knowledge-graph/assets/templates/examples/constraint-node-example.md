@@ -101,6 +101,6 @@ async def get_user(user_id: str, user_repo: UserRepository):
 - [[database-module]] — Database connection management
 - [[user-repository]] — Proper data access layer
 
-## Referencias
+## References
 
 **Applies to:** [[user-service]], [[order-service]], [[payment-service]]

@@ -139,7 +139,7 @@ patterns:
 - [[jwt-handler]] — Token generation
 - [[session-manager]] — Session storage
 
-## Referencias
+## References
 
 **Triggered by:** [[auth-endpoints]]
 **Produces:** TokenPair

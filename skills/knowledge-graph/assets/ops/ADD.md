@@ -49,6 +49,12 @@ Before creating, check if entity already exists:
 Read("{graph_path}/entities/{entity-name}.md")
 ```
 
+**Error handling:** If `Read()` fails (permissions, I/O error):
+
+- Report: "Cannot check for existing entity: {error}"
+- Ask user: "Continue with new entity? [Yes/No]"
+- If No: Abort operation
+
 If entity exists:
 
 - **If entity is healthy:** Offer UPDATE operation
@@ -128,6 +134,12 @@ mkdir -p "{graph_path}/entities/"
 ```
 Write(file_path: "{graph_path}/entities/{entity-name}.md", content: {prepared_content})
 ```
+
+**Error handling:** If `Write()` fails (disk full, permissions):
+
+- Report: "Failed to write entity: {error}"
+- Offer: "Retry / Change path / Abort"
+- Do not report success if write failed
 
 ### Step 7: Maintain Bidirectional References
 

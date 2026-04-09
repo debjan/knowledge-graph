@@ -91,7 +91,7 @@ patterns:
 - [[involved-entity]] — Entity involved in this process
 - [[related-process]] — Related process
 
-## Referencias
+## References
 
 **Triggered by:** [[trigger-entity]]
 **Produces:** [[output-entity]]

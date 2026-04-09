@@ -82,6 +82,6 @@ constraints:
 - [[affected-entity]] — Entity constrained by this
 - [[related-constraint]] — Related constraint
 
-## Referencias
+## References
 
 **Applies to:** [[entity-a]], [[entity-b]]

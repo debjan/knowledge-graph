@@ -97,7 +97,7 @@ class UserRepository:
 - [[database-module]] — Database connection management
 - [[user-service]] — Uses UserRepository
 
-## Referencias
+## References
 
 **Applies to:** [[user-service]], [[order-service]], [[payment-service]]
 **Related concepts:** [[unit-of-work]], [[domain-driven-design]]

@@ -47,6 +47,13 @@ Set `{graph_path}` = `{vault}/Memory/{project}/`
 Read("{graph_path}/entities/{entity-name}.md")
 ```
 
+**Error handling:** If entity file cannot be read (corrupted, permissions, I/O error):
+
+- Report: "Cannot read entity file: {error}"
+- Check if file is corrupted: attempt backup recovery
+- If unrecoverable: Offer to DELETE and re-ADD
+- Abort UPDATE operation
+
 ### Step U2: Check Health Status
 
 If entity has `needs_update: true` or `needs_delete: true`:
@@ -111,6 +118,14 @@ On confirmation:
 6. Set `health.last_verified = today`
 7. Write updated entity
 
+**Error handling:** If `Write()` fails (disk full, permissions):
+
+- Report: "Failed to write updated entity: {error}"
+- Preserve prepared content in memory for retry
+- Offer: "Retry / Save to alternate location / Abort"
+- Do not report success if write failed
+- Do not clear health flags if write failed
+
 ### Step U6: Update Bidirectional References
 
 If related entities changed:
@@ -124,6 +139,15 @@ If related entities changed:
    - Read `{graph_path}/entities/{removed-related}.md`
    - Remove `[[{entity-name}]]` from `related` field
    - Write updated related entity
+
+**Error handling (bidirectional sync failure):**
+If updating related entity fails mid-process:
+
+- Log which entities succeeded/failed
+- Do not leave refs in inconsistent state
+- Rollback completed changes if possible
+- Report partial success with list of failed updates
+- User must manually fix remaining refs
 
 ### Step U7: Report Update
 

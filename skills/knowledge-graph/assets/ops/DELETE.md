@@ -38,7 +38,24 @@ Resolve `{vault}` and `{project}`:
 
 Set `{graph_path}` = `{vault}/Memory/{project}/`
 
-### Step D1: Show Confirmation
+### Step D1: Read Entity
+
+Load the entity file to extract metadata and `related` field:
+
+```
+Read("{graph_path}/entities/{entity-name}.md")
+```
+
+Extract the `related` field to identify bidirectional references that need cleanup.
+
+If entity file cannot be read (corrupted, missing permissions):
+
+- Report error: "Cannot read entity file" + error details
+- Abort operation
+
+### Step D2: Show Confirmation
+
+Show confirmation dialog with actual related entities:
 
 ```markdown
 ### Delete Entity: {entity-name}
@@ -53,18 +70,6 @@ Entity will be removed along with:
 ```
 
 Wait for user confirmation. If user cancels, abort without changes.
-
-### Step D2: Collect Related Entities
-
-Load entity to get `related` field:
-
-```
-Read("{graph_path}/entities/{entity-name}.md")
-```
-
-Extract all wiki-links from `related` field.
-
-If entity has no related entities, proceed directly to file removal.
 
 ### Step D3: Clean Bidirectional References
 
@@ -83,6 +88,14 @@ rm "{graph_path}/entities/{entity-name}.md"
 ```
 
 If file not found, warn but report references cleaned.
+
+**Error handling:** If `rm` fails (permissions, file locked, read-only):
+
+- Report: "Cannot delete entity file: {error}"
+- Check file permissions and ownership
+- Offer: "Retry as admin / Skip file deletion / Abort"
+- If skipped: Entity remains but bidirectional refs are cleaned
+- Note in report: "File deletion failed, manual removal required"
 
 ### Step D5: Report Deletion
 
@@ -127,3 +140,56 @@ if entity.importance == "critical":
 - Warn about orphaned entities in report
 - Provide clear rollback instructions if deletion was accidental (restore from git)
 - Consider offering "archive" option instead of delete for important entities
+
+### Step D6: Propagate Deletion to Visualizations
+
+Trigger regeneration of visualization artifacts to remove deleted entity:
+
+#### Mermaid Diagrams
+
+1. Check if `graph-sequence.md` exists: `Read("{graph_path}/graph-sequence.md")`
+2. If exists, remove any interactions involving deleted entity
+3. Update sequence diagram to reflect removal
+4. Regenerate diagram with remaining entities
+
+**If regeneration fails:**
+
+- Log: "Mermaid diagram update failed: {error}"
+- Report: "⚠️ Manual diagram update may be needed"
+- Continue without failing the DELETE operation
+
+#### Obsidian Bases Dashboard
+
+1. Check if `graph.base` exists: `Read("{graph_path}/graph.base")`
+2. Bases will automatically reflect deletion (file-based)
+3. No manual update needed for Bases
+
+**Note:** The base dashboard updates automatically on file deletion.
+
+#### Index File
+
+1. Check if `index.md` exists: `Read("{graph_path}/index.md")`
+2. If mentions deleted entity, mark as stale or remove reference
+3. Log: "Updated index.md references"
+
+### Step D7: Final Report
+
+```markdown
+### DELETE Complete
+
+**Deleted:** {entity-name}
+**File removed:** `{graph_path}/entities/{entity-name}.md`
+
+**References cleaned:**
+- [[related-a]] — reference removed
+- [[related-b]] — reference removed
+
+**Orphaned entities:** None
+
+**Visualizations updated:**
+- ✓ graph-sequence.md — entity removed from diagrams
+- ✓ graph.base — automatically updated
+- ✓ index.md — references updated (if applicable)
+
+**Rollback:** If deletion was accidental, restore from git: `git checkout {file-path}`
+```

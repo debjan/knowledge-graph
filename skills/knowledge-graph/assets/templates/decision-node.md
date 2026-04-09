@@ -80,7 +80,7 @@ constraints:
 - [[affected-entity]] — Entity affected by this decision
 - [[related-decision]] — Related ADR
 
-## Referencias
+## References
 
 **Supersedes:** [[ADR-{N-1}]] (if applicable)
 **Superseded by:** [[ADR-{N+1}]] (if applicable)
