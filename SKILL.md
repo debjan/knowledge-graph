@@ -112,7 +112,7 @@ A collection of markdown documents representing entities, concepts, decisions, c
 
 **RULE 3 — USER CONFIRMS BEFORE WRITE**
 
-> In ADD or UPDATE operation, always present the gathered entity data to the user for review before writing. Never write without confirmation.
+> If operations generete significant changes, always present the gathered entity data to the user for review before writing.
 
 **RULE 4 — BIDIRECTIONAL REFERENCES**
 
