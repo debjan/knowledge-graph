@@ -16,8 +16,8 @@
 
 ## Critical Rules
 
-**RULE 1 — USER CONFIRMATION REQUIRED**
-> Always present entity data to the user before writing. Never write without confirmation.
+**RULE 1 — VALIDATE ENTITY PROPERTIES**
+> Entity properties must have valid YAML syntax. Use `yamllint` for verification.
 
 **RULE 2 — BIDIRECTIONAL REFERENCES**
 > If creating an entity that references others, ensure bidirectional links are established.
@@ -332,11 +332,11 @@ Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) **if merma
 
 Use these skills when available:
 
-| Skill                      | Purpose                                              |
-| -------------------------- | ---------------------------------------------------- |
-| `@skill:obsidian-markdown` | Proper Obsidian-flavored Markdown syntax in entities |
-| `@skill:obsidian-bases`    | Dashboard view compatibility                         |
-| `@skill:obsidian-cli`      | For interacting with Obsidian                        |
+| Skill               | Purpose                                              |
+| ------------------- | ---------------------------------------------------- |
+| `obsidian-markdown` | Proper Obsidian-flavored Markdown syntax in entities |
+| `obsidian-bases`    | Dashboard view compatibility                         |
+| `obsidian-cli`      | For interacting with Obsidian                        |
 
 ---
 

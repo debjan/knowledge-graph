@@ -16,8 +16,8 @@
 
 ## Critical Rules
 
-**RULE 1 — USER CONFIRMATION REQUIRED**
-> Always present entity diff to the user before updating. Never write without confirmation.
+**RULE 1 — VALIDATE ENTITY PROPERTIES**
+> Entity properties must have valid YAML syntax. Use `yamllint` for verification.
 
 **RULE 2 — BIDIRECTIONAL REFERENCES**
 > If updating entity relations, maintain bidirectional links by adding to new relations and removing from old relations.

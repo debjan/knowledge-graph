@@ -48,11 +48,12 @@ When connecting nodes, use the node ID, not the display text.
 
 Avoid problematic characters in node text:
 
-| Character             | Replace With                 |
-| --------------------- | ---------------------------- |
-| `"` (quotation marks) | `『』` (corner brackets)     |
-| `(` `)` (parentheses) | `「」` (lenticular brackets) |
-| Emoji                 | Text labels or color coding  |
+| Character                | Replace With                 |
+| ------------------------ | ---------------------------- |
+| `"` (quotation marks)    | `“”` (smart quotes)          |
+| `(` `)` (parentheses)    | `「」` (lenticular brackets) |
+| `[` `]` (sqare brackets) | `「」` (lenticular brackets) |
+| Emoji                    | Text labels or color coding  |
 
 **Line breaks:** Only valid in circle nodes: `((Line 1<br/>Line 2))`
 

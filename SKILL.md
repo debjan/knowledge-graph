@@ -101,7 +101,10 @@ A collection of markdown documents representing entities, concepts, decisions, c
 
 **RULE 1 — RESOLVE PATHS ONCE**
 
-> Resolve `{vault}` and `{project}` once per session. Don't re-ask unless the user wants to change paths.
+> You must resolve `{vault}` and `{project}` to be able to proceed.
+> If vault is not provided ask user!
+> If project name is not provided derive from working directory or git repo.
+> Don't re-ask unless the user wants to change paths.
 
 **RULE 2 — NO FABRICATION**
 

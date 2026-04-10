@@ -1,10 +1,11 @@
 # Base ADD Operation
 
 Create Obsidian Bases (.base) dashboard for knowledge graph projects.
-**Required Skills:**
 
-- `@skill:obsidian-bases` — For YAML validation and Obsidian Bases compatibility
-- `@skill:obsidian-markdown` — For proper Obsidian-flavored Markdown syntax
+**Load Skills if exists:**
+
+- `obsidian-bases` — For YAML validation and Obsidian Bases compatibility
+- `obsidian-markdown` — For proper Obsidian-flavored Markdown syntax
 
 **Output Format:** MUST be valid YAML (not JSON) for .base files
 
