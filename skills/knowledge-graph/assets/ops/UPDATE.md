@@ -25,6 +25,46 @@
 **RULE 3 — CHANGELOG INCREMENT**
 > Always increment the changelog when updating an entity.
 
+**How to Increment:**
+
+The `changelog` field is an array of version entries. When updating an entity, **append a new entry** rather than modifying existing entries.
+
+**Version Numbering:**
+
+- Simple: Increment patch version (`1.0` → `1.1` or `1.0.0` → `1.0.1`)
+- Semantic: Use semantic versioning based on change significance
+  - MAJOR: Breaking changes to constraints/patterns
+  - MINOR: New patterns, triggers added
+  - PATCH: Documentation updates, typo fixes
+
+**New Entry Format:**
+
+```yaml
+changelog:
+  - version: "1.0"
+    date: 2026-04-05
+    changes: ["Initial creation"]
+  - version: "1.1"  # NEW ENTRY - increment from last
+    date: {today}
+    changes:
+      - "Updated trigger patterns for new file structure"
+      - "Added rate limiting constraint"
+```
+
+**Field Requirements:**
+
+| Field     | Required | Description                                   |
+| --------- | -------- | --------------------------------------------- |
+| `version` | Yes      | New version string, incremented from previous |
+| `date`    | Yes      | Update date (ISO 8601: YYYY-MM-DD)            |
+| `changes` | Yes      | Array of change descriptions (1-5 items)      |
+
+**Best Practices:**
+
+- Keep change descriptions concise (under 100 chars)
+- Lead with action verb: "Added", "Fixed", "Updated", "Removed"
+- Never modify or delete existing changelog entries - append only
+
 **RULE 4 — HEALTH FLAGS CLEARED**
 > Clear all health flags after successful UPDATE.
 
@@ -112,7 +152,7 @@ On confirmation:
 
 1. Merge frontmatter (preserve usage; update metadata)
 2. Update `updated` to {today}
-3. Increment changelog version
+3. Append changelog entry (increment version per guidance above, add new entry to array)
 4. Clear `health.stale_files`
 5. Set `health.needs_update = false`
 6. Set `health.last_verified = {today}`

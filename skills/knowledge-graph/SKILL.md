@@ -43,6 +43,24 @@ auto_invoke:
  - "create dashboard"
 
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
+compatibility:
+  tools:
+    - name: obsidian
+      required: false
+      description: Markdown storage and graph visualization for entity files
+    - name: ripgrep
+      required: false
+      description: Proactive keyword-based retrieval for auto-query
+    - name: yamllint
+      required: false
+      description: Validate YAML generated files
+  skills:
+    - name: obsidian-markdown
+      required: false
+      description: Proper Obsidian-flavored Markdown syntax in entities
+    - name: obsidian-bases
+      required: false
+      description: Dashboard view compatibility for graph.base
 ---
 
 # Knowledge Graph
