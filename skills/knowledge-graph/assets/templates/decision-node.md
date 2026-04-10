@@ -20,7 +20,7 @@ usage:
   use_count: 1
   last_auto_query: null
 health:
-  stale_files: []
+  stale_files: []  # N/A for decisions (no implementation files)
   last_verified: null
   needs_update: false
   needs_delete: false

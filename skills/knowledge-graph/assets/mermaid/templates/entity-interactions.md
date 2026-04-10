@@ -169,7 +169,7 @@ def detect_cycles(entities: List[Entity]) -> List[Tuple[str, str]]:
 
 def add_cycle_indicators(mermaid_code: str, cycles: List[Tuple[str, str]]) -> str:
     for A, B in cycles:
-        mermaid_code += f""\n    Note over {A},{B}: ⚠️ Circular dependency"""
+        mermaid_code += f"\nNote over {A},{B}: Circular dependency"
     return mermaid_code
 ```
 

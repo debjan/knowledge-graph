@@ -72,7 +72,7 @@ checks:
 
 ## References
 
-**Parent:** [[index]] (if exists)
+**Parent:** [[index]] ← Link to index if it exists, remove this line if not
 **Depends on:** [[dependency-entity]]
 **Used by:** [[consumer-entity]]
 

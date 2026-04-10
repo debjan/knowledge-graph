@@ -271,10 +271,9 @@ obsidian base:views path="Memory/{project}/graph.base"
 
 **If validation fails:**
 
-1. Check Obsidian logs for specific error
-2. Check YAML syntax: `yamllint {graph_path}/graph.base`
-3. Fix template and regenerate
-4. Re-validate before proceeding
+1. Check YAML syntax: `yamllint {graph_path}/graph.base`
+2. Fix template and regenerate
+3. Re-validate before proceeding
 
 ### Step 13: Create Mermaid Diagrams
 

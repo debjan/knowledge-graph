@@ -95,9 +95,9 @@ graph LR
     B --> C
     C --> A
 
-    %% Cycle indicator
-    linkStyle 0 stroke:#333
-    linkStyle 1 stroke:#333
+    %% Cycle indicator (Full attribute syntax required for compatibility)
+    linkStyle 0 stroke:#333,stroke-width:2px
+    linkStyle 1 stroke:#333,stroke-width:2px
     linkStyle 2 stroke:#ff0000,stroke-width:3px,stroke-dasharray: 5 5
 
     %% Cycle participants
@@ -182,3 +182,26 @@ Before generating, verify:
 - [ ] Edges use `-->` not arrows with spaces
 - [ ] Class definitions come before usage
 - [ ] No cycles unless intentional (documented)
+
+## Mermaid Version Compatibility
+
+**Important:** Different Mermaid versions support different `linkStyle` syntax.
+
+| Syntax | Compatibility | Example                                       |
+| ------ | ------------- | --------------------------------------------- |
+| Simple | Mermaid 8.x+  | `linkStyle 0 stroke:#ff0000`                  |
+| Full   | All versions  | `linkStyle 0 stroke:#ff0000,stroke-width:2px` |
+
+**Recommendation:** Always use the **full attribute syntax** (with `stroke-width`) for maximum compatibility across all Mermaid versions.
+
+**Before:**
+
+```mermaid
+linkStyle 0 stroke:#ff0000  # May fail in older versions
+```
+
+**After:**
+
+```mermaid
+linkStyle 0 stroke:#ff0000,stroke-width:2px  # Works in all versions
+```

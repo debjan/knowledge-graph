@@ -247,7 +247,7 @@ Created automatically when initializing a new project knowledge graph:
 | ------------ | ---------- | ---------------------------------------- |
 | Obsidian     | Preferable | Markdown storage and graph visualization |
 | ripgrep (rg) | Preferable | Proactive keyword-based retrieval        |
-| yamllint     | Preferable | Validate yaml gnerated files             |
+| yamllint     | Preferable | Validate yaml generated files            |
 
 **Without ripgrep:** Falls back to glob-only matching. Proactive retrieval still works but less comprehensive.
 

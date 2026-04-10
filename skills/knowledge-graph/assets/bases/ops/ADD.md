@@ -91,8 +91,7 @@ obsidian base:views path="Memory/{project}/graph.base"
 **If validation fails:**
 
 1. Check YAML syntax: `yamllint {graph_path}/graph.base`
-2. Check Obsidian logs for specific error
-3. Fix issues and re-validate before proceeding
+2. Fix issues and re-validate before proceeding
 
 ### Step 5: Report Results
 
