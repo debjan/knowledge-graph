@@ -9,7 +9,7 @@
 #   {graph_path}/constraints/
 #   {graph_path}/processes/
 #
-# See ADD.md Step 8.5 for folder creation
+# See ADD.md Step 9 for folder creation
 
 # Global filters - use 'and:', 'or:', or 'not:' structure ONLY
 filters:

@@ -123,7 +123,7 @@ Wait for user confirmation.
 
 ### Step 6: Write Entity Document
 
-1 Ensure [directories exists](#step-85-create-project-directory-structure)
+1 Ensure [directories exists](#step-9-create-project-directory-structure)
 
 2. Write the document:
 
@@ -175,7 +175,7 @@ For each entity in `related`:
 - health: verified
 ```
 
-### Step 8.5: Create Project Directory Structure
+### Step 9: Create Project Directory Structure
 
 **When first entity in new project, create all folders:**
 
@@ -189,7 +189,7 @@ mkdir -p "{graph_path}/processes"
 
 **Why:** Graph traversal expects all folders to exist. Prevents errors in subsequent operations.
 
-### Step 9: Create Index File
+### Step 10: Create Index File
 
 If this is a new project initialization (first entity in project):
 
@@ -206,19 +206,19 @@ Follow the workflow in [../templates/index-node.md](../templates/index-node.md):
 
 **Note:** Index file provides human-readable landing page for the knowledge graph.
 
-### Step 10: Create Obsidian Bases Dashboard
+### Step 11: Create Obsidian Bases Dashboard
 
 Follow the workflow in [../bases/ops/ADD.md](../bases/ops/ADD.md) **if bases feature is available**:
 
 1. Check if bases feature is available: Verify `assets/bases/` directory exists
-2. If not available, skip to Step 11 (bases is optional)
+2. If not available, skip to Step 13 (bases is optional)
 3. If available, check if `graph.base` exists: `Read("{graph_path}/graph.base")`
 4. If not exists, read template and create: `Read("assets/bases/templates/graph-base.yaml")` → `Write("{graph_path}/graph.base")`
 5. If exists, skip (preserve human customizations)
 
 **Note:** This step is OPTIONAL. If the bases feature is installed (assets/bases/ exists), it provides an interactive Obsidian Bases dashboard for navigating the knowledge graph. Skip if bases was removed to keep the skill minimal.
 
-### Step 10.5: Validate graph.base
+### Step 12: Validate graph.base
 
 **Requires:** `obsidian cli command`
 
@@ -242,7 +242,7 @@ obsidian base:views path="Memory/{project}/graph.base"
 3. Fix template and regenerate
 4. Re-validate before proceeding
 
-### Step 11: Create Mermaid Diagrams
+### Step 13: Create Mermaid Diagrams
 
 Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) **if mermaid feature is available**:
 

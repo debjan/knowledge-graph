@@ -4,7 +4,7 @@ Create Mermaid sequence diagram files for knowledge graph projects.
 
 ## Trigger
 
-- First entity creation in a new project (called from [ADD operation](../../ops/ADD.md) Step 11)
+- First entity creation in a new project (called from [ADD operation](../../ops/ADD.md) Step 13)
 - Explicit "create mermaid" or "generate diagram" command
 - User requests visualization of project structure
 
@@ -74,7 +74,7 @@ graph TD
 
 Output to: `{graph_path}/graph-relationships.md`
 
-### Step 4: Validate Syntax
+### Step 5: Validate Syntax
 
 Before writing, validate Mermaid syntax:
 
@@ -94,7 +94,7 @@ for line in mermaid_code.split('\\n'):
         raise ValidationError(f"Missing 'participant': {line}")
 ```
 
-### Step 5: Write with Timestamp
+### Step 6: Write with Timestamp
 
 Each output file MUST include:
 
@@ -103,7 +103,7 @@ Each output file MUST include:
 {mermaid code}
 ```
 
-### Step 6: Report Results
+### Step 7: Report Results
 
 ```
 ✓ Created graph-sequence.md (interaction diagram)

@@ -10,7 +10,7 @@ Create Obsidian Bases (.base) dashboard for knowledge graph projects.
 
 ## Trigger
 
-- First entity creation in a new project (called from [ADD operation](../../ops/ADD.md) Step 10)
+- First entity creation in a new project (called from [ADD operation](../../ops/ADD.md) Step 12)
 - Explicit "create base" or "generate dashboard" command
 
 ## Prerequisites
