@@ -321,9 +321,18 @@ if old_file.exists() and not new_file.exists() and content_similarity > 0.8:
 | **Medium** | File renamed, minor changes      | Suggest UPDATE after rename |
 | **Low**    | File not found, new file present | Treat as DELETE+ADD         |
 
-## Related Operations
+---
 
-Read [ADD.md](./ADD.md) — Creating entities
-Read [UPDATE.md](./UPDATE.md) — Modifying entity content
-Read [DELETE.md](./DELETE.md) — Removing entities
-Read [QUERY.md](./QUERY.md) — Finding entities to rename
+## See Also
+
+**Related Operations:**
+
+- [ADD](./ADD.md) — Create new entities
+- [UPDATE](./UPDATE.md) — Modify existing entities
+- [DELETE](./DELETE.md) — Remove entities
+- [QUERY](./QUERY.md) — Load entity context
+
+**Related Assets:**
+
+- [change-detection.md](../helpers/change-detection.md) — Detect file renames
+- [lifecycle-management.md](../helpers/lifecycle-management.md) — Manage entity lifecycle

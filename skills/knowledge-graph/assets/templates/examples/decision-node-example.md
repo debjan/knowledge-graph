@@ -33,7 +33,7 @@ changelog:
 
 # ADR-002: Use Redis for Session Storage
 
-**Status:** Accepted
+**Status:** active
 **Date:** 2026-04-05
 **Decision Maker:** Team consensus
 

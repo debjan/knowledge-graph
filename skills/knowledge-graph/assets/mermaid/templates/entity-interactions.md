@@ -98,7 +98,7 @@ sequenceDiagram
 ## Output File Location
 
 Generated sequence diagrams should be written to:
-`Memory/{project}/{project}-sequence.md`
+`Memory/{project}/graph-sequence.md`
 
 ## Timestamp Format
 

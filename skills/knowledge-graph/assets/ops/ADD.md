@@ -49,11 +49,14 @@ Before creating, check if entity already exists:
 Read("{graph_path}/entities/{entity-name}.md")
 ```
 
-**Error handling:** If `Read()` fails (permissions, I/O error):
+**Error:** Cannot check for existing entity
+**Cause:** Read operation failed (permissions, I/O error)
+**Options:** [Continue] [Abort]
 
-- Report: "Cannot check for existing entity: {error}"
-- Ask user: "Continue with new entity? [Yes/No]"
-- If No: Abort operation
+**Action:**
+
+- Continue: Proceed with creating new entity
+- Abort: Cancel operation
 
 If entity exists:
 
@@ -165,10 +168,14 @@ Wait for user confirmation.
 Write(file_path: "{graph_path}/entities/{entity-name}.md", content: {prepared_content})
 ```
 
-**Error handling:** If `Write()` fails (disk full, permissions):
+**Error:** Failed to write entity file
+**Cause:** Disk full, permissions issue, or file locked
+**Options:** [Retry] [Change path] [Abort]
+**Note:**
 
-- Report: "Failed to write entity: {error}"
-- Offer: "Retry / Change path / Abort"
+- Retry: Attempt write again after checking storage/permissions
+- Change path: Use alternate location for entity
+- Abort: Cancel operation without writing
 - Do not report success if write failed
 
 ### Step 7: Maintain Bidirectional References
@@ -330,3 +337,20 @@ Use these skills when available:
 | `@skill:obsidian-markdown` | Proper Obsidian-flavored Markdown syntax in entities |
 | `@skill:obsidian-bases`    | Dashboard view compatibility                         |
 | `@skill:obsidian-cli`      | For interacting with Obsidian                        |
+
+---
+
+## See Also
+
+**Related Operations:**
+
+- [UPDATE](./UPDATE.md) — Modify existing entities
+- [DELETE](./DELETE.md) — Remove entities
+- [RENAME](./RENAME.md) — Rename/move entities
+- [QUERY](./QUERY.md) — Load entity context
+
+**Related Assets:**
+
+- [entity-extraction.md](../helpers/entity-extraction.md) — Extract entity metadata
+- [change-detection.md](../helpers/change-detection.md) — Detect non-trivial changes
+- [entity-node.md](../templates/entity-node.md) — Entity document template
