@@ -69,7 +69,7 @@ compatibility:
 
 This skill uses a modular assets architecture. Detailed workflows, helpers, and templates are in the [assets](./assets/) directory:
 
-- [operations](./assets/ops/) — ADD, UPDATE, DELETE, QUERY operation workflows
+- [operations](./assets/ops/) — ADD, UPDATE, DELETE, RENAME, QUERY operation workflows
 - [templates](./assets/templates/) — Node document templates
 - [helpers](./assets/helpers/) — Change detection, entity extraction, graph traversal, relevance scoring, lifecycle management
 - [mermaid](./assets/mermaid/) — Mermaid diagram generation (Sequence Diagram)
@@ -155,6 +155,40 @@ Use when you want to create a new entity:
 
 **Assets to read now:** [ADD.md](./assets/ops/ADD.md)
 
+### Creating Different Node Types
+
+The knowledge graph supports multiple node types. Use the appropriate template:
+
+| Node Type      | When to Create                 | Template                                                    | Example                                        |
+| -------------- | ------------------------------ | ----------------------------------------------------------- | ---------------------------------------------- |
+| **Entity**     | Code modules, classes, APIs    | [entity-node.md](./assets/templates/entity-node.md)         | `[[auth-service]]` — Auth module               |
+| **Concept**    | Design patterns, conventions   | [concept-node.md](./assets/templates/concept-node.md)       | `[[repository-pattern]]` — Data access pattern |
+| **Decision**   | Architecture decisions (ADR)   | [decision-node.md](./assets/templates/decision-node.md)     | `[[ADR-001]]` — Why we chose Redis             |
+| **Constraint** | Gotchas, limitations, warnings | [constraint-node.md](./assets/templates/constraint-node.md) | `[[rate-limit-warning]]` — API limits          |
+| **Process**    | Workflows, algorithms          | [process-node.md](./assets/templates/process-node.md)       | `[[deploy-pipeline]]` — Deployment workflow    |
+
+**How to Create:**
+
+All node types use the **ADD Operation** workflow. The skill detects the appropriate type from your description:
+
+> "Remember this **repository pattern** we're using for data access" → Creates a **concept-node**
+>
+> "Document this **decision** to use Redis for caching" → Creates a **decision-node**
+>
+> "Save this **constraint** about API rate limits" → Creates a **constraint-node**
+>
+> "Remember this **process** for deploying to production" → Creates a **process-node**
+
+**Storage Location:**
+
+| Type       | Stored In                   |
+| ---------- | --------------------------- |
+| Entity     | `{graph_path}/entities/`    |
+| Concept    | `{graph_path}/concepts/`    |
+| Decision   | `{graph_path}/decisions/`   |
+| Constraint | `{graph_path}/constraints/` |
+| Process    | `{graph_path}/processes/`   |
+
 ### UPDATE Operation
 
 Use when you want to modify an existing entity:
@@ -170,6 +204,14 @@ Use when you want to remove an entity:
 > Delete entity old-module.
 
 **Assets to read now:** [DELETE.md](./assets/ops/DELETE.md)
+
+### RENAME Operation
+
+Use when you want to rename or move an entity:
+
+> Rename entity auth-service to authentication-service.
+
+**Assets to read now:** [RENAME.md](./assets/ops/RENAME.md)
 
 ### QUERY Operation
 

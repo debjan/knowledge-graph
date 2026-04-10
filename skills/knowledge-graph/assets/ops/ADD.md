@@ -74,6 +74,30 @@ Use [change-detection.md](../helpers/change-detection.md) heuristics:
 | Formatting only    | No                        |
 | Renaming local var | No                        |
 
+### Step 2.5: Detect Node Type
+
+Determine which node type to create based on user intent:
+
+| Phrase / Signal                                        | Node Type      | Template           | Storage Path    |
+| ------------------------------------------------------ | -------------- | ------------------ | --------------- |
+| "entity", "module", "class", "service"                 | **Entity**     | entity-node.md     | `/entities/`    |
+| "concept", "pattern", "convention", "principle"        | **Concept**    | concept-node.md    | `/concepts/`    |
+| "decision", "ADR", "architecture decision", "we chose" | **Decision**   | decision-node.md   | `/decisions/`   |
+| "constraint", "gotcha", "limitation", "warning"        | **Constraint** | constraint-node.md | `/constraints/` |
+| "process", "workflow", "algorithm", "sequence"         | **Process**    | process-node.md    | `/processes/`   |
+
+**Examples:**
+
+- "Remember this **entity**..." → Creates entity node
+- "Save this **pattern**..." → Creates concept node
+- "Document this **decision**..." → Creates decision node
+- "Note this **limitation**..." → Creates constraint node
+- "Remember this **workflow**..." → Creates process node
+
+**If unclear:** Ask user to clarify: "Is this an entity (code module), concept (pattern), decision (ADR), constraint (limitation), or process (workflow)?"
+
+**Note:** All node types use the same ADD workflow, just different templates and storage folders. Based on detected type, use the appropriate template in Step 4.
+
 ### Step 3: Extract Entity Metadata
 
 Use [entity-extraction.md](../helpers/entity-extraction.md):
@@ -86,7 +110,17 @@ Use [entity-extraction.md](../helpers/entity-extraction.md):
 
 ### Step 4: Prepare Entity Document
 
-Use [entity-node.md](../templates/entity-node.md)
+Use appropriate template based on node type detected in Step 2.5:
+
+| Node Type  | Template                                              |
+| ---------- | ----------------------------------------------------- |
+| Entity     | [entity-node.md](../templates/entity-node.md)         |
+| Concept    | [concept-node.md](../templates/concept-node.md)       |
+| Decision   | [decision-node.md](../templates/decision-node.md)     |
+| Constraint | [constraint-node.md](../templates/constraint-node.md) |
+| Process    | [process-node.md](../templates/process-node.md)       |
+
+For entities (default):
 
 Initialize new metadata fields:
 
@@ -275,9 +309,9 @@ Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) **if merma
 - Validate bidirectional refs before reporting success
 - Warn if related entities not found, but proceed with ADD
 - **Recommended: Create available artifacts on project initialization (skip if optional features not installed):**
-    - `graph.base` (Obsidian Bases dashboard) — Optional, requires bases feature
-    - `graph-sequence.md` (Mermaid diagrams) — Optional, requires mermaid feature
   - `index.md` (Landing page)
+  - `graph.base` (Obsidian Bases dashboard) — Optional, requires bases feature
+  - `graph-sequence.md` (Mermaid diagrams) — Optional, requires mermaid feature
 
 ## Quick Reference
 

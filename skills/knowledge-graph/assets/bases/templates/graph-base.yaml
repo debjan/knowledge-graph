@@ -24,13 +24,13 @@ formulas:
   days_since_used: 'if(usage.last_used, (now() - date(usage.last_used)).days.round(), "never")'
   lifecycle_state: |
     if(health.needs_delete, "DEPRECATED",
-      if(health.needs_update || health.stale_files && health.stale_files.length > 0, "STALE",
+      if(health.needs_update || health.stale_files != null && health.stale_files.length > 0, "STALE",
         if(!usage.last_used || usage.use_count == 0, "CREATED",
           if((now() - date(usage.last_used)).days > 90, "STALE", "ACTIVE"))))
   health_action: |
     if(health.needs_delete, "⚠️ Delete",
       if(health.needs_update, "🔄 Update",
-        if(health.stale_files && health.stale_files.length > 0, "⏰ Verify Stale Files",
+        if(health.stale_files != null && health.stale_files.length > 0, "⏰ Verify Stale Files",
           if(usage.last_used && (now() - date(usage.last_used)).days > 60, "📅 Aging", "✓ OK"))))
   health_status: 'if(health.needs_delete, "Delete", if(health.needs_update, "Update", "OK"))'
   relevance_score: |
