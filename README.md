@@ -24,7 +24,7 @@ Clone as a skill for AI agents:
 
 ```bash
 mkdir -p ~/.agents/skills
-git clone https://gitlab.com/dejan.stojkovic/knowledge-graph-skill.git ~/.agents/skills/knowledge-graph
+git clone https://gitlab.com/dejan.stojkovic/knowledge-graph-skill ~/.agents/skills
 ```
 
 ## Usage
