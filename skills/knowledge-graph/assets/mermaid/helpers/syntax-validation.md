@@ -15,7 +15,7 @@ Markdown parsers interpret `[1. Item]` as a numbered list, causing "Unsupported 
 | Input             | Valid Output                               |
 | ----------------- | ------------------------------------------ |
 | `[1. Perception]` | `[1.Perception]` (remove space)            |
-| `[1. Perception]` | `[(1) Perception]` (use parentheses)       |
+| `[1. Perception]` | `["(1) Perception"]` (use parentheses)     |
 | `[1. Perception]` | `[① Perception]` (use circled numbers)     |
 | `[1. Perception]` | `[Step 1: Perception]` (use "Step" prefix) |
 
@@ -132,3 +132,61 @@ In sequence diagrams, every participant declaration MUST start with `participant
 ```
 
 **Detection:** Lines with ` as ` that don't start with `participant`, `actor`, or message arrows.
+
+### Rule 7: Commas in Message Content
+
+Sequence diagram messages with commas or unescaped quotes will fail to parse.
+
+**Problem:**
+
+```mermaid
+sequenceDiagram
+  API->>DB: POST /data ("2024-01-01", "2024-01-31")
+  %% Parse error: comma in message!
+```
+
+**Fix:** Wrap message in quotes or escape commas:
+
+```mermaid
+sequenceDiagram
+  API->>DB: "POST /data (2024-01-01, 2024-01-31)"
+  %% Quoted message works!
+```
+
+**Detection:** Messages containing `,` `;` `(` `)` should be wrapped in quotes.
+
+**Code fix:**
+
+```python
+def sanitize_message(msg: str) -> str:
+    if any(c in msg for c in [',', ';', '(', ')', '[', ']']):
+        return f'"{msg}"'
+    return msg
+```
+
+### Rule 8: JSON Escaping in .base Files
+
+When generating `.base` files (Obsidian Bases) from templates, ensure
+property values with quotes are properly escaped.
+
+**Problem:** `content: "Type: {{type}}"` in JSON:
+
+If `{{type}}` renders to a value containing `"`, the JSON becomes invalid.
+
+**Fix:** Template engines should escape quotes:
+
+```json
+{
+  "card": {
+    "content": "**Type:** {{type|escape}}"
+  }
+}
+```
+
+**Or use single quotes in YAML template:**
+
+```yaml
+content: '**Type:** {{type}}'
+```
+
+**Detection:** Parser errors like "Missing closing quote"

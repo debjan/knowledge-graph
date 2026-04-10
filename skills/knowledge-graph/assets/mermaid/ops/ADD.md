@@ -59,6 +59,21 @@ Focus on operation flows: ADD → Entity Extraction → File Write → Regenerat
 
 Output to: `{graph_path}/graph-sequence.md`
 
+### Step 4: Generate Relationship Graph
+
+Use template: `knowledge-graph/assets/mermaid/templates/graph-relationships.md`
+
+Structure: `graph TD` or `graph LR` with nodes and edges from entity `related` field:
+
+```mermaid
+graph TD
+    A[auth-module] --> B[session-manager]
+    B --> C[jwt-handler]
+    style A fill:#2d3748
+```
+
+Output to: `{graph_path}/graph-relationships.md`
+
 ### Step 4: Validate Syntax
 
 Before writing, validate Mermaid syntax:
@@ -129,3 +144,13 @@ The `graph-sequence.md` file is NOT part of the knowledge graph:
 
 - **Template not found**: Error, cannot proceed
 - **Write failed**: Error with path details
+
+## Cycle Visualization Support
+
+When generating diagrams from entities with circular references:
+
+1. Detect cycles: Check if A→B and B→A exist in entity `related` fields
+2. Add visual indicators:
+   - `Note over` participants with ⚠️ Circular dependency
+   - Dashed red arrows for cycle edges
+3. Reference: [Cycle Visualization](../templates/entity-interactions.md)

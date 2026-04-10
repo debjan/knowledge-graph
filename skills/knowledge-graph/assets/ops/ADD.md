@@ -123,11 +123,7 @@ Wait for user confirmation.
 
 ### Step 6: Write Entity Document
 
-1. Ensure directory exists:
-
-```bash
-mkdir -p "{graph_path}/entities/"
-```
+1 Ensure [directories exists](#step-85-create-project-directory-structure)
 
 2. Write the document:
 
@@ -179,6 +175,20 @@ For each entity in `related`:
 - health: verified
 ```
 
+### Step 8.5: Create Project Directory Structure
+
+**When first entity in new project, create all folders:**
+
+```bash
+mkdir -p "{graph_path}/entities"
+mkdir -p "{graph_path}/concepts"
+mkdir -p "{graph_path}/decisions"
+mkdir -p "{graph_path}/constraints"
+mkdir -p "{graph_path}/processes"
+```
+
+**Why:** Graph traversal expects all folders to exist. Prevents errors in subsequent operations.
+
 ### Step 9: Create Index File
 
 If this is a new project initialization (first entity in project):
@@ -206,6 +216,30 @@ Follow the workflow in [../bases/ops/ADD.md](../bases/ops/ADD.md) if it exists:
 
 **Note:** This step is MANDATORY when initializing a new project. The `graph.base` file provides an interactive Obsidian Bases dashboard for navigating the knowledge graph.
 
+### Step 10.5: Validate graph.base
+
+**Requires:** `obsidian cli command`
+
+After creating/updating `graph.base`, validate it:
+
+```bash
+obsidian base:views path="Memory/{project}/graph.base"
+```
+
+**Validation checks:**
+
+- YAML structure valid
+- All views parse correctly
+- Filters syntax valid
+- Formulas compile successfully
+
+**If validation fails:**
+
+1. Check Obsidian logs for specific error
+2. Check YAML syntax: `yamllint {graph_path}/graph.base`
+3. Fix template and regenerate
+4. Re-validate before proceeding
+
 ### Step 11: Create Mermaid Diagrams
 
 Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) if it exists:
@@ -213,8 +247,18 @@ Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) if it exis
 1. Check if `graph-sequence.md` exists: `Read("{graph_path}/graph-sequence.md")`
 2. If not exists, create initial sequence diagram with entity relationships
 3. If exists, consider regenerating if relationships changed significantly
+4. Check if `graph-relationships.md` exists: `Read("{graph_path}/graph-relationships.md")`
+5. If not exists, create relationship graph using `graph TD` with entity nodes and dependencies
+6. If exists, regenerate if structure changes
 
 **Note:** This step is MANDATORY when initializing a new project. The `graph-sequence.md` file provides Mermaid diagrams showing data flow and entity interactions.
+
+**MANDATORY visualization files:**
+
+| File                     | Template                                                              | Purpose                               |
+| ------------------------ | --------------------------------------------------------------------- | ------------------------------------- |
+| `graph-sequence.md`      | [entity-interactions.md](../mermaid/templates/entity-interactions.md) | Sequence diagrams (interaction flows) |
+| `graph-relationships.md` | [graph-relationships.md](../mermaid/templates/graph-relationships.md) | Relationship graphs (dependencies)    |
 
 ## Best Practices
 
@@ -239,3 +283,13 @@ Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) if it exis
 | `graph.base`        | `Memory/{project}/`          | Obsidian Bases dashboard | First entity |
 | `graph-sequence.md` | `Memory/{project}/`          | Mermaid diagrams         | First entity |
 | Entity nodes        | `Memory/{project}/entities/` | Knowledge nodes          | Each entity  |
+
+## Optional Skill Dependencies
+
+Use these skills when available:
+
+| Skill                      | Purpose                                              |
+| -------------------------- | ---------------------------------------------------- |
+| `@skill:obsidian-markdown` | Proper Obsidian-flavored Markdown syntax in entities |
+| `@skill:obsidian-bases`    | Dashboard view compatibility                         |
+| `@skill:obsidian-cli`      | For interacting with Obsidian                        |

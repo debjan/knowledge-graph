@@ -81,21 +81,21 @@ A collection of markdown documents representing entities, concepts, decisions, c
 
 ## Critical Rules
 
-**RULE 1 — NO FABRICATION**
+**RULE 1 — RESOLVE PATHS ONCE**
+
+> Resolve `{vault}` and `{project}` once per session. Don't re-ask unless the user wants to change paths.
+
+**RULE 2 — NO FABRICATION**
 
 > Only report information that exists in entity nodes (QUERY) or was explicitly discussed (ADD/UPDATE). Never infer, guess, or complete missing data.
 
-**RULE 2 — USER CONFIRMS BEFORE WRITE**
+**RULE 3 — USER CONFIRMS BEFORE WRITE**
 
 > In ADD or UPDATE operation, always present the gathered entity data to the user for review before writing. Never write without confirmation.
 
-**RULE 3 — BIDIRECTIONAL REFERENCES**
+**RULE 4 — BIDIRECTIONAL REFERENCES**
 
 > If entity A references entity B, then entity B MUST reference entity A. Maintain bidirectional wiki-links in the `related` frontmatter field.
-
-**RULE 4 — RESOLVE PATHS ONCE**
-
-> Resolve `{vault}` and `{project}` once per session. Don't re-ask unless the user wants to change paths.
 
 **RULE 5 — ATOMIC OPERATIONS**
 
@@ -187,5 +187,12 @@ Created automatically when initializing a new project knowledge graph:
 | ------------ | ---------- | ---------------------------------------- |
 | Obsidian     | Preferable | Markdown storage and graph visualization |
 | ripgrep (rg) | Preferable | Proactive keyword-based retrieval        |
+| yamllint     | Preferable | Validate yaml gnerated files             |
 
 **Without ripgrep:** Falls back to glob-only matching. Proactive retrieval still works but less comprehensive.
+
+**Required Skills (if available):**
+
+- `@skill:obsidian-markdown` — Proper Obsidian-flavored Markdown syntax
+- `@skill:obsidian-bases` — Dashboard view compatibility
+- `@skill:obsidian-cli` - For interacting with Obsidian

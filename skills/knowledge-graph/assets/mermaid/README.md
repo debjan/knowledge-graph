@@ -11,7 +11,8 @@ mermaid/
 │   ├── ADD.md — Mermaid generation workflow
 │   └── UPDATE.md — Mermaid regeneration workflow
 ├── templates/
-│   └── entity-interactions.md — Sequence Diagram template
+│   ├── entity-interactions.md — Sequence Diagram template
+│   └── graph-relationships.md — Relationship Graph template
 └── helpers/
     └── syntax-validation.md — Mermaid syntax rules
 ```
@@ -20,9 +21,10 @@ mermaid/
 
 Per-project Mermaid diagram file in `Memory/{project}/`:
 
-| File                | Diagram Type     | Purpose           |
-| ------------------- | ---------------- | ----------------- |
-| `graph-sequence.md` | Sequence Diagram | Interaction flows |
+| File                     | Diagram Type       | Purpose             |
+| ------------------------ | ------------------ | ------------------- |
+| `graph-sequence.md`      | Sequence Diagram   | Interaction flows   |
+| `graph-relationships.md` | Relationship Graph | Entity dependencies |
 
 ## Operation Loading
 

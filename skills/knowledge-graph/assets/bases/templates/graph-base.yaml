@@ -1,45 +1,49 @@
-# Per-project knowledge graph dashboard
-# Location: Memory/{project}/graph.base
+# OBSIDIAN BASES FORMAT: YAML (.base file)
+# MUST be valid YAML for Obsidian-Bases compatibility
+#
+# DIRECTORY REQUIREMENT:
+# All folders must exist before first use:
+#   {graph_path}/entities/
+#   {graph_path}/concepts/
+#   {graph_path}/decisions/
+#   {graph_path}/constraints/
+#   {graph_path}/processes/
+#
+# See ADD.md Step 8.5 for folder creation
 
+# Global filters - use 'and:', 'or:', or 'not:' structure ONLY
 filters:
   or:
-    - file.inFolder("Memory/{project}/entities")
-    - file.inFolder("Memory/{project}/concepts")
-    - file.inFolder("Memory/{project}/decisions")
-    - file.inFolder("Memory/{project}/constraints")
-    - file.inFolder("Memory/{project}/processes")
+    - file.inFolder("{project}/entities")
+    - file.inFolder("{project}/concepts")
+    - file.inFolder("{project}/decisions")
+    - file.inFolder("{project}/constraints")
+    - file.inFolder("{project}/processes")
 
 formulas:
   days_since_used: 'if(usage.last_used, (now() - date(usage.last_used)).days.round(), "never")'
-
-  # Lifecycle state: NONE → CREATED → ACTIVE → STALE → DEPRECATED → DELETED
   lifecycle_state: |
     if(health.needs_delete, "DEPRECATED",
       if(health.needs_update || health.stale_files && health.stale_files.length > 0, "STALE",
         if(!usage.last_used || usage.use_count == 0, "CREATED",
           if((now() - date(usage.last_used)).days > 90, "STALE", "ACTIVE"))))
-
-  # Health action status: what action is needed
   health_action: |
     if(health.needs_delete, "⚠️ Delete",
       if(health.needs_update, "🔄 Update",
         if(health.stale_files && health.stale_files.length > 0, "⏰ Verify Stale Files",
           if(usage.last_used && (now() - date(usage.last_used)).days > 60, "📅 Aging", "✓ OK"))))
-
-  # Legacy health_status for backward compatibility
   health_status: 'if(health.needs_delete, "Delete", if(health.needs_update, "Update", "OK"))'
-
-  # Relevance scoring: importance × recency × usage
   relevance_score: |
     let importance_weight = if(importance == "high", 1.0, if(importance == "medium", 0.7, 0.4))
     let days_old = if(usage.last_used, (now() - date(usage.last_used)).days, 90)
     let recency_factor = 1.0 / (1.0 + days_old / 30.0)
     let usage_norm = min(usage.use_count / 5.0, 1.0)
     round(importance_weight * recency_factor * usage_norm, 2)
-
   activity_level: 'if(usage.use_count > 5, "Active", if(usage.use_count > 0, "Used", "Never"))'
 
 properties:
+  title:
+    displayName: "Name"
   type:
     displayName: "Type"
   importance:
@@ -66,6 +70,7 @@ views:
     name: "Overview"
     order:
       - file.name
+      - title
       - type
       - importance
       - formula.lifecycle_state
@@ -76,11 +81,12 @@ views:
     name: "Needs Attention"
     filters:
       or:
-        - "health.needs_update == true"
-        - "health.needs_delete == true"
-        - "health.stale_files.length > 0"
+        - 'health.needs_update == true'
+        - 'health.needs_delete == true'
+        - 'health.stale_files.length > 0'
     order:
       - file.name
+      - title
       - type
       - formula.lifecycle_state
       - formula.health_action
@@ -88,11 +94,15 @@ views:
 
   - type: table
     name: "By Lifecycle State"
+    filters:
+      and:
+        - file.inFolder("{project}")
     groupBy:
       property: formula.lifecycle_state
       direction: ASC
     order:
       - file.name
+      - title
       - importance
       - formula.health_action
       - usage.last_used
@@ -104,6 +114,7 @@ views:
       direction: ASC
     order:
       - file.name
+      - title
       - importance
       - formula.lifecycle_state
       - formula.health_action
@@ -112,6 +123,7 @@ views:
     name: "Recent Activity"
     order:
       - file.name
+      - title
       - usage.last_used
       - formula.activity_level
     limit: 20
@@ -120,6 +132,7 @@ views:
     name: "By Relevance"
     order:
       - file.name
+      - title
       - formula.relevance_score DESC
       - importance
       - formula.lifecycle_state
