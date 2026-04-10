@@ -3,7 +3,7 @@ type: decision
 name: {kebab-case-identifier}  # Programmatic identifier for API access
 category: {adr|choice|tradeoff}
 importance: {high|medium|low}
-status: active
+status: {active|deprecated|superseded}
 project: {project-name}
 created: {YYYY-MM-DD}
 updated: {YYYY-MM-DD}
@@ -32,7 +32,7 @@ changelog:
 
 # ADR-{N}: {Decision Title}
 
-**Status:** {Proposed|Accepted|Deprecated|Superseded}
+**Status:** {active|deprecated|superseded}
 **Date:** {YYYY-MM-DD}
 **Decision Maker:** {Who made this decision}
 

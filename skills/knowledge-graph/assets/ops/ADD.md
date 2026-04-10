@@ -208,13 +208,15 @@ Follow the workflow in [../templates/index-node.md](../templates/index-node.md):
 
 ### Step 10: Create Obsidian Bases Dashboard
 
-Follow the workflow in [../bases/ops/ADD.md](../bases/ops/ADD.md) if it exists:
+Follow the workflow in [../bases/ops/ADD.md](../bases/ops/ADD.md) **if bases feature is available**:
 
-1. Check if `graph.base` exists: `Read("{graph_path}/graph.base")`
-2. If not exists, read template and create: `Read("assets/bases/templates/graph-base.yaml")` → `Write("{graph_path}/graph.base")`
-3. If exists, skip (preserve human customizations)
+1. Check if bases feature is available: Verify `assets/bases/` directory exists
+2. If not available, skip to Step 11 (bases is optional)
+3. If available, check if `graph.base` exists: `Read("{graph_path}/graph.base")`
+4. If not exists, read template and create: `Read("assets/bases/templates/graph-base.yaml")` → `Write("{graph_path}/graph.base")`
+5. If exists, skip (preserve human customizations)
 
-**Note:** This step is MANDATORY when initializing a new project. The `graph.base` file provides an interactive Obsidian Bases dashboard for navigating the knowledge graph.
+**Note:** This step is OPTIONAL. If the bases feature is installed (assets/bases/ exists), it provides an interactive Obsidian Bases dashboard for navigating the knowledge graph. Skip if bases was removed to keep the skill minimal.
 
 ### Step 10.5: Validate graph.base
 
@@ -242,18 +244,20 @@ obsidian base:views path="Memory/{project}/graph.base"
 
 ### Step 11: Create Mermaid Diagrams
 
-Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) if it exists:
+Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) **if mermaid feature is available**:
 
-1. Check if `graph-sequence.md` exists: `Read("{graph_path}/graph-sequence.md")`
-2. If not exists, create initial sequence diagram with entity relationships
-3. If exists, consider regenerating if relationships changed significantly
-4. Check if `graph-relationships.md` exists: `Read("{graph_path}/graph-relationships.md")`
-5. If not exists, create relationship graph using `graph TD` with entity nodes and dependencies
-6. If exists, regenerate if structure changes
+1. Check if mermaid feature is available: Verify `assets/mermaid/` directory exists
+2. If not available, skip this step (mermaid is optional)
+3. If available, check if `graph-sequence.md` exists: `Read("{graph_path}/graph-sequence.md")`
+4. If not exists, create initial sequence diagram with entity relationships
+5. If exists, consider regenerating if relationships changed significantly
+6. Check if `graph-relationships.md` exists: `Read("{graph_path}/graph-relationships.md")`
+7. If not exists, create relationship graph using `graph TD` with entity nodes and dependencies
+8. If exists, regenerate if structure changes
 
-**Note:** This step is MANDATORY when initializing a new project. The `graph-sequence.md` file provides Mermaid diagrams showing data flow and entity interactions.
+**Note:** This step is OPTIONAL. If the mermaid feature is installed (assets/mermaid/ exists), it provides Mermaid diagrams showing data flow. Skip if mermaid was removed to keep the skill minimal.
 
-**MANDATORY visualization files:**
+**Optional visualization files (if features installed):**
 
 | File                     | Template                                                              | Purpose                               |
 | ------------------------ | --------------------------------------------------------------------- | ------------------------------------- |
@@ -270,9 +274,9 @@ Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) if it exis
 - Extract constraints from code comments/docstrings
 - Validate bidirectional refs before reporting success
 - Warn if related entities not found, but proceed with ADD
-- **ALWAYS create all three artifacts on project initialization:**
-  - `graph.base` (Obsidian Bases dashboard)
-  - `graph-sequence.md` (Mermaid diagrams)
+- **Recommended: Create available artifacts on project initialization (skip if optional features not installed):**
+    - `graph.base` (Obsidian Bases dashboard) — Optional, requires bases feature
+    - `graph-sequence.md` (Mermaid diagrams) — Optional, requires mermaid feature
   - `index.md` (Landing page)
 
 ## Quick Reference
