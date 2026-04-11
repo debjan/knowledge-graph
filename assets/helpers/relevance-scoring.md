@@ -97,7 +97,7 @@ relevance = 1.0 × 0.86 × 0.71 = 0.61
 
 ## Implementation
 
-### Pseudocode
+### Pseudo-code
 
 ```python
 def compute_relevance(entity, max_use_count, today):

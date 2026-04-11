@@ -56,10 +56,8 @@ compatibility:
       description: Validate YAML generated files
   skills:
     - name: obsidian-markdown
-      required: false
       description: Proper Obsidian-flavored Markdown syntax in entities
     - name: obsidian-bases
-      required: false
       description: Dashboard view compatibility for graph.base
 ---
 
@@ -72,7 +70,7 @@ This skill uses a modular assets architecture. Detailed workflows, helpers, and 
 - [operations](./assets/ops/) — ADD, UPDATE, DELETE, RENAME, QUERY operation workflows
 - [templates](./assets/templates/) — Node document templates
 - [helpers](./assets/helpers/) — Change detection, entity extraction, graph traversal, relevance scoring, lifecycle management
-- [mermaid](./assets/mermaid/) — Mermaid diagram generation (Sequence Diagram)
+- [mermaid](./assets/mermaid/) — Mermaid diagram generation
 - [bases](./assets/bases/) — Obsidian Bases integration
 - [specs](./assets/specs/) — agent-context block specification
 
@@ -104,6 +102,7 @@ A collection of markdown documents representing entities, concepts, decisions, c
 > You must resolve `{vault}` and `{project}` to be able to proceed.
 > If vault is not provided ask user!
 > If project name is not provided derive from working directory or git repo.
+> Write to `{vault}/Memory/{project}`
 > Don't re-ask unless the user wants to change paths.
 
 **RULE 2 — NO FABRICATION**
@@ -112,7 +111,7 @@ A collection of markdown documents representing entities, concepts, decisions, c
 
 **RULE 3 — USER CONFIRMS BEFORE WRITE**
 
-> If operations generete significant changes, always present the gathered entity data to the user for review before writing.
+> If operations generate significant changes, always present the gathered entity data to the user for review before writing.
 
 **RULE 4 — BIDIRECTIONAL REFERENCES**
 
@@ -130,7 +129,7 @@ A collection of markdown documents representing entities, concepts, decisions, c
 
 **RULE 7 — VISUALIZATION ARTIFACTS**
 
-> When initializing a new project knowledge graph, ALWAYS create both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md` (Mermaid diagrams). These visualizations are essential for human navigation and understanding.
+> When initializing a new project knowledge graph, ALWAYS create both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams). These visualizations are essential for human navigation and understanding.
 
 ## Operation Detection
 
@@ -252,10 +251,5 @@ Created automatically when initializing a new project knowledge graph:
 | ripgrep (rg) | Preferable | Proactive keyword-based retrieval        |
 | yamllint     | Preferable | Validate yaml generated files            |
 
+**Without obsidian:** Graph base validation cannot be enforced.
 **Without ripgrep:** Falls back to glob-only matching. Proactive retrieval still works but less comprehensive.
-
-**Required Skills (if available):**
-
-- `@skill:obsidian-markdown` — Proper Obsidian-flavored Markdown syntax
-- `@skill:obsidian-bases` — Dashboard view compatibility
-- `@skill:obsidian-cli` - For interacting with Obsidian

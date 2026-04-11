@@ -18,6 +18,8 @@ Schema sync is needed when:
 
 ## Workflow
 
+### Step 0: Load `obsidian-bases` skill
+
 ### Step 1: Detect Schema Change
 
 Compare entity template frontmatter fields with graph.base formulas:
@@ -53,9 +55,10 @@ Update graph.base to match current schema?
 
 On confirmation:
 
-1. Read [graph-base template](../templates/graph-base.yaml)
-2. Write to: `{graph_path}/graph.base`
-3. Report: "graph.base updated with {count} formulas"
+1. Load `obsidian-bases` skill
+2. Read [graph-base template](../templates/graph-base.yaml)
+3. Write to: `{graph_path}/graph.base`
+4. Report: "graph.base updated with {count} formulas"
 
 ### Step 4: Report Results
 
@@ -73,7 +76,7 @@ User can request sync explicitly:
 
 Response: Execute Step 1 through 3 without detecting changes first.
 
-## Preserving Human Customizations
+## Preserving Human Customization
 
 If human has modified graph.base:
 

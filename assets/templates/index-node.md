@@ -70,6 +70,7 @@ graph LR
 ## 📈 Visualizations
 
 - **Sequence Diagrams**: [[graph-sequence]]
+- **Relationships Diagrams**: [[graph-relationships]]
 - **Dashboard**: Use Obsidian Bases (open `graph.base`)
 
 ---

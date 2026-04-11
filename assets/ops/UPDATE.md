@@ -81,6 +81,8 @@ Resolve `{vault}` and `{project}`:
 
 Set `{graph_path}` = `{vault}/Memory/{project}/`
 
+Load `obsidian-markdown` skill
+
 ### Step 1: Load Existing Entity
 
 ```

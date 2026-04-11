@@ -353,14 +353,8 @@ After presenting query results, offer to generate a Mermaid diagram:
 If user accepts:
 
 1. Read [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) for generation workflow
-2. Generate sequence diagram from loaded entities
-3. Write to `{graph_path}/graph-sequence.md`
-
-### Diagram Type
-
-| Query Result     | Recommended Diagram |
-| ---------------- | ------------------- |
-| Any result       | Sequence Diagram    |
+2. Ask user which [template](../mermaid/templates) to use
+3. Generate diagram and write to `{graph_path}/{query}-diagram.md`
 
 ## Best Practices
 

@@ -200,9 +200,9 @@ Update visualization artifacts:
 
 #### Mermaid Diagrams
 
-1. Check if `graph-sequence.md` exists
+1. Check if `graph-sequence.md` or `graph-relationships.md` exists: `Read("{graph_path}/graph-*.md")`
 2. Regenerate: Replace `{old-name}` with `{new-name}` in diagram
-3. Update sequence flows where entity participates
+3. Update diagrams where entity participates
 4. Include note: "Entity renamed: {old-name} → {new-name}"
 
 #### Obsidian Bases Dashboard

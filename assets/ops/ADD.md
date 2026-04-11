@@ -17,7 +17,7 @@
 ## Critical Rules
 
 **RULE 1 — VALIDATE ENTITY PROPERTIES**
-> Entity properties must have valid YAML syntax. Use `yamllint` for verification.
+> Entity properties must have valid YAML syntax. Use `yamllint` for verification if exists, or other available yaml linter.
 
 **RULE 2 — BIDIRECTIONAL REFERENCES**
 > If creating an entity that references others, ensure bidirectional links are established.
@@ -26,7 +26,7 @@
 > Initialize health metadata for all new entities.
 
 **RULE 4 — VISUALIZATION ARTIFACTS**
-> When initializing a new project knowledge graph, ALWAYS create both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md` (Mermaid diagrams). These visualizations are essential for human navigation and understanding.
+> When initializing a new project knowledge graph, ALWAYS create both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams). These visualizations are essential for human navigation and understanding.
 
 ## Workflow
 
@@ -40,6 +40,8 @@ Resolve `{vault}` and `{project}`:
 4. If ambiguous, ask user
 
 Set `{graph_path}` = `{vault}/Memory/{project}/`
+
+Load `obsidian-markdown` skill
 
 ### Step 1: Check if Entity Exists
 
@@ -284,25 +286,21 @@ obsidian base:views path="Memory/{project}/graph.base"
 
 ### Step 13: Create Mermaid Diagrams
 
-Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) **if mermaid feature is available**:
+Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) **if mermaid feature is available**
 
-1. Check if mermaid feature is available: Verify `assets/mermaid/` directory exists
-2. If not available, skip this step (mermaid is optional)
-3. If available, check if `graph-sequence.md` exists: `Read("{graph_path}/graph-sequence.md")`
-4. If not exists, create initial sequence diagram with entity relationships
-5. If exists, consider regenerating if relationships changed significantly
-6. Check if `graph-relationships.md` exists: `Read("{graph_path}/graph-relationships.md")`
-7. If not exists, create relationship graph using `graph TD` with entity nodes and dependencies
-8. If exists, regenerate if structure changes
+If not available, skip this step
 
-**Note:** This step is OPTIONAL. If the mermaid feature is installed (assets/mermaid/ exists), it provides Mermaid diagrams showing data flow. Skip if mermaid was removed to keep the skill minimal.
+#### Step 13.1: Create Graph Relationships
 
-**Optional visualization files (if features installed):**
+- Check if `graph-relationships.md` exists: `Read("{graph_path}/graph-relationships.md")`
+- If not exists, create relationship graph using [graph-relationships.md](../mermaid/templates/graph-relationships.md) template
+- If exists, regenerate if structure changes
 
-| File                     | Template                                                              | Purpose                               |
-| ------------------------ | --------------------------------------------------------------------- | ------------------------------------- |
-| `graph-sequence.md`      | [entity-interactions.md](../mermaid/templates/entity-interactions.md) | Sequence diagrams (interaction flows) |
-| `graph-relationships.md` | [graph-relationships.md](../mermaid/templates/graph-relationships.md) | Relationship graphs (dependencies)    |
+#### Step 13.2: Create Entity Relationships
+
+- Check if `graph-sequence.md` exists: `Read("{graph_path}/graph-sequence.md")`
+- If not exists, create initial sequence diagram using [entity-interactions.md](../mermaid/templates/entity-interactions.md) template
+- If exists, consider regenerating if relationships changed significantly
 
 ## Best Practices
 
@@ -318,15 +316,17 @@ Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) **if merma
   - `index.md` (Landing page)
   - `graph.base` (Obsidian Bases dashboard) — Optional, requires bases feature
   - `graph-sequence.md` (Mermaid diagrams) — Optional, requires mermaid feature
+  - `graph-relationships.md` (Mermaid diagrams) — Optional, requires mermaid feature
 
 ## Quick Reference
 
-| Artifact            | Location                     | Purpose                  | Created When |
-| ------------------- | ---------------------------- | ------------------------ | ------------ |
-| `index.md`          | `Memory/{project}/`          | Landing page             | First entity |
-| `graph.base`        | `Memory/{project}/`          | Obsidian Bases dashboard | First entity |
-| `graph-sequence.md` | `Memory/{project}/`          | Mermaid diagrams         | First entity |
-| Entity nodes        | `Memory/{project}/entities/` | Knowledge nodes          | Each entity  |
+| Artifact                 | Location                     | Purpose                  | Created When |
+| ------------------------ | ---------------------------- | ------------------------ | ------------ |
+| `index.md`               | `Memory/{project}/`          | Landing page             | First entity |
+| `graph.base`             | `Memory/{project}/`          | Obsidian Bases dashboard | First entity |
+| `graph-sequence.md`      | `Memory/{project}/`          | Mermaid diagrams         | First entity |
+| `graph-relationships.md` | `Memory/{project}/`          | Mermaid diagrams         | First entity |
+| Entity nodes             | `Memory/{project}/entities/` | Knowledge nodes          | Each entity  |
 
 ## Optional Skill Dependencies
 
@@ -336,7 +336,6 @@ Use these skills when available:
 | ------------------- | ---------------------------------------------------- |
 | `obsidian-markdown` | Proper Obsidian-flavored Markdown syntax in entities |
 | `obsidian-bases`    | Dashboard view compatibility                         |
-| `obsidian-cli`      | For interacting with Obsidian                        |
 
 ---
 

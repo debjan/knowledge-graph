@@ -2,11 +2,6 @@
 
 Create Obsidian Bases (.base) dashboard for knowledge graph projects.
 
-**Load Skills if exists:**
-
-- `obsidian-bases` — For YAML validation and Obsidian Bases compatibility
-- `obsidian-markdown` — For proper Obsidian-flavored Markdown syntax
-
 **Output Format:** MUST be valid YAML (not JSON) for .base files
 
 ## Trigger
@@ -20,6 +15,8 @@ Create Obsidian Bases (.base) dashboard for knowledge graph projects.
 - Templates available at [templates](../templates/)
 
 ## Workflow
+
+### Step 0: Load `obsidian-bases` skill
 
 ### Step 1: Resolve Paths
 

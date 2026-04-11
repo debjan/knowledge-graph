@@ -161,10 +161,10 @@ Trigger regeneration of visualization artifacts to remove deleted entity:
 
 #### Mermaid Diagrams
 
-1. Check if `graph-sequence.md` exists: `Read("{graph_path}/graph-sequence.md")`
+1. Check if `graph-sequence.md` or `graph-relationships.md` exists: `Read("{graph_path}/graph-*.md")`
 2. If exists, remove any interactions involving deleted entity
-3. Update sequence diagram to reflect removal
-4. Regenerate diagram with remaining entities
+3. Update diagram to reflect removal
+4. Regenerate diagrams with remaining entities
 
 **If regeneration fails:**
 
@@ -201,6 +201,7 @@ Trigger regeneration of visualization artifacts to remove deleted entity:
 **Orphaned entities:** None
 
 **Visualizations updated:**
+- ✓ graph-relationship.md — entity removed from diagrams
 - ✓ graph-sequence.md — entity removed from diagrams
 - ✓ graph.base — automatically updated
 - ✓ index.md — references updated (if applicable)
