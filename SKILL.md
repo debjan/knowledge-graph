@@ -97,37 +97,47 @@ A collection of markdown documents representing entities, concepts, decisions, c
 
 ## Critical Rules
 
-**RULE 1 — RESOLVE PATHS ONCE**
+### RULE 1: RESOLVE PATHS ONCE
 
 > You must resolve `{vault}` and `{project}` to be able to proceed.
-> If vault is not provided ask user!
-> If project name is not provided derive basename from working directory or git repo.
+>
+> **Vault resolution order:**
+>
+> 1. Check explicit paths in user message
+> 2. Check environment variable `OBSIDIAN_VAULT`
+> 3. Auto-discover from common locations: `~/Documents/Obsidian Vault`, `~/Obsidian`, `%USERPROFILE%/Documents/Obsidian Vault`
+> 4. Only if all above fail: **ask user**
+>
+> **Project name:**
+>
+> - Derive from working directory basename or git repo name
+>
 > Write to `{vault}/Memory/{project}`
 > Don't re-ask unless the user wants to change paths.
 
-**RULE 2 — NO FABRICATION**
+### RULE 2: NO FABRICATION
 
 > Only report information that exists in entity nodes (QUERY) or was explicitly discussed (ADD/UPDATE). Never infer, guess, or complete missing data.
 
-**RULE 3 — USER CONFIRMS BEFORE WRITE**
+### RULE 3: USER CONFIRMS BEFORE WRITE
 
 > If operations generate significant changes, always present the gathered entity data to the user for review before writing.
 
-**RULE 4 — BIDIRECTIONAL REFERENCES**
+### RULE 4: BIDIRECTIONAL REFERENCES
 
 > If entity A references entity B, then entity B MUST reference entity A. Maintain bidirectional wiki-links in the `related` frontmatter field.
 
-**RULE 5 — ATOMIC OPERATIONS**
+### RULE 5: ATOMIC OPERATIONS
 
 > ADD, UPDATE, DELETE, and RENAME operations must be atomic.
 > If bidirectional reference updates fail, roll back or report partial success.
 > Never leave the graph in an inconsistent state.
 
-**RULE 6 — RESPECT TOKEN BUDGET**
+### RULE 6: RESPECT TOKEN BUDGET
 
 > In QUERY operation, load context within token budget. Prioritize high-relevance entities. Summarize overflow.
 
-**RULE 7 — VISUALIZATION ARTIFACTS**
+### RULE 7: VISUALIZATION ARTIFACTS
 
 > When initializing a new project knowledge graph, ALWAYS create both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams). These visualizations are essential for human navigation and understanding.
 

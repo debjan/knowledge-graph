@@ -16,13 +16,16 @@
 
 ## Critical Rules
 
-**RULE 1 — CONFIRMATION REQUIRED**
+### RULE 1: CONFIRMATION REQUIRED
+
 > Never delete an entity without user confirmation. Always prompt and wait for explicit confirmation.
 
-**RULE 2 — BIDIRECTIONAL REFERENCE CLEANUP**
+### RULE 2: BIDIRECTIONAL REFERENCE CLEANUP
+
 > Always clean bidirectional references from all related entities before deleting.
 
-**RULE 3 — ORPHAN DETECTION**
+### RULE 3: ORPHAN DETECTION
+
 > Warn if deletion causes related entities to become orphaned (no remaining relations).
 
 ## Workflow
@@ -31,10 +34,7 @@
 
 Resolve `{vault}` and `{project}`:
 
-1. Check user message for explicit paths
-2. Auto-discover vault path (common locations: `~/Documents/Obsidian Vault`, `~/Obsidian`, `%USERPROFILE%/Documents/Obsidian Vault`, check environment variable `OBSIDIAN_VAULT`)
-3. Extract project name from `{cwd}` basename or git repo
-4. If ambiguous, ask user
+If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
 Set `{graph_path}` = `{vault}/Memory/{project}/`
 

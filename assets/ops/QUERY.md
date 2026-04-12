@@ -15,16 +15,20 @@
 
 ## Critical Rules
 
-**RULE 1 — NO FABRICATION**
+### RULE 1: NO FABRICATION
+
 > Only report information that exists in entity nodes. Quote verbatim, don't interpret.
 
-**RULE 2 — CITE SOURCES**
+### RULE 2: CITE SOURCES
+
 > Always cite the entity document path when presenting information.
 
-**RULE 3 — STALE DETECTION**
+### RULE 3: STALE DETECTION
+
 > Warn if entity references files that no longer exist.
 
-**RULE 4 — RESPECT TOKEN BUDGET**
+### RULE 4: RESPECT TOKEN BUDGET
+
 > Load context within budget. Prioritize high-relevance entities. Summarize overflow.
 
 ## Workflow
@@ -33,10 +37,7 @@
 
 Resolve `{vault}` and `{project}`:
 
-1. Check user message for explicit paths
-2. Auto-discover vault path (common locations: `~/Documents/Obsidian Vault`, `~/Obsidian`, `%USERPROFILE%/Documents/Obsidian Vault`, check environment variable `OBSIDIAN_VAULT`)
-3. Extract project name from `{cwd}` basename or git repo
-4. If ambiguous, ask user
+If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
 Set `{graph_path}` = `{vault}/Memory/{project}/`
 

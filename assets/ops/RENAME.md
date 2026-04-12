@@ -18,16 +18,20 @@ Rename an entity while preserving its history, usage metadata, and relationships
 
 ## Critical Rules
 
-**RULE 1 — HISTORY PRESERVATION**
+### RULE 1: HISTORY PRESERVATION
+
 > The RENAME operation MUST preserve all usage statistics, changelog, and health metadata. Do not reset these values.
 
-**RULE 2 — BIDIRECTIONAL REFERENCE UPDATE**
+### RULE 2: BIDIRECTIONAL REFERENCE UPDATE
+
 > All entities that reference the old name MUST be updated to reference the new name.
 
-**RULE 3 — TOMBSTONE REDIRECT**
+### RULE 3: TOMBSTONE REDIRECT
+
 > Leave a tombstone at the old path that redirects to the new entity for backward compatibility.
 
-**RULE 4 — ATOMIC OPERATION**
+### RULE 4: ATOMIC OPERATION
+
 > Either complete all steps successfully, or rollback to original state. Do not leave the graph in an inconsistent state.
 
 ## Workflow
@@ -36,10 +40,7 @@ Rename an entity while preserving its history, usage metadata, and relationships
 
 Resolve `{vault}` and `{project}`:
 
-1. Check user message for explicit paths
-2. Auto-discover vault path (common locations: `~/Documents/Obsidian Vault`, `~/Obsidian`, `%USERPROFILE%/Documents/Obsidian Vault`, check environment variable `OBSIDIAN_VAULT`)
-3. Extract project name from `{cwd}` basename or git repo
-4. If ambiguous, ask user
+If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
 Set `{graph_path}` = `{vault}/Memory/{project}/`
 

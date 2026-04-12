@@ -16,17 +16,21 @@
 
 ## Critical Rules
 
-**RULE 1 — VALIDATE ENTITY PROPERTIES**
+### RULE 1: VALIDATE ENTITY PROPERTIES
+
 > Entity properties must have valid YAML syntax.
 > Use `yamllint` for verification if exists, or do manual YAML syntax check (look for missing quotes, incorrect indentation).
 
-**RULE 2 — BIDIRECTIONAL REFERENCES**
+### RULE 2: BIDIRECTIONAL REFERENCES
+
 > If creating an entity that references others, ensure bidirectional links are established.
 
-**RULE 3 — HEALTH INITIALIZATION**
+### RULE 3: HEALTH INITIALIZATION
+
 > Initialize health metadata for all new entities.
 
-**RULE 4 — VISUALIZATION ARTIFACTS**
+### RULE 4: VISUALIZATION ARTIFACTS
+
 > When initializing a new project knowledge graph, ALWAYS create both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams). These visualizations are essential for human navigation and understanding.
 
 ## Workflow
@@ -35,10 +39,7 @@
 
 Resolve `{vault}` and `{project}`:
 
-1. Check user message for explicit paths
-2. Auto-discover vault path (common locations: `~/Documents/Obsidian Vault`, `~/Obsidian`, `%USERPROFILE%/Documents/Obsidian Vault`, check environment variable `OBSIDIAN_VAULT`)
-3. Extract project name from `{cwd}` basename or git repo
-4. If ambiguous, ask user
+If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
 Set `{graph_path}` = `{vault}/Memory/{project}/`
 
@@ -163,7 +164,7 @@ Wait for user confirmation.
 
 ### Step 8: Write Entity Document
 
-1 Ensure [directories exists](#step-9-create-project-directory-structure)
+1 Ensure [directories exists](#step-11-create-project-directory-structure)
 
 2. Write the document:
 
