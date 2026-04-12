@@ -229,7 +229,7 @@ For each entity in `related`:
 
 **When first entity in new project, create all folders:**
 
-```bash
+```shell
 mkdir -p "{graph_path}/entities"
 mkdir -p "{graph_path}/concepts"
 mkdir -p "{graph_path}/decisions"
@@ -263,7 +263,7 @@ Follow the workflow in [../templates/index-node.md](../templates/index-node.md):
 1. Check if `graph.base` already exists: `Read("{graph_path}/graph.base")`
    - If exists: Skip to Step 15
    - If not exists: Proceed to create
-2. Try to create using `../bases/ops/ADD.md` → `../templates/graph-base.yaml` if available
+2. Create using `../bases/ops/ADD.md` → `../bases/templates/graph-base.yaml`
 3. On any failure (template missing, validation error):
    - Log warning: "Bases dashboard creation failed: {reason}. Continuing without."
    - Continue to Step 14
@@ -276,7 +276,7 @@ Follow the workflow in [../templates/index-node.md](../templates/index-node.md):
 
 After creating/updating `graph.base`, validate it:
 
-```bash
+```shell
 obsidian base:views path="{memory}/{project}/graph.base"
 ```
 

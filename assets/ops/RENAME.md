@@ -100,7 +100,7 @@ Prepare new entity document with:
 
 Collect all entities that reference `{old-name}`:
 
-```bash
+```shell
 Grep(pattern: "\[\[{old-name}\]\]", path: "{graph_path}/entities", type: "md")
 ```
 
@@ -122,7 +122,7 @@ For each referencing entity:
 
 Create new entity file:
 
-```bash
+```shell
 mkdir -p "{graph_path}/entities/"
 Write("{graph_path}/entities/{new-name}.md", {prepared_content})
 ```
@@ -172,7 +172,7 @@ If tombstone created successfully:
 
 Remove old entity file (replaced by tombstone):
 
-```bash
+```shell
 rm "{graph_path}/entities/{old-name}.md"
 ```
 

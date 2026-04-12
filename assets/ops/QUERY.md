@@ -55,7 +55,7 @@ Set `{graph_path}` = `{vault}/{memory}/{project}/`
 
 #### File Match (Auto-load)
 
-```bash
+```shell
 Grep(pattern: "pattern:.*{file_path}", path: "{graph_path}", type: "md")
 ```
 
@@ -74,7 +74,7 @@ Read("{graph_path}/entities/{entity-name}.md")
 
 #### Search
 
-```bash
+```shell
 Grep(pattern: "{search_term}", path: "{graph_path}", type: "md", -i: true)
 ```
 
@@ -254,7 +254,7 @@ Use [keyword-extraction.md](../helpers/keyword-extraction.md):
 
 If ripgrep available:
 
-```bash
+```shell
 rg -l -i "keyword1|keyword2|keyword3" --type code {project_path}
 ```
 

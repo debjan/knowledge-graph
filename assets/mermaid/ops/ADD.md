@@ -44,7 +44,7 @@ For each entity, extract:
 
 ### Step 3: Generate Sequence Diagram
 
-Use template: `knowledge-graph/assets/mermaid/templates/entity-interactions.md`
+Use template: `../templates/entity-interactions.md`
 
 Structure:
 
@@ -61,7 +61,7 @@ Output to: `{graph_path}/graph-sequence.md`
 
 ### Step 4: Generate Relationship Graph
 
-Use template: `knowledge-graph/assets/mermaid/templates/graph-relationships.md`
+Use template: `../templates/graph-relationships.md`
 
 Structure: `graph TD` or `graph LR` with nodes and edges from entity `related` field:
 

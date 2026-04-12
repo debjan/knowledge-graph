@@ -70,7 +70,7 @@ graph.base already exists for this project.
 
 After writing `graph.base`, validate the file:
 
-```bash
+```shell
 obsidian base:views path="{memory}/{project}/graph.base"
 ```
 

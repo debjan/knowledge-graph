@@ -198,7 +198,7 @@ def build_ripgrep_pattern(keywords: list[str]) -> str:
 
 ### Search Command
 
-```bash
+```shell
 rg -l -i "auth|jwt|token" --type code {project_path}
 ```
 

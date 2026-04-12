@@ -117,14 +117,14 @@ Enriched with:
 >
 > **Memory name:**
 >
-> - Check if `{vault}/memory` exists or any case-insensitive match exists → set `memory` = detected memory folder case
+> - Check if `{vault}/memory` exists or any case-insensitive match exists → set `memory` = detected memory folder case (actual case is important!)
 > - Else (no folder exists) → set `memory` = "memory"
 >
 > **Project name:**
 >
 > - Derive from working directory basename or git repo name
 >
-> Set {graph_path} = {vault}/{memory}/{project}/
+> Set write path to: {vault}/{memory}/{project}/
 >
 > Don't re-ask unless the user wants to change paths.
 

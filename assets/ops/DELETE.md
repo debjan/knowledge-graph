@@ -97,7 +97,7 @@ For each related entity:
 
 ### Step 5: Delete Entity File
 
-```bash
+```shell
 rm "{graph_path}/entities/{entity-name}.md"
 ```
 
