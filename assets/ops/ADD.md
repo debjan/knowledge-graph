@@ -31,7 +31,11 @@
 
 ### RULE 4: VISUALIZATION ARTIFACTS
 
-> When initializing a new project knowledge graph, **attempt to create** both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams).
+> When initializing a new project knowledge graph, **attempt to create**:
+>
+> - `graph.base` (Obsidian Bases dashboard)
+> - `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams).
+>
 > These visualizations are essential for human navigation and understanding.
 
 ## Workflow
