@@ -19,6 +19,7 @@ assets/
 │       ADD.md — Create entity workflow
 │       DELETE.md — Remove entity workflow
 │       QUERY.md — Read from graph workflow
+│       RENAME.md — Rename entity workflow
 │       UPDATE.md — Modify entity workflow
 ├───specs/
 │       agent-context-spec.md — Executable block schema specification
@@ -33,12 +34,23 @@ assets/
 
 ## Operation Loading
 
-| Operation   | Load These Assets                                                                                          |
-| ----------- | ---------------------------------------------------------------------------------------------------------- |
-| **ADD**     | `ops/ADD.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`, `templates/entity-node.md`   |
-| **UPDATE**  | `ops/UPDATE.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`                            |
-| **DELETE**  | `ops/DELETE.md` → `helpers/lifecycle-management.md`                                                        |
-| **QUERY**   | `ops/QUERY.md` → `helpers/graph-traversal.md`                                                              |
+| Operation  | Load These Assets                                                                                        |
+| ---------- | -------------------------------------------------------------------------------------------------------- |
+| **ADD**    | `ops/ADD.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`, `templates/entity-node.md` |
+| **UPDATE** | `ops/UPDATE.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`                          |
+| **DELETE** | `ops/DELETE.md` → `helpers/lifecycle-management.md`                                                      |
+| **RENAME** | `ops/RENAME.md`                                                                                          |
+| **QUERY**  | `ops/QUERY.md` → `helpers/graph-traversal.md`                                                            |
+
+### Optional features
+
+| Operation  | Optional Features                                                                    |
+| ---------- | ------------------------------------------------------------------------------------ |
+| **ADD**    | `bases/ops/ADD.md` (if bases installed), `mermaid/ops/ADD.md` (if mermaid installed) |
+| **UPDATE** | `bases/ops/UPDATE.md`, `mermaid/ops/UPDATE.md`                                       |
+| **DELETE** | (visualizations auto-update)                                                         |
+| **RENAME** | (visualizations auto-update)                                                         |
+| **QUERY**  | —                                                                                    |
 
 ## Asset Descriptions
 
@@ -47,6 +59,7 @@ assets/
 - **ADD.md** — Workflow for creating new entity nodes
 - **UPDATE.md** — Workflow for modifying existing entity nodes
 - **DELETE.md** — Workflow for removing entity nodes with reference cleanup
+- **RENAME.md** — Workflow for renaming entity nodes while preserving its history
 - **QUERY.md** — Workflow for loading entities and presenting context briefing
 
 ### Helpers
@@ -71,6 +84,19 @@ assets/
 ### Specifications
 
 - **agent-context-spec.md** — Specification for `agent-context` executable blocks
+
+### Bases (Optional)
+
+- **bases/ops/ADD.md** — Create Obsidian Bases dashboard
+- **bases/ops/UPDATE.md** — Update dashboard schema
+- **bases/templates/graph-base.yaml** — Obsidian Bases template
+
+### Mermaid (Optional)
+
+- **mermaid/ops/ADD.md** — Create Mermaid diagrams
+- **mermaid/ops/UPDATE.md** — Update diagrams
+- **mermaid/templates/entity-interactions.md** — Sequence Diagram template
+- **mermaid/templates/graph-relationships.md** — Relationship Graph template
 
 Read [bases](./bases/README.md)
 Read [mermaid](./mermaid/README.md)

@@ -17,7 +17,8 @@
 ## Critical Rules
 
 **RULE 1 — VALIDATE ENTITY PROPERTIES**
-> Entity properties must have valid YAML syntax. Use `yamllint` for verification.
+> Entity properties must have valid YAML syntax.
+> Use `yamllint` for verification if exists, or do manual YAML syntax check (look for missing quotes, incorrect indentation).
 
 **RULE 2 — BIDIRECTIONAL REFERENCES**
 > If updating entity relations, maintain bidirectional links by adding to new relations and removing from old relations.
@@ -75,7 +76,7 @@ changelog:
 Resolve `{vault}` and `{project}`:
 
 1. Check user message for explicit paths
-2. Auto-discover vault path (common locations)
+2. Auto-discover vault path (common locations: `~/Documents/Obsidian Vault`, `~/Obsidian`, `%USERPROFILE%/Documents/Obsidian Vault`, check environment variable `OBSIDIAN_VAULT`)
 3. Extract project name from `{cwd}` basename or git repo
 4. If ambiguous, ask user
 

@@ -93,7 +93,7 @@ Proactive knowledge graph for AI agents. Maintains entities, decisions, constrai
 
 **What a knowledge graph is:**
 
-A collection of markdown documents representing entities, concepts, decisions, constraints, and processes — connected via Obsidian wiki-links (`[[entity-name]]`) and enriched with `agent-context` executable blocks. Includes `index.md` (human landing page), `graph.base` (Obsidian Bases dashboard), and `graph-sequence.md` (Mermaid diagrams) for navigation.
+A collection of markdown documents representing entities, concepts, decisions, constraints, and processes — connected via Obsidian wiki-links (`[[entity-name]]`) and enriched with `agent-context` executable blocks. Includes `index.md` (human landing page), `graph.base` (Obsidian Bases dashboard), and `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams) for navigation.
 
 ## Critical Rules
 
@@ -101,7 +101,7 @@ A collection of markdown documents representing entities, concepts, decisions, c
 
 > You must resolve `{vault}` and `{project}` to be able to proceed.
 > If vault is not provided ask user!
-> If project name is not provided derive from working directory or git repo.
+> If project name is not provided derive basename from working directory or git repo.
 > Write to `{vault}/Memory/{project}`
 > Don't re-ask unless the user wants to change paths.
 

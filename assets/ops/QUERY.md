@@ -34,7 +34,7 @@
 Resolve `{vault}` and `{project}`:
 
 1. Check user message for explicit paths
-2. Auto-discover vault path (common locations)
+2. Auto-discover vault path (common locations: `~/Documents/Obsidian Vault`, `~/Obsidian`, `%USERPROFILE%/Documents/Obsidian Vault`, check environment variable `OBSIDIAN_VAULT`)
 3. Extract project name from `{cwd}` basename or git repo
 4. If ambiguous, ask user
 

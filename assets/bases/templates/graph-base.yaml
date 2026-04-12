@@ -32,7 +32,7 @@ formulas:
       if(health.needs_update, "🔄 Update",
         if(health.stale_files != null && health.stale_files.length > 0, "⏰ Verify Stale Files",
           if(usage.last_used && (now() - date(usage.last_used)).days > 60, "📅 Aging", "✓ OK"))))
-  health_status: 'if(health.needs_delete, "Delete", if(health.needs_update, "Update", "OK"))'
+  health_status: 'if(health.needs_delete, "Delete", if(health.needs_update, "Update", if(health.stale_files != null && health.stale_files.length > 0, "Stale", "OK")))'
   relevance_score: |
     let importance_weight = if(importance == "high", 1.0, if(importance == "medium", 0.7, 0.4))
     let days_old = if(usage.last_used, (now() - date(usage.last_used)).days, 90)

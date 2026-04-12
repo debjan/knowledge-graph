@@ -18,9 +18,9 @@ Schema sync is needed when:
 
 ## Workflow
 
-### Step 0: Load `obsidian-bases` skill
+### Step 1: Load `obsidian-bases` skill
 
-### Step 1: Detect Schema Change
+### Step 2: Detect Schema Change
 
 Compare entity template frontmatter fields with graph.base formulas:
 
@@ -30,7 +30,7 @@ Compare entity template frontmatter fields with graph.base formulas:
 4. Extract formulas from graph.base
 5. Check if formulas reference all relevant frontmatter fields
 
-### Step 2: Prompt for Sync
+### Step 3: Prompt for Sync
 
 If schema mismatch detected:
 
@@ -51,7 +51,7 @@ Update graph.base to match current schema?
 [Show diff] — Preview changes
 ```
 
-### Step 3: Apply Sync
+### Step 4: Apply Sync
 
 On confirmation:
 
@@ -60,7 +60,7 @@ On confirmation:
 3. Write to: `{graph_path}/graph.base`
 4. Report: "graph.base updated with {count} formulas"
 
-### Step 4: Report Results
+### Step 5: Report Results
 
 ```
 ✓ Synced graph.base formulas with entity schema

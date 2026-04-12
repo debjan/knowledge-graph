@@ -16,9 +16,9 @@ Create Obsidian Bases (.base) dashboard for knowledge graph projects.
 
 ## Workflow
 
-### Step 0: Load `obsidian-bases` skill
+### Step 1: Load `obsidian-bases` skill
 
-### Step 1: Resolve Paths
+### Step 2: Resolve Paths
 
 ```
 vault = resolved vault path
@@ -26,7 +26,7 @@ project = resolved project name
 graph_path = {vault}/Memory/{project}
 ```
 
-### Step 2: Create Project Dashboard (graph.base)
+### Step 3: Create Project Dashboard (graph.base)
 
 1. Check if `graph.base` exists:
 
@@ -49,7 +49,7 @@ graph.base already exists for this project.
 [Update] — Regenerate from template
 ```
 
-### Step 3: Validate YAML Output
+### Step 4: Validate YAML Output
 
 **Before writing graph.base, validate:**
 
@@ -69,7 +69,7 @@ graph.base already exists for this project.
 - `{project}` → actual project name
 - `{graph_path}` → actual path
 
-### Step 4: Validate with Obsidian CLI
+### Step 5: Validate with Obsidian CLI
 
 **Requires:** `obsidian cli command`
 
@@ -88,10 +88,10 @@ obsidian base:views path="Memory/{project}/graph.base"
 
 **If validation fails:**
 
-1. Check YAML syntax: `yamllint {graph_path}/graph.base`
-2. Fix issues and re-validate before proceeding
+1. **If yamllint available:** Check YAML syntax: `yamllint {graph_path}/graph.base`
+2. **Otherwise:** Check YAML manually (look for missing quotes, incorrect indentation, etc.)
 
-### Step 5: Report Results
+### Step 6: Report Results
 
 ```
 ✓ Created graph.base (project dashboard)

@@ -48,7 +48,7 @@ Use template: `knowledge-graph/assets/mermaid/templates/entity-interactions.md`
 
 Structure:
 
-```
+```mermaid
 sequenceDiagram
     participant A as Entity A
     participant B as Entity B
@@ -125,6 +125,14 @@ Per-project sequence diagram with:
 - **Interactions**: Related entity connections
 - **Flows**: ADD, UPDATE, DELETE operation flows
 
+### graph-relationships.md
+
+Per-project relationship graph with:
+
+- **Nodes**: All entities displayed by type
+- **Edges**: Relationships from `related` fields
+- **Views**: Architecture overview, dependencies, relevance filtering
+
 ## Human Customization
 
 - Humans can customize mermaid files (add participants, change styling)
@@ -133,7 +141,7 @@ Per-project sequence diagram with:
 
 ## Exclusion from Entity Operations
 
-The `graph-sequence.md` file is NOT part of the knowledge graph:
+The `graph-sequence.md` and `graph-relationships.md` files are NOT part of the knowledge graph:
 
 - Not scanned by QUERY operation
 - Not affected by entity lifecycle

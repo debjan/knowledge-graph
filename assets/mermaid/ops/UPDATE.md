@@ -22,11 +22,11 @@ Regeneration is needed when:
 ### Step 1: Check for Existing Diagram
 
 1. Resolve `{graph_path}` = `{vault}/Memory/{project}/`
-2. Check if `graph-sequence.md` exists:
+2. Check if `graph-sequence.md` or `graph-relationships.md` exists:
 
-   ```
-   Read("{graph_path}/graph-sequence.md")
-   ```
+```
+Read("{graph_path}/graph-*.md")
+```
 
 3. If not exists, defer to ADD operation
 
@@ -55,7 +55,15 @@ For each entity, extract:
 3. Build interaction flows from `related` fields
 4. Include operation flows (ADD/UPDATE/DELETE lifecycle)
 
-### Step 4: Validate Syntax
+### Step 4: Regenerate Relationship Graph
+
+1. Read [template](../templates/graph-relationships.md)
+2. Build node list from current entities
+3. Build edges from `related` fields
+4. Apply styling by entity type/importance
+5. Include cycle detection markup if needed
+
+### Step 5: Validate Syntax
 
 Before writing, validate Mermaid syntax:
 

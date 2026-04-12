@@ -17,7 +17,8 @@
 ## Critical Rules
 
 **RULE 1 — VALIDATE ENTITY PROPERTIES**
-> Entity properties must have valid YAML syntax. Use `yamllint` for verification if exists, or other available yaml linter.
+> Entity properties must have valid YAML syntax.
+> Use `yamllint` for verification if exists, or do manual YAML syntax check (look for missing quotes, incorrect indentation).
 
 **RULE 2 — BIDIRECTIONAL REFERENCES**
 > If creating an entity that references others, ensure bidirectional links are established.
@@ -35,7 +36,7 @@
 Resolve `{vault}` and `{project}`:
 
 1. Check user message for explicit paths
-2. Auto-discover vault path (common locations)
+2. Auto-discover vault path (common locations: `~/Documents/Obsidian Vault`, `~/Obsidian`, `%USERPROFILE%/Documents/Obsidian Vault`, check environment variable `OBSIDIAN_VAULT`)
 3. Extract project name from `{cwd}` basename or git repo
 4. If ambiguous, ask user
 
@@ -280,9 +281,10 @@ obsidian base:views path="Memory/{project}/graph.base"
 
 **If validation fails:**
 
-1. Check YAML syntax: `yamllint {graph_path}/graph.base`
-2. Fix template and regenerate
-3. Re-validate before proceeding
+1. **If yamllint available:** Check YAML syntax: `yamllint {graph_path}/graph.base`
+2. **Otherwise:** Check YAML manually (look for missing quotes, incorrect indentation)
+3. Fix template and regenerate
+4. Re-validate before proceeding
 
 ### Step 13: Create Mermaid Diagrams
 
