@@ -21,7 +21,7 @@ Regeneration is needed when:
 
 ### Step 1: Check for Existing Diagram
 
-1. Resolve `{graph_path}` = `{vault}/Memory/{project}/`
+1. Resolve `{graph_path}` = `{vault}/memory/{project}/`
 2. Check if `graph-sequence.md` or `graph-relationships.md` exists:
 
 ```

@@ -10,7 +10,7 @@ Create Mermaid sequence diagram files for knowledge graph projects.
 
 ## Prerequisites
 
-- Entity directory structure exists at `Memory/{project}/`
+- Entity directory structure exists at `memory/{project}/`
 - Templates available at [templates](../templates/)
 
 ## Workflow
@@ -20,7 +20,7 @@ Create Mermaid sequence diagram files for knowledge graph projects.
 ```
 vault = resolved vault path
 project = resolved project name
-graph_path = {vault}/Memory/{project}
+graph_path = {vault}/memory/{project}
 ```
 
 ### Step 2: Collect Entity Data

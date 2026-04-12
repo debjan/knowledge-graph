@@ -20,7 +20,7 @@ Per-project base file:
 
 | File         | Location                      | Purpose                                                                   |
 | ------------ | ----------------------------- | ------------------------------------------------------------------------- |
-| `graph.base` | `Memory/{project}/graph.base` | Per-project dashboard with entity overview, health status, activity views |
+| `graph.base` | `memory/{project}/graph.base` | Per-project dashboard with entity overview, health status, activity views |
 
 ## Operation Loading
 

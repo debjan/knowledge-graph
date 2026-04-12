@@ -41,7 +41,7 @@ Resolve `{vault}` and `{project}`:
 
 If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
-Set `{graph_path}` = `{vault}/Memory/{project}/`
+Set `{graph_path}` = `{vault}/memory/{project}/`
 
 Load `obsidian-markdown` skill
 
@@ -270,7 +270,7 @@ Follow the workflow in [../bases/ops/ADD.md](../bases/ops/ADD.md) **if bases fea
 After creating/updating `graph.base`, validate it:
 
 ```bash
-obsidian base:views path="Memory/{project}/graph.base"
+obsidian base:views path="memory/{project}/graph.base"
 ```
 
 **Validation checks:**
@@ -325,11 +325,11 @@ If not available, skip this step
 
 | Artifact                 | Location                     | Purpose                  | Created When |
 | ------------------------ | ---------------------------- | ------------------------ | ------------ |
-| `index.md`               | `Memory/{project}/`          | Landing page             | First entity |
-| `graph.base`             | `Memory/{project}/`          | Obsidian Bases dashboard | First entity |
-| `graph-sequence.md`      | `Memory/{project}/`          | Mermaid diagrams         | First entity |
-| `graph-relationships.md` | `Memory/{project}/`          | Mermaid diagrams         | First entity |
-| Entity nodes             | `Memory/{project}/entities/` | Knowledge nodes          | Each entity  |
+| `index.md`               | `memory/{project}/`          | Landing page             | First entity |
+| `graph.base`             | `memory/{project}/`          | Obsidian Bases dashboard | First entity |
+| `graph-sequence.md`      | `memory/{project}/`          | Mermaid diagrams         | First entity |
+| `graph-relationships.md` | `memory/{project}/`          | Mermaid diagrams         | First entity |
+| Entity nodes             | `memory/{project}/entities/` | Knowledge nodes          | Each entity  |
 
 ## Optional Skill Dependencies
 

@@ -36,7 +36,7 @@ Resolve `{vault}` and `{project}`:
 
 If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
-Set `{graph_path}` = `{vault}/Memory/{project}/`
+Set `{graph_path}` = `{vault}/memory/{project}/`
 
 ### Step 2: Read Entity
 

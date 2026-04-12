@@ -112,7 +112,12 @@ A collection of markdown documents representing entities, concepts, decisions, c
 >
 > - Derive from working directory basename or git repo name
 >
-> Write to `{vault}/Memory/{project}`
+> **Write to:** `{vault}/memory/{project}`
+>
+> **Lowercase memory folder:**
+>
+> - Create as `memory/`, but detect existing folders case-insensitively (`Memory/`, `MEMORY/`).
+>
 > Don't re-ask unless the user wants to change paths.
 
 ### RULE 2: NO FABRICATION

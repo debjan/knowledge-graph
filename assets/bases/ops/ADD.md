@@ -11,7 +11,7 @@ Create Obsidian Bases (.base) dashboard for knowledge graph projects.
 
 ## Prerequisites
 
-- Entity directory structure exists at `Memory/{project}/`
+- Entity directory structure exists at `memory/{project}/`
 - Templates available at [templates](../templates/)
 
 ## Workflow
@@ -23,7 +23,7 @@ Create Obsidian Bases (.base) dashboard for knowledge graph projects.
 ```
 vault = resolved vault path
 project = resolved project name
-graph_path = {vault}/Memory/{project}
+graph_path = {vault}/memory/{project}
 ```
 
 ### Step 3: Create Project Dashboard (graph.base)
@@ -76,7 +76,7 @@ graph.base already exists for this project.
 After writing `graph.base`, validate the file:
 
 ```bash
-obsidian base:views path="Memory/{project}/graph.base"
+obsidian base:views path="memory/{project}/graph.base"
 ```
 
 **Expected output:**

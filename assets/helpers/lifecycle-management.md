@@ -170,7 +170,7 @@ Entity will be removed along with:
 ### DELETE Complete
 
 **Deleted:** auth-service
-**File removed:** `Memory/project/entities/auth-service.md`
+**File removed:** `memory/project/entities/auth-service.md`
 
 **References cleaned:**
  - [[session-manager]] — removed reference
