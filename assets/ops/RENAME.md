@@ -38,11 +38,11 @@ Rename an entity while preserving its history, usage metadata, and relationships
 
 ### Step 1: Resolve Paths
 
-Resolve `{vault}` and `{project}`:
+Resolve `{vault}`, `{memory}` and `{project}`:
 
 If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
-Set `{graph_path}` = `{vault}/memory/{project}/`
+Set `{graph_path}` = `{vault}/{memory}/{project}/`
 
 ### Step 2: Load Existing Entity
 

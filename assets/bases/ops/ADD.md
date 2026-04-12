@@ -11,7 +11,7 @@ Create Obsidian Bases (.base) dashboard for knowledge graph projects.
 
 ## Prerequisites
 
-- Entity directory structure exists at `memory/{project}/`
+- Entity directory structure exists at `{memory}/{project}/`
 - Templates available at [templates](../templates/)
 
 ## Workflow
@@ -20,11 +20,11 @@ Create Obsidian Bases (.base) dashboard for knowledge graph projects.
 
 ### Step 2: Resolve Paths
 
-```
-vault = resolved vault path
-project = resolved project name
-graph_path = {vault}/memory/{project}
-```
+Resolve `{vault}`, `{memory}` and `{project}`.
+
+If ambiguous, enforce [Critical Rule 1](../../../SKILL.md#rule-1-resolve-paths-once)
+
+Set `{graph_path}` = `{vault}/{memory}/{project}/`
 
 ### Step 3: Create Project Dashboard (graph.base)
 
@@ -64,11 +64,6 @@ graph.base already exists for this project.
 - Formulas with unescaped quotes
 - Missing formula definitions
 
-**Template variables:** Replace before output:
-
-- `{project}` → actual project name
-- `{graph_path}` → actual path
-
 ### Step 5: Validate with Obsidian CLI
 
 **Requires:** `obsidian cli command`
@@ -76,7 +71,7 @@ graph.base already exists for this project.
 After writing `graph.base`, validate the file:
 
 ```bash
-obsidian base:views path="memory/{project}/graph.base"
+obsidian base:views path="{memory}/{project}/graph.base"
 ```
 
 **Expected output:**

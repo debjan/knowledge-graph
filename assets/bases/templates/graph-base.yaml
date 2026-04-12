@@ -14,11 +14,11 @@
 # Global filters - use 'and:', 'or:', or 'not:' structure ONLY
 filters:
   or:
-    - file.inFolder("{project}/entities")
-    - file.inFolder("{project}/concepts")
-    - file.inFolder("{project}/decisions")
-    - file.inFolder("{project}/constraints")
-    - file.inFolder("{project}/processes")
+    - file.inFolder("{memory}/{project}/entities")
+    - file.inFolder("{memory}/{project}/concepts")
+    - file.inFolder("{memory}/{project}/decisions")
+    - file.inFolder("{memory}/{project}/constraints")
+    - file.inFolder("{memory}/{project}/processes")
 
 formulas:
   days_since_used: 'if(usage.last_used, (now() - date(usage.last_used)).days.round(), "never")'
@@ -96,7 +96,7 @@ views:
     name: "By Lifecycle State"
     filters:
       and:
-        - file.inFolder("{project}")
+        - file.inFolder("{memory}/{project}")
     groupBy:
       property: formula.lifecycle_state
       direction: ASC

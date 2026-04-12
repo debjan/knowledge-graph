@@ -22,6 +22,12 @@ Schema sync is needed when:
 
 ### Step 2: Detect Schema Change
 
+Resolve `{vault}`, `{memory}` and `{project}`.
+
+If ambiguous, enforce [Critical Rule 1](../../../SKILL.md#rule-1-resolve-paths-once)
+
+Set `{graph_path}` = `{vault}/{memory}/{project}/`
+
 Compare entity template frontmatter fields with graph.base formulas:
 
 1. Read [entity template](../../templates/entity-node.md)

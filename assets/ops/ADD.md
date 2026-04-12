@@ -37,11 +37,11 @@
 
 ### Step 1: Resolve Paths
 
-Resolve `{vault}` and `{project}`:
+Resolve `{vault}`, `{memory}` and `{project}`:
 
 If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
-Set `{graph_path}` = `{vault}/memory/{project}/`
+Set `{graph_path}` = `{vault}/{memory}/{project}/`
 
 Load `obsidian-markdown` skill
 
@@ -270,7 +270,7 @@ Follow the workflow in [../bases/ops/ADD.md](../bases/ops/ADD.md) **if bases fea
 After creating/updating `graph.base`, validate it:
 
 ```bash
-obsidian base:views path="memory/{project}/graph.base"
+obsidian base:views path="{memory}/{project}/graph.base"
 ```
 
 **Validation checks:**
@@ -323,13 +323,13 @@ If not available, skip this step
 
 ## Quick Reference
 
-| Artifact                 | Location                     | Purpose                  | Created When |
-| ------------------------ | ---------------------------- | ------------------------ | ------------ |
-| `index.md`               | `memory/{project}/`          | Landing page             | First entity |
-| `graph.base`             | `memory/{project}/`          | Obsidian Bases dashboard | First entity |
-| `graph-sequence.md`      | `memory/{project}/`          | Mermaid diagrams         | First entity |
-| `graph-relationships.md` | `memory/{project}/`          | Mermaid diagrams         | First entity |
-| Entity nodes             | `memory/{project}/entities/` | Knowledge nodes          | Each entity  |
+| Artifact                 | Location                       | Purpose                  | Created When |
+| ------------------------ | ------------------------------ | ------------------------ | ------------ |
+| `index.md`               | `{memory}/{project}/`          | Landing page             | First entity |
+| `graph.base`             | `{memory}/{project}/`          | Obsidian Bases dashboard | First entity |
+| `graph-sequence.md`      | `{memory}/{project}/`          | Mermaid diagrams         | First entity |
+| `graph-relationships.md` | `{memory}/{project}/`          | Mermaid diagrams         | First entity |
+| Entity nodes             | `{memory}/{project}/entities/` | Knowledge nodes          | Each entity  |
 
 ## Optional Skill Dependencies
 

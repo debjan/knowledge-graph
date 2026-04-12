@@ -19,7 +19,7 @@ mermaid/
 
 ## Generated Files
 
-Per-project Mermaid diagram file in `memory/{project}/`:
+Per-project Mermaid diagram file in `{memory}/{project}/`:
 
 | File                     | Diagram Type       | Purpose             |
 | ------------------------ | ------------------ | ------------------- |

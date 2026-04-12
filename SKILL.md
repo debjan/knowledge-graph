@@ -99,7 +99,7 @@ A collection of markdown documents representing entities, concepts, decisions, c
 
 ### RULE 1: RESOLVE PATHS ONCE
 
-> You must resolve `{vault}` and `{project}` to be able to proceed.
+> You must resolve `{vault}`, `{memory}` and `{project}` to be able to proceed.
 >
 > **Vault resolution order:**
 >
@@ -108,15 +108,16 @@ A collection of markdown documents representing entities, concepts, decisions, c
 > 3. Auto-discover from common locations: `~/Documents/Obsidian Vault`, `~/Obsidian`, `%USERPROFILE%/Documents/Obsidian Vault`
 > 4. Only if all above fail: **ask user**
 >
+> **Memory name:**
+>
+> - Check if `{vault}/memory` exists or any case-insensitive match exists → set `memory` = detected memory folder case
+> - Else (no folder exists) → set `memory` = "memory"
+>
 > **Project name:**
 >
 > - Derive from working directory basename or git repo name
 >
-> **Write to:** `{vault}/memory/{project}`
->
-> **Lowercase memory folder:**
->
-> - Create as `memory/`, but detect existing folders case-insensitively (`Memory/`, `MEMORY/`).
+> **Write to:** `{vault}/{memory}/{project}`
 >
 > Don't re-ask unless the user wants to change paths.
 

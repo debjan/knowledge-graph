@@ -21,7 +21,12 @@ Regeneration is needed when:
 
 ### Step 1: Check for Existing Diagram
 
-1. Resolve `{graph_path}` = `{vault}/memory/{project}/`
+Resolve `{vault}`, `{memory}` and `{project}`.
+
+If ambiguous, enforce [Critical Rule 1](../../../SKILL.md#rule-1-resolve-paths-once)
+
+Set `{graph_path}` = `{vault}/{memory}/{project}/`
+
 2. Check if `graph-sequence.md` or `graph-relationships.md` exists:
 
 ```
