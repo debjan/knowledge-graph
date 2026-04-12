@@ -31,7 +31,8 @@
 
 ### RULE 4: VISUALIZATION ARTIFACTS
 
-> When initializing a new project knowledge graph, ALWAYS create both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams). These visualizations are essential for human navigation and understanding.
+> When initializing a new project knowledge graph, **attempt to create** both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams).
+> These visualizations are essential for human navigation and understanding.
 
 ## Workflow
 
@@ -253,15 +254,17 @@ Follow the workflow in [../templates/index-node.md](../templates/index-node.md):
 
 ### Step 13: Create Obsidian Bases Dashboard
 
-Follow the workflow in [../bases/ops/ADD.md](../bases/ops/ADD.md) **if bases feature is available**:
+**Default behavior:** Create bases dashboard. Warn and continue if creation fails.
 
-1. Check if bases feature is available: Verify `assets/bases/` directory exists
-2. If not available, skip to Step 15 (bases is optional)
-3. If available, check if `graph.base` exists: `Read("{graph_path}/graph.base")`
-4. If not exists, read template and create: `Read("assets/bases/templates/graph-base.yaml")` → `Write("{graph_path}/graph.base")`
-5. If exists, skip (preserve human customizations)
+1. Check if `graph.base` already exists: `Read("{graph_path}/graph.base")`
+   - If exists: Skip to Step 15
+   - If not exists: Proceed to create
+2. Try to create using `../bases/ops/ADD.md` → `../templates/graph-base.yaml` if available
+3. On any failure (template missing, validation error):
+   - Log warning: "Bases dashboard creation failed: {reason}. Continuing without."
+   - Continue to Step 14
 
-**Note:** This step is OPTIONAL. If the bases feature is installed (assets/bases/ exists), it provides an interactive Obsidian Bases dashboard for navigating the knowledge graph. Skip if bases was removed to keep the skill minimal.
+**Note:** This step is a soft default—creation failures are tolerated.
 
 ### Step 14: Validate graph.base
 
@@ -282,28 +285,24 @@ obsidian base:views path="{memory}/{project}/graph.base"
 
 **If validation fails:**
 
-1. **If yamllint available:** Check YAML syntax: `yamllint {graph_path}/graph.base`
-2. **Otherwise:** Check YAML manually (look for missing quotes, incorrect indentation)
-3. Fix template and regenerate
-4. Re-validate before proceeding
+1. **Warn:** "graph.base validation failed: {details}. Continuing with unvalidated file."
+2. Optionally: Check YAML manually or with `yamllint` if available
+3. **Continue operation** — do not block on validation errors
 
 ### Step 15: Create Mermaid Diagrams
 
-Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) **if mermaid feature is available**
+**Default behavior:** Create Mermaid diagrams. Warn and continue if creation fails.
 
-If not available, skip this step
+1. Check if diagram files already exist:
+   - `Read("{graph_path}/graph-sequence.md")`
+   - `Read("{graph_path}/graph-relationships.md")`
+   - If both exist: Skip this step to preserve human customizations
+2. Try to create using `../mermaid/ops/ADD.md` → `../templates/*.md` if available
+3. On any failure (template missing, syntax error):
+   - Log warning: "Mermaid diagram creation failed: {reason}. Continuing without."
+   - Continue to report results
 
-#### Step 15.1: Create Graph Relationships
-
-- Check if `graph-relationships.md` exists: `Read("{graph_path}/graph-relationships.md")`
-- If not exists, create relationship graph using [graph-relationships.md](../mermaid/templates/graph-relationships.md) template
-- If exists, regenerate if structure changes
-
-#### Step 15.2: Create Entity Relationships
-
-- Check if `graph-sequence.md` exists: `Read("{graph_path}/graph-sequence.md")`
-- If not exists, create initial sequence diagram using [entity-interactions.md](../mermaid/templates/entity-interactions.md) template
-- If exists, consider regenerating if relationships changed significantly
+**Note:** This step is a soft default—creation failures are tolerated. The feature can be disabled by deleting the `.md` files and ignoring warnings.
 
 ## Best Practices
 
@@ -315,11 +314,11 @@ If not available, skip this step
 - Extract constraints from code comments/docstrings
 - Validate bidirectional refs before reporting success
 - Warn if related entities not found, but proceed with ADD
-- **Recommended: Create available artifacts on project initialization (skip if optional features not installed):**
-  - `index.md` (Landing page)
-  - `graph.base` (Obsidian Bases dashboard) — Optional, requires bases feature
-  - `graph-sequence.md` (Mermaid diagrams) — Optional, requires mermaid feature
-  - `graph-relationships.md` (Mermaid diagrams) — Optional, requires mermaid feature
+- **Recommended: Create available artifacts on project initialization:**
+  - `index.md` - Landing page
+  - `graph.base` - Obsidian Bases dashboard
+  - `graph-sequence.md` - Mermaid diagrams
+  - `graph-relationships.md` - Mermaid diagrams
 
 ## Quick Reference
 
@@ -335,10 +334,10 @@ If not available, skip this step
 
 Use these skills when available:
 
-| Skill               | Purpose                                              |
-| ------------------- | ---------------------------------------------------- |
-| `obsidian-markdown` | Proper Obsidian-flavored Markdown syntax in entities |
-| `obsidian-bases`    | Dashboard view compatibility                         |
+| Skill                | Purpose                                              |
+| -------------------- | ---------------------------------------------------- |
+| `obsidian-markdown`  | Proper Obsidian-flavored Markdown syntax in entities |
+| `obsidian-bases`     | Extended dashboard features and validation           |
 
 ---
 

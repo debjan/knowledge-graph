@@ -145,7 +145,12 @@ A collection of markdown documents representing entities, concepts, decisions, c
 
 ### RULE 7: VISUALIZATION ARTIFACTS
 
-> When initializing a new project knowledge graph, ALWAYS create both `graph.base` (Obsidian Bases dashboard) and `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams). These visualizations are essential for human navigation and understanding.
+> When initializing a new project knowledge graph, **attempt to create**:
+>
+> - `graph.base` (Obsidian Bases dashboard)
+> - `graph-sequence.md` and `graph-relationships.md` (Mermaid diagrams)
+>
+> These are soft defaults—creation failures are logged as warnings, not errors. Humans can customize or delete these files without consequence.
 
 ## Operation Detection
 
