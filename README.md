@@ -5,7 +5,7 @@ A proactive knowledge graph system for AI agents that maintains entities, decisi
 ## Features
 
 - **AUTO-QUERY**: Proactively load relevant context at session start
-- **ADD/UPDATE/DELETE**: Manage entity nodes with reference cleanup
+- **ADD/UPDATE/DELETE/RENAME**: Manage entity nodes with reference cleanup
 - **QUERY**: Load relevant entities with relevance scoring and budget awareness
 - **LIFECYCLE**: Detect stale entities, manage updates and deletions
 
@@ -13,7 +13,7 @@ A proactive knowledge graph system for AI agents that maintains entities, decisi
 
 The following features are optional and can be safely deleted if not needed:
 
-- **Mermaid diagrams** (`assets/mermaid/`) - Sequence diagram generation
+- **Mermaid diagrams** (`assets/mermaid/`) - Sequence and relationship diagram generation
 - **Obsidian Bases** (`assets/bases/`) - Dashboard views
 
 To remove: delete the respective directories under `knowledge-graph/assets/`.
