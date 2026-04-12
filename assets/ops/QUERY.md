@@ -29,7 +29,7 @@
 
 ## Workflow
 
-### Step 0: Resolve Paths
+### Step 1: Resolve Paths
 
 Resolve `{vault}` and `{project}`:
 
@@ -40,7 +40,7 @@ Resolve `{vault}` and `{project}`:
 
 Set `{graph_path}` = `{vault}/Memory/{project}/`
 
-### Step 1: Identify Query Type
+### Step 2: Identify Query Type
 
 | Query Type      | Example                               | Action                                      |
 | --------------- | ------------------------------------- | ------------------------------------------- |
@@ -50,7 +50,7 @@ Set `{graph_path}` = `{vault}/Memory/{project}/`
 | **Explore**     | "Show me the knowledge graph"         | Load index.md or list entities              |
 | **Auto-query**  | Session start                         | Proactive context loading (see below)       |
 
-### Step 2: Find Matching Entities
+### Step 3: Find Matching Entities
 
 #### File Match (Auto-load)
 
@@ -86,7 +86,7 @@ For auto-query, use [keyword-extraction.md](../helpers/keyword-extraction.md) an
 3. Match results to entity triggers
 4. Merge with glob-based results
 
-### Step 3: Compute Relevance Scores
+### Step 4: Compute Relevance Scores
 
 Use [relevance-scoring.md](../helpers/relevance-scoring.md):
 
@@ -98,7 +98,7 @@ For each matching entity:
 4. Compute `usage_factor = log(use_count + 1) / log(max_use_count + 1)`
 5. Calculate `relevance = importance_weight × recency_factor × usage_factor`
 
-### Step 4: Parse Entity Document
+### Step 5: Parse Entity Document
 
 For each matching entity:
 
@@ -113,7 +113,7 @@ For each matching entity:
 - Continue with remaining entities
 - Note in report: "Skipped {entity} — malformed frontmatter"
 
-### Step 5: Traverse Related Entities
+### Step 6: Traverse Related Entities
 
 Use [graph-traversal.md](../helpers/graph-traversal.md):
 
@@ -122,7 +122,7 @@ Use [graph-traversal.md](../helpers/graph-traversal.md):
 3. Build a tree of related context
 4. Compute relevance scores for traversed entities
 
-### Step 6: Apply Token Budget
+### Step 7: Apply Token Budget
 
 Use [token-budget.md](../helpers/token-budget.md):
 
@@ -133,7 +133,7 @@ Use [token-budget.md](../helpers/token-budget.md):
    - Load remaining 30% budget as summaries
    - Omit overflow with count
 
-### Step 7: Present Context Briefing
+### Step 8: Present Context Briefing
 
 ```markdown
 ### Context Briefing
@@ -181,7 +181,7 @@ Use [token-budget.md](../helpers/token-budget.md):
 *{omitted_count} lower-relevance entities omitted. Use "load full context for {name}" to see all.*
 ```
 
-### Step 8: Stale Entity Check
+### Step 9: Stale Entity Check
 
 For each implementation file listed:
 
@@ -197,7 +197,7 @@ For each implementation file listed:
 - Mark file as "unknown status" rather than stale
 - Warn: "⚠ Cannot verify [[{entity}]] implementation file"
 
-### Step 9: Update Usage Metadata
+### Step 10: Update Usage Metadata
 
 For each entity loaded (full or summarized):
 
@@ -393,7 +393,7 @@ class CachedResult:
     ttl_seconds: int = 300  # 5 minutes
 ```
 
-### Cache Lookup (Step 0.5: Check Cache)
+### Cache Lookup
 
 Before running QUERY workflow:
 
@@ -409,7 +409,7 @@ def check_query_cache(query_params) -> Optional[CachedResult]:
     return None
 ```
 
-### Cache Population (After Step 9)
+### Cache Population (After Step 10)
 
 After computing final results:
 

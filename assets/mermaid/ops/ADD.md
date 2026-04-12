@@ -4,7 +4,7 @@ Create Mermaid sequence diagram files for knowledge graph projects.
 
 ## Trigger
 
-- First entity creation in a new project (called from [ADD operation](../../ops/ADD.md) Step 13)
+- First entity creation in a new project (called from [ADD operation](../../ops/ADD.md) Step 15)
 - Explicit "create mermaid" or "generate diagram" command
 - User requests visualization of project structure
 

@@ -32,7 +32,7 @@ Rename an entity while preserving its history, usage metadata, and relationships
 
 ## Workflow
 
-### Step 0: Resolve Paths
+### Step 1: Resolve Paths
 
 Resolve `{vault}` and `{project}`:
 
@@ -43,7 +43,7 @@ Resolve `{vault}` and `{project}`:
 
 Set `{graph_path}` = `{vault}/Memory/{project}/`
 
-### Step 1: Load Existing Entity
+### Step 2: Load Existing Entity
 
 ```
 Read("{graph_path}/entities/{old-name}.md")
@@ -61,7 +61,7 @@ Validate entity is healthy enough to rename:
 - If entity has `needs_delete: true`, warn: "Entity flagged for deletion. Proceed?"
 - If entity is stale, proceed but note: "Entity is stale; consider UPDATE first"
 
-### Step 2: Check Target Name Availability
+### Step 3: Check Target Name Availability
 
 Check if target name already exists:
 
@@ -75,7 +75,7 @@ If target exists:
 - **If target is different entity:** Error: "Target name already exists. Choose different name or merge entities"
 - **If target file unreadable:** Warn and ask: "Target file exists but cannot be read. Replace? [Yes/No]"
 
-### Step 3: Extract and Prepare
+### Step 4: Extract and Prepare
 
 Extract from old entity:
 
@@ -95,7 +95,7 @@ Prepare new entity document with:
 - Keep all `usage.*` fields unchanged
 - Keep all `health.*` fields (will be cleared after successful rename)
 
-### Step 4: Update Bidirectional References
+### Step 5: Update Bidirectional References
 
 Collect all entities that reference `{old-name}`:
 
@@ -117,7 +117,7 @@ For each referencing entity:
 - Report partial success with list of failed updates
 - User must manually fix remaining refs after rename completes
 
-### Step 5: Write New Entity
+### Step 6: Write New Entity
 
 Create new entity file:
 
@@ -134,7 +134,7 @@ Write("{graph_path}/entities/{new-name}.md", {prepared_content})
 - Rollback any bidirectional ref updates if possible
 - User must resolve file system issue and retry
 
-### Step 6: Create Tombstone
+### Step 7: Create Tombstone
 
 Create tombstone file at old path with redirect:
 
@@ -165,7 +165,7 @@ See: [[{new-name}]] for current entity information.
 - Note in report: "Manual tombstone creation may be needed"
 - Continue operation
 
-### Step 7: Delete Old Entity (Optional Cleanup)
+### Step 8: Delete Old Entity (Optional Cleanup)
 
 If tombstone created successfully:
 
@@ -183,7 +183,7 @@ rm "{graph_path}/entities/{old-name}.md"
 - Tombstone exists, so old file shouldn't be accessed
 - Note: "Manual cleanup may be needed"
 
-### Step 8: Clear Health Flags
+### Step 9: Clear Health Flags
 
 Mark rename as complete in new entity:
 
@@ -194,7 +194,7 @@ Mark rename as complete in new entity:
 
 **Note:** Preserve `usage.*` fields — do not modify.
 
-### Step 9: Propagate Rename to Visualizations
+### Step 10: Propagate Rename to Visualizations
 
 Update visualization artifacts:
 
@@ -215,7 +215,7 @@ Update visualization artifacts:
 1. Update entity counts
 2. Update any direct references to old name
 
-### Step 10: Report RENAME
+### Step 11: Report RENAME
 
 ```markdown
 ### RENAME Complete

@@ -31,7 +31,7 @@
 
 ## Workflow
 
-### Step 0: Resolve Paths
+### Step 1: Resolve Paths
 
 Resolve `{vault}` and `{project}`:
 
@@ -44,7 +44,7 @@ Set `{graph_path}` = `{vault}/Memory/{project}/`
 
 Load `obsidian-markdown` skill
 
-### Step 1: Check if Entity Exists
+### Step 2: Check if Entity Exists
 
 Before creating, check if entity already exists:
 
@@ -67,7 +67,7 @@ If entity exists:
 - **If entity is stale:** Offer UPDATE or DELETE operation
 - **If user wants different entity:** Proceed with new entity (different name)
 
-### Step 2: Detect Non-Trivial Change
+### Step 3: Detect Non-Trivial Change
 
 Use [change-detection.md](../helpers/change-detection.md) heuristics:
 
@@ -80,7 +80,7 @@ Use [change-detection.md](../helpers/change-detection.md) heuristics:
 | Formatting only    | No                        |
 | Renaming local var | No                        |
 
-### Step 2.5: Detect Node Type
+### Step 4: Detect Node Type
 
 Determine which node type to create based on user intent:
 
@@ -104,7 +104,7 @@ Determine which node type to create based on user intent:
 
 **Note:** All node types use the same ADD workflow, just different templates and storage folders. Based on detected type, use the appropriate template in Step 4.
 
-### Step 3: Extract Entity Metadata
+### Step 5: Extract Entity Metadata
 
 Use [entity-extraction.md](../helpers/entity-extraction.md):
 
@@ -114,9 +114,9 @@ Use [entity-extraction.md](../helpers/entity-extraction.md):
 4. Infer category and importance
 5. Identify related entities
 
-### Step 4: Prepare Entity Document
+### Step 6: Prepare Entity Document
 
-Use appropriate template based on node type detected in Step 2.5:
+Use appropriate template based on node type detected in Step 4:
 
 | Node Type  | Template                                              |
 | ---------- | ----------------------------------------------------- |
@@ -142,7 +142,7 @@ health:
   needs_delete: false
 ```
 
-### Step 5: Confirm with User
+### Step 7: Confirm with User
 
 Present the prepared entity:
 
@@ -161,7 +161,7 @@ Proceed? [Yes / No / Edit]
 
 Wait for user confirmation.
 
-### Step 6: Write Entity Document
+### Step 8: Write Entity Document
 
 1 Ensure [directories exists](#step-9-create-project-directory-structure)
 
@@ -181,7 +181,7 @@ Write(file_path: "{graph_path}/entities/{entity-name}.md", content: {prepared_co
 - Abort: Cancel operation without writing
 - Do not report success if write failed
 
-### Step 7: Maintain Bidirectional References
+### Step 9: Maintain Bidirectional References
 
 **Two-phase approach (Recommended):**
 
@@ -196,7 +196,7 @@ For each entity in `related`:
 3. If not, add it: `Edit(...)` to add `[[{entity-name}]]` to related
 4. If related entity not found, warn: "Related entity [[{related}]] not found"
 
-### Step 8: Report Results
+### Step 10: Report Results
 
 ```markdown
 ### ADD Complete
@@ -219,7 +219,7 @@ For each entity in `related`:
 - health: verified
 ```
 
-### Step 9: Create Project Directory Structure
+### Step 11: Create Project Directory Structure
 
 **When first entity in new project, create all folders:**
 
@@ -233,7 +233,7 @@ mkdir -p "{graph_path}/processes"
 
 **Why:** Graph traversal expects all folders to exist. Prevents errors in subsequent operations.
 
-### Step 10: Create Index File
+### Step 12: Create Index File
 
 If this is a new project initialization (first entity in project):
 
@@ -250,19 +250,19 @@ Follow the workflow in [../templates/index-node.md](../templates/index-node.md):
 
 **Note:** Index file provides human-readable landing page for the knowledge graph.
 
-### Step 11: Create Obsidian Bases Dashboard
+### Step 13: Create Obsidian Bases Dashboard
 
 Follow the workflow in [../bases/ops/ADD.md](../bases/ops/ADD.md) **if bases feature is available**:
 
 1. Check if bases feature is available: Verify `assets/bases/` directory exists
-2. If not available, skip to Step 13 (bases is optional)
+2. If not available, skip to Step 15 (bases is optional)
 3. If available, check if `graph.base` exists: `Read("{graph_path}/graph.base")`
 4. If not exists, read template and create: `Read("assets/bases/templates/graph-base.yaml")` → `Write("{graph_path}/graph.base")`
 5. If exists, skip (preserve human customizations)
 
 **Note:** This step is OPTIONAL. If the bases feature is installed (assets/bases/ exists), it provides an interactive Obsidian Bases dashboard for navigating the knowledge graph. Skip if bases was removed to keep the skill minimal.
 
-### Step 12: Validate graph.base
+### Step 14: Validate graph.base
 
 **Requires:** `obsidian cli command`
 
@@ -286,19 +286,19 @@ obsidian base:views path="Memory/{project}/graph.base"
 3. Fix template and regenerate
 4. Re-validate before proceeding
 
-### Step 13: Create Mermaid Diagrams
+### Step 15: Create Mermaid Diagrams
 
 Follow the workflow in [../mermaid/ops/ADD.md](../mermaid/ops/ADD.md) **if mermaid feature is available**
 
 If not available, skip this step
 
-#### Step 13.1: Create Graph Relationships
+#### Step 15.1: Create Graph Relationships
 
 - Check if `graph-relationships.md` exists: `Read("{graph_path}/graph-relationships.md")`
 - If not exists, create relationship graph using [graph-relationships.md](../mermaid/templates/graph-relationships.md) template
 - If exists, regenerate if structure changes
 
-#### Step 13.2: Create Entity Relationships
+#### Step 15.2: Create Entity Relationships
 
 - Check if `graph-sequence.md` exists: `Read("{graph_path}/graph-sequence.md")`
 - If not exists, create initial sequence diagram using [entity-interactions.md](../mermaid/templates/entity-interactions.md) template

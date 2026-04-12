@@ -74,7 +74,7 @@ Before writing, validate Mermaid syntax:
 
 [Reference](../helpers/syntax-validation.md)
 
-### Step 5: Write with Timestamp
+### Step 6: Write with Timestamp
 
 Update timestamp in output:
 
@@ -83,7 +83,7 @@ Update timestamp in output:
 {mermaid code}
 ```
 
-### Step 6: Report Results
+### Step 7: Report Results
 
 ```
 ✓ Regenerated graph-sequence.md
@@ -133,4 +133,4 @@ User can request regeneration explicitly:
 
 > Regenerate the mermaid diagram
 
-Response: Execute Step 1 through 6 without detecting changes first.
+Response: Execute Step 2 through 7 without detecting changes first.

@@ -27,7 +27,7 @@
 
 ## Workflow
 
-### Step 0: Resolve Paths
+### Step 1: Resolve Paths
 
 Resolve `{vault}` and `{project}`:
 
@@ -38,7 +38,7 @@ Resolve `{vault}` and `{project}`:
 
 Set `{graph_path}` = `{vault}/Memory/{project}/`
 
-### Step 1: Read Entity
+### Step 2: Read Entity
 
 Load the entity file to extract metadata and `related` field:
 
@@ -53,7 +53,7 @@ If entity file cannot be read (corrupted, missing permissions):
 - Report error: "Cannot read entity file" + error details
 - Abort operation
 
-### Step 2: Show Confirmation
+### Step 3: Show Confirmation
 
 Show confirmation dialog with actual related entities:
 
@@ -71,7 +71,7 @@ Entity will be removed along with:
 
 Wait for user confirmation. If user cancels, abort without changes.
 
-### Step 3: Clean Bidirectional References
+### Step 4: Clean Bidirectional References
 
 **⚠️ ATOMICITY REQUIREMENT:**
 
@@ -95,7 +95,7 @@ For each related entity:
 4. Write updated related entity
 5. If orphaned, add to orphaned list for reporting
 
-### Step 4: Delete Entity File
+### Step 5: Delete Entity File
 
 ```bash
 rm "{graph_path}/entities/{entity-name}.md"
@@ -111,7 +111,7 @@ If file not found, warn but report references cleaned.
 - If skipped: Entity remains but bidirectional refs are cleaned
 - Note in report: "File deletion failed, manual removal required"
 
-### Step 5: Report Deletion
+### Step 6: Report Deletion
 
 ```markdown
 ### DELETE Complete
@@ -155,7 +155,7 @@ if entity.importance == "critical":
 - Provide clear rollback instructions if deletion was accidental (restore from git)
 - Consider offering "archive" option instead of delete for important entities
 
-### Step 6: Propagate Deletion to Visualizations
+### Step 7: Propagate Deletion to Visualizations
 
 Trigger regeneration of visualization artifacts to remove deleted entity:
 
@@ -186,7 +186,7 @@ Trigger regeneration of visualization artifacts to remove deleted entity:
 2. If mentions deleted entity, mark as stale or remove reference
 3. Log: "Updated index.md references"
 
-### Step 7: Final Report
+### Step 8: Final Report
 
 ```markdown
 ### DELETE Complete

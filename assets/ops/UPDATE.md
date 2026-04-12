@@ -71,7 +71,7 @@ changelog:
 
 ## Workflow
 
-### Step 0: Resolve Paths
+### Step 1: Resolve Paths
 
 Resolve `{vault}` and `{project}`:
 
@@ -84,7 +84,7 @@ Set `{graph_path}` = `{vault}/Memory/{project}/`
 
 Load `obsidian-markdown` skill
 
-### Step 1: Load Existing Entity
+### Step 2: Load Existing Entity
 
 ```
 Read("{graph_path}/entities/{entity-name}.md")
@@ -97,7 +97,7 @@ Read("{graph_path}/entities/{entity-name}.md")
 - If unrecoverable: Offer to DELETE and re-ADD
 - Abort UPDATE operation
 
-### Step 2: Check Health Status
+### Step 3: Check Health Status
 
 If entity has `needs_update: true` or `needs_delete: true`:
 
@@ -109,7 +109,7 @@ Note: Entity "{entity-name}" has pending health issues:
 Address these during the update? [Yes/No]
 ```
 
-### Step 3: Extract New Metadata
+### Step 4: Extract New Metadata
 
 Re-extract entity metadata from current code state using [entity-extraction.md](../helpers/entity-extraction.md):
 
@@ -119,7 +119,7 @@ Re-extract entity metadata from current code state using [entity-extraction.md](
 4. Infer category and importance
 5. Identify related entities
 
-### Step 4: Show Diff
+### Step 5: Show Diff
 
 Present the diff between existing and new:
 
@@ -149,7 +149,7 @@ Present the diff between existing and new:
 - **OVERRIDE:** Replace all with new content (preserve usage statistics only)
 - **CANCEL:** Keep existing, abort update
 
-### Step 5: Apply Update
+### Step 6: Apply Update
 
 On confirmation:
 
@@ -169,7 +169,7 @@ On confirmation:
 - Do not report success if write failed
 - Do not clear health flags if write failed
 
-### Step 6: Update Bidirectional References
+### Step 7: Update Bidirectional References
 
 If related entities changed:
 
@@ -192,7 +192,7 @@ If updating related entity fails mid-process:
 - Report partial success with list of failed updates
 - User must manually fix remaining refs
 
-### Step 7: Report Update
+### Step 8: Report Update
 
 ```markdown
 ### UPDATE Complete
@@ -213,7 +213,7 @@ If updating related entity fails mid-process:
 - [[removed-related]] ✓ (link removed)
 ```
 
-### Step 8: Sync Dashboard Formulas
+### Step 9: Sync Dashboard Formulas
 
 If entity template schema changed:
 

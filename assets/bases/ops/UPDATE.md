@@ -74,14 +74,14 @@ User can request sync explicitly:
 
 > Update the graph base
 
-Response: Execute Step 1 through 3 without detecting changes first.
+Response: Execute Step 1 through 4, skipping the conditional check in Step 2.
 
 ## Preserving Human Customization
 
 If human has modified graph.base:
 
-1. Prompt before overwrite (Step 2)
-2. If user declines, keep existing
-3. Human must manually merge changes if needed
+1. Detect human modifications (Step 2)
+2. Prompt before overwrite (Step 3)
+3. If user declines, keep existing
 
 Custom base files (not `graph.base`) are never touched by schema sync.

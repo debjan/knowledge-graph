@@ -253,3 +253,4 @@ Created automatically when initializing a new project knowledge graph:
 
 **Without obsidian:** Graph base validation cannot be enforced.
 **Without ripgrep:** Falls back to glob-only matching. Proactive retrieval still works but less comprehensive.
+**Without yamllint:** Manual YAML validation should be used.
