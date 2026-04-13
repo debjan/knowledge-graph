@@ -19,7 +19,6 @@
 ### RULE 1: VALIDATE ENTITY PROPERTIES
 
 > Entity properties must have valid YAML syntax.
-> Use `yamllint` for verification if exists, or do manual YAML syntax check (look for missing quotes, incorrect indentation).
 
 ### RULE 2: BIDIRECTIONAL REFERENCES
 

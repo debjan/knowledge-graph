@@ -51,9 +51,6 @@ compatibility:
     - name: ripgrep
       required: false
       description: Proactive keyword-based retrieval for auto-query
-    - name: yamllint
-      required: false
-      description: Validate YAML generated files
   skills:
     - name: obsidian-markdown
       description: Proper Obsidian-flavored Markdown syntax in entities
@@ -124,7 +121,7 @@ Enriched with:
 >
 > - Derive from working directory basename or git repo name
 >
-> Set write path to: {vault}/{memory}/{project}/
+> Set write path to: {vault}/{memory}/{project}
 >
 > Don't re-ask unless the user wants to change paths.
 
@@ -277,8 +274,6 @@ Created automatically when initializing a new project knowledge graph:
 | ------------ | ---------- | ---------------------------------------- |
 | Obsidian     | Preferable | Markdown storage and graph visualization |
 | ripgrep (rg) | Preferable | Proactive keyword-based retrieval        |
-| yamllint     | Preferable | Validate yaml generated files            |
 
 **Without obsidian:** Graph base validation cannot be enforced.
 **Without ripgrep:** Falls back to glob-only matching. Proactive retrieval still works but less comprehensive.
-**Without yamllint:** Manual YAML validation should be used.

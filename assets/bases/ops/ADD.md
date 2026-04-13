@@ -81,10 +81,7 @@ obsidian base:views path="{memory}/{project}/graph.base"
 - `✓ Filters syntax valid`
 - `✓ Formulas compile successfully`
 
-**If validation fails:**
-
-1. **If yamllint available:** Check YAML syntax: `yamllint {graph_path}/graph.base`
-2. **Otherwise:** Check YAML manually (look for missing quotes, incorrect indentation, etc.)
+**If validation fails:** Check YAML manually (look for missing quotes, incorrect indentation, etc.)
 
 ### Step 6: Report Results
 

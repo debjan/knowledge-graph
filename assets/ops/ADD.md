@@ -19,7 +19,6 @@
 ### RULE 1: VALIDATE ENTITY PROPERTIES
 
 > Entity properties must have valid YAML syntax.
-> Use `yamllint` for verification if exists, or do manual YAML syntax check (look for missing quotes, incorrect indentation).
 
 ### RULE 2: BIDIRECTIONAL REFERENCES
 
@@ -290,8 +289,7 @@ obsidian base:views path="{memory}/{project}/graph.base"
 **If validation fails:**
 
 1. **Warn:** "graph.base validation failed: {details}. Continuing with unvalidated file."
-2. Optionally: Check YAML manually or with `yamllint` if available
-3. **Continue operation** — do not block on validation errors
+2. **Continue operation** — do not block on validation errors
 
 ### Step 15: Create Mermaid Diagrams
 
