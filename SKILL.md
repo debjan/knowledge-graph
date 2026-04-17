@@ -51,11 +51,6 @@ compatibility:
     - name: ripgrep
       required: false
       description: Proactive keyword-based retrieval for auto-query
-  skills:
-    - name: obsidian-markdown
-      description: Proper Obsidian-flavored Markdown syntax in entities
-    - name: obsidian-bases
-      description: Dashboard view compatibility for graph.base
 ---
 
 # Knowledge Graph
@@ -267,13 +262,3 @@ Created automatically when initializing a new project knowledge graph:
 **Assets to read now:** [bases](./assets/bases/README.md) if it exists, use for managing Obsidian Bases dashboard with tables, cards, and filters
 
 **Assets to read now:** [mermaid](./assets/mermaid/README.md) if it exists, use for managing Mermaid sequence diagrams showing entity relationships
-
-## Dependencies
-
-| Dependency   | Required   | Purpose                                  |
-| ------------ | ---------- | ---------------------------------------- |
-| Obsidian     | Preferable | Markdown storage and graph visualization |
-| ripgrep (rg) | Preferable | Proactive keyword-based retrieval        |
-
-**Without obsidian:** Graph base validation cannot be enforced.
-**Without ripgrep:** Falls back to glob-only matching. Proactive retrieval still works but less comprehensive.
