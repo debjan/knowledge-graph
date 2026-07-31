@@ -28,6 +28,15 @@ auto_invoke:
  - "check the graph for"
  - "what entities relate to"
  - "show me the knowledge graph"
+ # SYNC (bulk graph sync from codebase)
+ - "sync the graph"
+ - "synchronize with codebase"
+ - "update graph from codebase"
+ # VERIFY (graph integrity check)
+ - "verify graph"
+ - "check graph integrity"
+ - "validate knowledge graph"
+ - "verify knowledge graph"
  # Health Check
  - "check knowledge graph health"
  - "review stale entities"
@@ -80,6 +89,8 @@ auto-loading context when working on matching files, auto-updating after non-tri
 - **UPDATE operation**: Modify existing entity nodes
 - **DELETE operation**: Remove entity nodes with reference cleanup
 - **QUERY operation**: Load relevant entities with relevance scoring and budget awareness
+- **SYNC operation**: Bulk reconcile all entities against live codebase (ADD/UPDATE/DELETE batch)
+- **VERIFY operation**: Run automated graph integrity checks (links, backlinks, files, frontmatter)
 - **LIFECYCLE**: Detect stale entities, manage updates and deletions
 - **INDEX**: Create human-readable landing page with quick stats and navigation
 - **VISUALIZATIONS**: Create Obsidian Bases dashboards and Mermaid diagrams
@@ -161,6 +172,8 @@ Enriched with:
 | **DELETE**     | "delete entity", "remove entity"                                         | Remove entity nodes with reference cleanup             |
 | **RENAME**     | "rename entity", "move entity"                                           | Rename entity while preserving history                 |
 | **QUERY**      | "load context", "what do we know", "check graph", "show knowledge graph" | Load entities matching current work (within budget)    |
+| **SYNC**       | "sync the graph", "synchronize with codebase", "update graph from codebase" | Walk codebase, compare with entities, produce diff report for ADD/UPDATE/DELETE batch operations |
+| **VERIFY**     | "verify graph", "check graph integrity", "validate knowledge graph"      | Run automated checks: wiki-links resolve, backlinks bidirectional, implementation files exist, frontmatter complete |
 | **HEALTH**     | "check health", "review stale", "cleanup"                                | Scan for stale/unused entities, offer batch operations |
 
 **Disambiguation**: If intent is unclear, ask:
@@ -250,6 +263,26 @@ Use to review stale or unused entities:
 > Check knowledge graph health.
 
 **Assets to read now:** [lifecycle-management.md](./assets/helpers/lifecycle-management.md)
+
+### SYNC Operation (Graph Sync from Codebase)
+
+Use to reconcile the entire knowledge graph with the live codebase in one pass:
+
+> Sync the graph with the codebase.
+
+Scans all code files, compares them against existing entities, and produces a diff report showing ADD candidates (new modules), UPDATE candidates (changed modules), and DELETE candidates (stale entities). Each change is confirmed before execution, and graph integrity is auto-verified afterwards.
+
+**Assets to read now:** [SYNC.md](./assets/ops/SYNC.md)
+
+### VERIFY Operation (Graph Integrity)
+
+Use to run automated consistency checks across the entire graph:
+
+> Verify the knowledge graph.
+
+Checks all wiki-links resolve, all backlinks are bidirectional, all implementation files exist, and all entities have complete frontmatter. Produces a tabular PASS/FAIL report.
+
+**Assets to read now:** [VERIFY.md](./assets/ops/VERIFY.md)
 
 ### Index Creation (Automatic)
 

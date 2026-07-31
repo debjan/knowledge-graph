@@ -1,0 +1,359 @@
+# VERIFY Operation — Graph Integrity Verification
+
+## When to Use This Operation
+
+- User says "verify graph", "check graph integrity", "validate knowledge graph"
+- After a SYNC operation (auto-run on completion)
+- After manual ADD/UPDATE/DELETE operations
+- When user reports broken links or inconsistent graph state
+- Before committing graph changes to version control
+
+## When NOT to Use This Operation
+
+- User wants to sync graph from codebase (use SYNC operation)
+- User wants to check entity health/lifecycle (use Health Check)
+- User wants to load context (use QUERY operation)
+
+## Critical Rules
+
+### RULE 1: READ-ONLY
+
+> VERIFY never modifies any files. It only reads and reports. Fixes are proposed as actionable suggestions but never auto-applied.
+
+### RULE 2: COMPREHENSIVE COVERAGE
+
+> ALL files in the graph directory must be checked, not just entity files. Concepts, decisions, constraints, processes, and index.md are all part of the graph.
+
+### RULE 3: REPORT EVERY ISSUE
+
+> Every discovered issue must be reported. Do not silently skip or fix issues — present them all for user action.
+
+## Workflow
+
+### Step 1: Resolve Paths
+
+```
+{graph_path} = {vault}/{memory}/{project}/
+```
+
+If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
+
+### Step 2: Run Verification Checks
+
+Run all seven checks sequentially. Each check produces PASS/FAIL with details.
+
+---
+
+#### CHECK 1: Wiki-Link Resolution
+
+**What it does:** Every `[[target]]` in every file must point to an existing file in the graph.
+
+**Files scanned:** All `.md` and `.base` files in `{graph_path}` (recursive, excluding `chats/` and `node_modules/`)
+
+**Resolution rules:**
+
+| Link Format       | Resolves To                                                                                                                                                                                                                            |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `[[name]]`        | `{graph_path}/name.md` or `{graph_path}/entities/name.md` or `{graph_path}/concepts/name.md` or `{graph_path}/decisions/name.md` or `{graph_path}/constraints/name.md` or `{graph_path}/processes/name.md` or `{graph_path}/name.base` |
+| `[[name\|Alias]]` | Same as above, displayed as "Alias"                                                                                                                                                                                                    |
+
+**Output:**
+
+```
+CHECK 1: Wiki-Link Resolution ──────────────────────────────────
+
+PASS: All [[links]] resolve to existing files.
+```
+
+```
+FAIL: 3 unresolved [[links]] found:
+
+| File | Broken Link |
+| ---- | ----------- |
+| index.md | [[graph.base]] → file not found |
+| entities/acp-daemon.md | [[acp-daemon-state]] → file not found |
+| concepts/daemon-architecture.md | [[daemon-lifecycle]] → file not found |
+```
+
+**Fix suggestions:**
+
+- `[[graph.base]]` in `index.md` — ensure `graph.base` exists, or fix the link
+- `[[acp-daemon-state]]` in `entities/acp-daemon.md` — entity was deleted, remove or redirect the link
+- `[[daemon-lifecycle]]` in `concepts/daemon-architecture.md` — concept was renamed, update the link
+
+---
+
+#### CHECK 2: Bidirectional Backlinks
+
+**What it does:** For every `[[target]]` in a file's `related:` frontmatter field, the target's `related:` field must contain a reciprocal `[[source]]`.
+
+**Files scanned:** All `.md` files with frontmatter in `{graph_path}`
+
+**Verification algorithm:**
+
+```
+For each file A in graph:
+  For each [[target]] in A.related:
+    Read target file B
+    If [[A]] not in B.related:
+      FAIL: missing backlink from B to A
+```
+
+**Output:**
+
+```
+CHECK 2: Bidirectional Backlinks ──────────────────────────────
+
+PASS: All {n} related entries are bidirectional.
+```
+
+```
+FAIL: 2 missing backlinks detected:
+
+| Source Entity | Target Entity | Missing In |
+| ------------- | ------------- | ---------- |
+| [[acp-daemon]] | [[acp-permissions]] | entities/acp-permissions.md |
+| [[daemon-architecture]] | [[acp-daemon]] | entities/acp-daemon.md |
+
+Missing from entity [[acp-permissions]] (related):
+- "[[acp-daemon]]"
+```
+
+**Fix suggestions:**
+
+- Add `- "[[acp-daemon]]"` to `entities/acp-permissions.md` related field
+- Add `- "[[daemon-architecture]]"` to `entities/acp-daemon.md` related field
+
+---
+
+#### CHECK 3: Duplicate Related Entries
+
+**What it does:** A `related:` list must not contain duplicate entries for the same target.
+
+**Output:**
+
+```
+CHECK 3: Duplicate Related Entries ─────────────────────────────
+
+PASS: No duplicates found in any related field.
+```
+
+```
+FAIL: 1 file has duplicate related entries:
+
+| File | Duplicate Target |
+| ---- | ---------------- |
+| constraints/sublime-thread-safety.md | [[daemon-architecture]] appears 2 times |
+```
+
+**Fix suggestions:**
+
+- Remove one duplicate `[[daemon-architecture]]` entry from `constraints/sublime-thread-safety.md`
+
+---
+
+#### CHECK 4: Implementation Files Existence
+
+**What it does:** Every file listed in an entity's `implementation_files` field must exist on disk.
+
+**Output:**
+
+```
+CHECK 4: Implementation Files Existence ────────────────────────
+
+PASS: All implementation files exist on disk.
+```
+
+```
+FAIL: 2 entities reference missing files:
+
+| Entity | Missing File |
+| ------ | ------------ |
+| [[acp-daemon]] | modules/daemon_state.py (consolidated into modules/daemon.py) |
+| [[acp-daemon]] | modules/daemon_lifecycle.py (consolidated into modules/daemon.py) |
+
+Stale files count: 2
+```
+
+**Fix suggestions:**
+
+- Update `acp-daemon` implementation_files to `["modules/daemon.py"]` and set `health.needs_update = true`
+
+---
+
+#### CHECK 5: Frontmatter Completeness
+
+**What it does:** Every entity and graph file must have a complete and valid frontmatter block.
+
+**Required fields per type:**
+
+| Type       | Required Fields                                                                                                                     |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| entity     | `type`, `name`, `category`, `importance`, `status`, `project`, `created`, `updated`, `agents`, `tags`, `related`, `health`, `usage` |
+| concept    | `type`, `name`, `category`, `importance`, `status`, `created`, `updated`, `related`                                                 |
+| decision   | `type`, `name`, `title`, `status`, `created`, `updated`, `related`                                                                  |
+| constraint | `type`, `name`, `category`, `importance`, `status`, `created`, `updated`, `related`                                                 |
+| process    | `type`, `name`, `category`, `importance`, `status`, `created`, `updated`, `related`                                                 |
+
+**Health sub-fields:**
+
+```yaml
+health:
+  stale_files: []
+  last_verified: {date}
+  needs_update: false
+  needs_delete: false
+```
+
+**Output:**
+
+```
+CHECK 5: Frontmatter Completeness ────────────────────────────
+
+PASS: All {n} files have complete frontmatter.
+```
+
+```
+FAIL: 3 files missing required fields:
+
+| File | Missing Fields |
+| ---- | -------------- |
+| entities/acp-plugin.md | health.last_verified, health.needs_update |
+| entities/acp-ui.md | health.last_verified |
+| processes/daemon-lifecycle.md | health (missing entirely) |
+```
+
+**Fix suggestions:**
+
+- Add `health.last_verified: 2026-07-22` and `health.needs_update: false` to `entities/acp-plugin.md`
+- Add `health.last_verified: 2026-07-22` to `entities/acp-ui.md`
+- Add health block to `processes/daemon-lifecycle.md`
+
+---
+
+#### CHECK 6: Updated Date Freshness
+
+**What it does:** Ensure every file has an `updated` field that is not stale (> 90 days from today).
+
+**Output:**
+
+```
+CHECK 6: Updated Date Freshness ────────────────────────────────
+
+PASS: All {n} files have current updated dates.
+```
+
+```
+FAIL: 1 file has stale updated date:
+
+| File | Last Updated | Days Ago |
+| ---- | ------------ | -------- |
+| entities/acp-plugin.md | 2026-04-05 | 108 |
+
+```
+
+**Fix suggestions:**
+
+- Review and update `entities/acp-plugin.md`, then set `updated: {today}`
+
+---
+
+#### CHECK 7: Changelog Consistency
+
+**What it does:** For files with a `changelog` field, verify that version strings increment and dates are chronological.
+
+**Output:**
+
+```
+CHECK 7: Changelog Consistency ─────────────────────────────────
+
+PASS: All changelogs are consistent.
+```
+
+```
+FAIL: 1 file has inconsistent changelog:
+
+| File | Issue |
+| ---- | ----- |
+| entities/acp-daemon.md | version 2.0 → 2.0 (duplicate) |
+```
+
+**Fix suggestions:**
+
+- Fix version sequence in `entities/acp-daemon.md` changelog
+
+### Step 3: Aggregate Report
+
+Compile all check results into a single summary:
+
+```markdown
+### Graph Integrity Report
+
+**Graph:** {graph_path}
+**Total files:** 25 (14 entities, 2 concepts, 2 decisions, 1 constraint, 2 processes, 4 root)
+**Last verified:** {today}
+
+#### Results Summary
+
+| Check | Status | Issues |
+| ----- | ------ | ------ |
+| 1. Wiki-Link Resolution | PASS | — |
+| 2. Bidirectional Backlinks | PASS | — |
+| 3. Duplicate Related Entries | FAIL | 1 |
+| 4. Implementation Files | FAIL | 2 |
+| 5. Frontmatter Completeness | PASS | — |
+| 6. Updated Date Freshness | PASS | — |
+| 7. Changelog Consistency | PASS | — |
+
+**Overall: ⚠️ 2 checks failing — see details above**
+
+#### Suggested Actions
+
+1. Remove duplicate `[[daemon-architecture]]` from `constraints/sublime-thread-safety.md`
+2. Update `acp-daemon` implementation_files to `["modules/daemon.py"]`
+
+[Fix All] [Fix Selected] [Dismiss]
+```
+
+### Step 4: Offer Fixes
+
+After presenting the report, offer to fix the issues:
+
+- **Fix All** — Apply all suggested fixes without further confirmation
+- **Fix Selected** — Walk through each issue individually
+- **Dismiss** — Leave all issues for later
+
+If the user selects Fix All or Fix Selected:
+
+1. Apply fixes using the appropriate operation (UPDATE for entity changes, DELETE for stale entities)
+2. Re-run VERIFY to confirm all issues are resolved
+3. Report final status
+
+### Step 5: Re-Verify (Optional)
+
+If fixes were applied, offer to re-run verification:
+
+```markdown
+Fixes applied. Re-run VERIFY to confirm? [Yes] [Skip]
+```
+
+## Best Practices
+
+- Run VERIFY after every SYNC operation to catch any inconsistencies from bulk operations
+- Run VERIFY before committing graph changes to version control
+- Address CHECK 1 (broken links) and CHECK 2 (missing backlinks) first — they break graph navigation
+- CHECK 4 (missing implementation files) often indicates a STALE entity that needs UPDATE or DELETE
+- Run VERIFY when onboarding to a new project to understand graph health before making changes
+
+## See Also
+
+**Related Operations:**
+
+- [SYNC](./SYNC.md) — Bulk graph sync from codebase
+- [ADD](./ADD.md) — Create new entities
+- [UPDATE](./UPDATE.md) — Modify existing entities
+- [DELETE](./DELETE.md) — Remove entities
+
+**Related Assets:**
+
+- [lifecycle-management.md](../helpers/lifecycle-management.md) — Health check and lifecycle

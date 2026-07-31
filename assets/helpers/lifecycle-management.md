@@ -299,6 +299,111 @@ lifecycle_state: |
 | DEPRECATED | needs_delete flag set                                 | Entity deleted           | Show "⚠️ Delete"                |
 | DELETED    | Entity file removed                                   | —                        | Removed from base               |
 
+## Bulk Sync (Multiple Entities)
+
+Use when multiple entities need update/delete from a single refactor event (file consolidations, renames, deletions across the codebase).
+
+### When to Use Bulk Sync
+
+- Multiple files consolidated into one (e.g., 4 daemon sub-modules merged into `daemon.py`)
+- Several implementation files renamed or moved
+- Group of entities with stale implementation files from the same refactor
+- After running SYNC operation and reviewing the diff report
+
+### Bulk Sync Process
+
+```
+1. Identify affected entities from SYNC diff report or manual audit
+2. Group changes by operation type:
+   a. UPDATE — entities whose implementation_files changed
+   b. DELETE — entities whose implementation files are gone and not replaced
+   c. RENAME — entities whose name or implementation_file path changed
+3. Process each group:
+   For each UPDATE:
+     - Re-extract metadata from current code
+     - Merge new implementation_files, lines, description
+     - Update bidirectional references if relations changed
+     - Increment changelog
+   For each DELETE:
+     - Confirm deletion
+     - Clean bidirectional references from related entities
+     - Delete entity file
+     - Check for orphans
+   For each RENAME:
+     - Move entity file to new name
+     - Update all backlinks across the graph to point to new name
+     - Preserve changelog history
+4. Verify graph integrity (run VERIFY operation)
+```
+
+### Consolidation Pattern
+
+When multiple source files are merged into one (the most common bulk-sync scenario):
+
+#### Old State
+
+| Entity           | Implementation Files                      |
+| ---------------- | ----------------------------------------- |
+| daemon-state     | `modules/daemon_state.py` (200 lines)     |
+| daemon-lifecycle | `modules/daemon_lifecycle.py` (150 lines) |
+| daemon-session   | `modules/daemon_session.py` (180 lines)   |
+| daemon           | `modules/daemon.py` (23 lines, facade)    |
+
+#### New State
+
+| Entity           | Change                                                                 |
+| ---------------- | ---------------------------------------------------------------------- |
+| daemon           | UPDATE: `implementation_files = ["modules/daemon.py"]`, lines 23 → 641 |
+| daemon-state     | DELETE: all files gone                                                 |
+| daemon-lifecycle | DELETE: all files gone                                                 |
+| daemon-session   | DELETE: all files gone                                                 |
+
+#### Steps
+
+1. **Prepare:**
+   - Identify the surviving entity (the one whose file absorbed the others)
+   - Identify entities to delete (their files no longer exist)
+
+2. **Update surviving entity:**
+   - Update `implementation_files` to the consolidated file path
+   - Update `lines` to the new line count
+   - Re-extract description, imports, exports from consolidated code
+   - Add changelog entry: `"Consolidated from {n} files into modules/daemon.py"`
+   - Check if new imports/exports require new relationships
+
+3. **Delete consumed entities:**
+   - For each entity to delete:
+     - Remove its `[[entity-name]]` references from all related entities' `related` fields
+     - Delete its entity file
+   - Check if any remaining entity has empty `related` after cleanup
+
+4. **Fix re-routed references:**
+   - In surviving entity, ensure it now references entities that the consumed entities previously referenced (if the consolidated code still touches them)
+   - Update any remaining wiki-links in body text that point to now-deleted entities — either remove or redirect
+
+5. **Fix body references:**
+   - In all non-deleted entities, find body references `[[deleted-entity]]` and decide: remove or redirect
+
+6. **Verify:**
+   - All wiki-links resolve
+   - All backlinks are bidirectional
+   - No stale implementation files remain
+
+### Rename Pattern
+
+When a single file is renamed:
+
+| Old File                        | New File                 | Change       |
+| ------------------------------- | ------------------------ | ------------ |
+| `modules/daemon_permissions.py` | `modules/permissions.py` | File renamed |
+
+#### Steps
+
+1. **Rename entity:** Use RENAME operation to move the entity file
+2. **Update implementation_file:** Update path in renamed entity
+3. **Update backlinks:** Update all `[[old-name]]` references across the graph to `[[new-name]]`
+4. **Verify:** All links resolve, backlinks are bidirectional
+
 ## Best Practices
 
 1. **Don't auto-delete:** Always require user confirmation
@@ -306,3 +411,5 @@ lifecycle_state: |
 3. **Lazy evaluation:** Only check health when needed
 4. **Clear warnings:** Show exactly what's wrong and how to fix it
 5. **Batch operations:** Allow bulk updates for efficiency
+6. **Process consolidations before renames:** If multiple files merge into one, do the consolidations first, then handle any renamed surviving files
+7. **Run VERIFY after every bulk sync:** The more entities you touch, the higher the chance of introducing inconsistencies

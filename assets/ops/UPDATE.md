@@ -84,7 +84,43 @@ Set `{graph_path}` = `{vault}/{memory}/{project}/`
 
 Load `obsidian-markdown` skill
 
-### Step 2: Load Existing Entity
+### Step 2: Codebase Discovery (Bulk Awareness)
+
+Before updating the requested entity, scan the codebase to detect if OTHER entities also need updates. This prevents the "update one, then discover ten more" pattern.
+
+**Scan process:**
+
+```
+1. Walk the project codebase for source files (*.py, *.js, etc.)
+2. For each existing entity, check if its implementation_files still exist
+3. For each entity with stale files, detect the pattern:
+   - FILE_MISSING: implementation file deleted, no replacement
+   - FILE_MERGED: implementation file combined into another (consolidation)
+   - FILE_RENAMED: implementation file moved/renamed
+4. Cross-reference: do any entities reference now-deleted files whose logic was absorbed into another?
+```
+
+**If other stale entities are found, present a notification:**
+
+```markdown
+### Additional Stale Entities Detected
+
+While scanning the codebase, other entities appear out of date:
+
+| Entity | Issue | Type |
+| ------ | ----- | ---- |
+| [[acp-daemon-state]] | modules/daemon_state.py → (deleted) | FILE_MISSING |
+| [[acp-daemon-lifecycle]] | modules/daemon_lifecycle.py → (deleted) | FILE_MISSING |
+| [[acp-daemon-session]] | modules/daemon_session.py → (deleted) | FILE_MISSING |
+| [[acp-daemon]] | lines: 23 → 641, files changed | FILE_MERGED |
+
+**Recommended:** Run [SYNC](./SYNC.md) to handle all changes in one pass:
+> "Sync the graph with the codebase."
+```
+
+If the user chooses to proceed with individual update, skip the notification and continue to Step 3.
+
+### Step 3: Load Existing Entity
 
 ```
 Read("{graph_path}/entities/{entity-name}.md")
@@ -97,7 +133,7 @@ Read("{graph_path}/entities/{entity-name}.md")
 - If unrecoverable: Offer to DELETE and re-ADD
 - Abort UPDATE operation
 
-### Step 3: Check Health Status
+### Step 4: Check Health Status
 
 If entity has `needs_update: true` or `needs_delete: true`:
 
@@ -109,7 +145,7 @@ Note: Entity "{entity-name}" has pending health issues:
 Address these during the update? [Yes/No]
 ```
 
-### Step 4: Extract New Metadata
+### Step 5: Extract New Metadata
 
 Re-extract entity metadata from current code state using [entity-extraction.md](../helpers/entity-extraction.md):
 
@@ -119,7 +155,7 @@ Re-extract entity metadata from current code state using [entity-extraction.md](
 4. Infer category and importance
 5. Identify related entities
 
-### Step 5: Show Diff
+### Step 6: Show Diff
 
 Present the diff between existing and new:
 
@@ -149,7 +185,7 @@ Present the diff between existing and new:
 - **OVERRIDE:** Replace all with new content (preserve usage statistics only)
 - **CANCEL:** Keep existing, abort update
 
-### Step 6: Apply Update
+### Step 7: Apply Update
 
 On confirmation:
 
@@ -169,7 +205,7 @@ On confirmation:
 - Do not report success if write failed
 - Do not clear health flags if write failed
 
-### Step 7: Update Bidirectional References
+### Step 8: Update Bidirectional References
 
 If related entities changed:
 
@@ -192,7 +228,7 @@ If updating related entity fails mid-process:
 - Report partial success with list of failed updates
 - User must manually fix remaining refs
 
-### Step 8: Report Update
+### Step 9: Report Update
 
 ```markdown
 ### UPDATE Complete
@@ -213,7 +249,7 @@ If updating related entity fails mid-process:
 - [[removed-related]] ✓ (link removed)
 ```
 
-### Step 9: Sync Dashboard Formulas
+### Step 10: Sync Dashboard Formulas
 
 If entity template schema changed:
 
@@ -262,6 +298,8 @@ Read [mermaid](../mermaid/ops/UPDATE.md)
 - [DELETE](./DELETE.md) — Remove entities
 - [RENAME](./RENAME.md) — Rename/move entities
 - [QUERY](./QUERY.md) — Load entity context
+- [SYNC](./SYNC.md) — Bulk sync graph from codebase (for multi-entity changes)
+- [VERIFY](./VERIFY.md) — Graph integrity verification
 
 **Related Assets:**
 
