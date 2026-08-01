@@ -29,6 +29,6 @@ git clone https://github.com/debjan/knowledge-graph ~/.agents/skills/knowledge-g
 
 ## Usage
 
-The skill auto-loads when working on matching files.
+Initialize your project with `\knowledge-graph generate graph`
 
-<img width="1550" height="1005" alt="image" src="https://github.com/user-attachments/assets/f6d141f7-da27-4db5-b60c-cd85f745cf58" />
+<img width="1550" height="1005" alt="image" src="https://github.com/user-attachments/assets/3db3351f-4510-4e95-a968-46af281158ce" />
