@@ -31,4 +31,4 @@ git clone https://github.com/debjan/knowledge-graph ~/.agents/skills/knowledge-g
 
 The skill auto-loads when working on matching files.
 
-<img width="1381" height="1005" alt="image" src="https://github.com/user-attachments/assets/59d739df-d7cc-40b8-bd56-d5ca26463839" />
+<img width="1550" height="1005" alt="image" src="https://github.com/user-attachments/assets/f6d141f7-da27-4db5-b60c-cd85f745cf58" />
