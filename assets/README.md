@@ -20,7 +20,9 @@ assets/
 │       DELETE.md — Remove entity workflow
 │       QUERY.md — Read from graph workflow
 │       RENAME.md — Rename entity workflow
+│       SYNC.md — Synchronize entity workflow
 │       UPDATE.md — Modify entity workflow
+│       Verify.md — Verify entity workflow
 ├───specs/
 │       agent-context-spec.md — Executable block schema specification
 └───templates/
@@ -34,13 +36,15 @@ assets/
 
 ## Operation Loading
 
-| Operation  | Load These Assets                                                                                        |
-| ---------- | -------------------------------------------------------------------------------------------------------- |
-| **ADD**    | `ops/ADD.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`, `templates/entity-node.md` |
-| **UPDATE** | `ops/UPDATE.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`                          |
-| **DELETE** | `ops/DELETE.md` → `helpers/lifecycle-management.md`                                                      |
-| **RENAME** | `ops/RENAME.md`                                                                                          |
-| **QUERY**  | `ops/QUERY.md` → `helpers/graph-traversal.md`                                                            |
+| Operation  | Load These Assets                                                                                                |
+| ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| **ADD**    | `ops/ADD.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`, `templates/entity-node.md`         |
+| **UPDATE** | `ops/UPDATE.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`                                  |
+| **DELETE** | `ops/DELETE.md` → `helpers/lifecycle-management.md`                                                              |
+| **RENAME** | `ops/RENAME.md`                                                                                                  |
+| **SYNC**   | `ops/SYNC.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`, `helpers/lifecycle-management.md` |
+| **VERIFY** | `ops/VERIFY.md` → `helpers/lifecycle-management.md`                                                              |
+| **QUERY**  | `ops/QUERY.md` → `helpers/graph-traversal.md`                                                                    |
 
 ### Optional features
 
@@ -50,6 +54,8 @@ assets/
 | **UPDATE** | `bases/ops/UPDATE.md`, `mermaid/ops/UPDATE.md`                                       |
 | **DELETE** | (visualizations auto-update)                                                         |
 | **RENAME** | (visualizations auto-update)                                                         |
+| **SYNC**   | (visualizations auto-update)                                                         |
+| **VERIFY** | (read-only, no visuals)                                                              |
 | **QUERY**  | —                                                                                    |
 
 ## Asset Descriptions
@@ -58,8 +64,10 @@ assets/
 
 - **ADD.md** — Workflow for creating new entity nodes
 - **UPDATE.md** — Workflow for modifying existing entity nodes
+- **SYNC.md** — Workflow for synchronizing existing entity nodes
 - **DELETE.md** — Workflow for removing entity nodes with reference cleanup
 - **RENAME.md** — Workflow for renaming entity nodes while preserving its history
+- **VERIFY.md** — Workflow for verifying entities and presenting context briefing
 - **QUERY.md** — Workflow for loading entities and presenting context briefing
 
 ### Helpers

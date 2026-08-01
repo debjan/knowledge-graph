@@ -102,20 +102,21 @@ Before updating the requested entity, scan the codebase to detect if OTHER entit
 
 **If other stale entities are found, present a notification:**
 
-```markdown
+```
 ### Additional Stale Entities Detected
 
 While scanning the codebase, other entities appear out of date:
 
-| Entity | Issue | Type |
-| ------ | ----- | ---- |
-| [[acp-daemon-state]] | modules/daemon_state.py → (deleted) | FILE_MISSING |
-| [[acp-daemon-lifecycle]] | modules/daemon_lifecycle.py → (deleted) | FILE_MISSING |
-| [[acp-daemon-session]] | modules/daemon_session.py → (deleted) | FILE_MISSING |
-| [[acp-daemon]] | lines: 23 → 641, files changed | FILE_MERGED |
+| Entity                   | Issue                                   | Type         |
+| ------------------------ | --------------------------------------- | ------------ |
+| [[acp.daemon-state]]     | modules/daemon_state.py → (deleted)     | FILE_MISSING |
+| [[acp.daemon-lifecycle]] | modules/daemon_lifecycle.py → (deleted) | FILE_MISSING |
+| [[acp.daemon-session]]   | modules/daemon_session.py → (deleted)   | FILE_MISSING |
+| [[acp.daemon]]           | lines: 23 → 641, files changed          | FILE_MERGED  |
 
 **Recommended:** Run [SYNC](./SYNC.md) to handle all changes in one pass:
 > "Sync the graph with the codebase."
+
 ```
 
 If the user chooses to proceed with individual update, skip the notification and continue to Step 3.
@@ -123,7 +124,9 @@ If the user chooses to proceed with individual update, skip the notification and
 ### Step 3: Load Existing Entity
 
 ```
-Read("{graph_path}/entities/{entity-name}.md")
+
+Read("{graph_path}/entities/{project}.{entity-name}.md")
+
 ```
 
 **Error handling:** If entity file cannot be read (corrupted, permissions, I/O error):
@@ -137,12 +140,15 @@ Read("{graph_path}/entities/{entity-name}.md")
 
 If entity has `needs_update: true` or `needs_delete: true`:
 
-```markdown
-Note: Entity "{entity-name}" has pending health issues:
+```
+
+Note: Entity "{project}.{entity-name}" has pending health issues:
+
 - Stale files: {stale_files}
 - Needs update: {needs_update}
 
 Address these during the update? [Yes/No]
+
 ```
 
 ### Step 5: Extract New Metadata
@@ -159,24 +165,29 @@ Re-extract entity metadata from current code state using [entity-extraction.md](
 
 Present the diff between existing and new:
 
-```markdown
-### Entity Update: {entity-name}
+```
+
+### Entity Update: {project}.{entity-name}
 
 **Changes detected:**
 
 #### Frontmatter
+
 - `importance`: high → medium
 - `tags`: [+rate-limit] [-legacy-auth]
 
 #### Content
+
 - Description: 2 lines changed
 - Agent Context: triggers updated
 
 #### Health
+
 - Stale files: {count} cleared
 - needs_update: true → false
 
 [MERGE] [OVERRIDE] [CANCEL]
+
 ```
 
 **Options:**
@@ -210,13 +221,13 @@ On confirmation:
 If related entities changed:
 
 1. For new relations: Add bidirectional links
-   - Read `{graph_path}/entities/{new-related}.md`
-   - Add `[[{entity-name}]]` to `related` field
+   - Read `{graph_path}/entities/{project}.{new-related}.md`
+   - Add `[[{project}.{entity-name}]]` to `related` field
    - Write updated related entity
 
 2. For removed relations: Remove bidirectional links
-   - Read `{graph_path}/entities/{removed-related}.md`
-   - Remove `[[{entity-name}]]` from `related` field
+   - Read `{graph_path}/entities/{project}.{removed-related}.md`
+   - Remove `[[{project}.{entity-name}]]` from `related` field
    - Write updated related entity
 
 **Error handling (bidirectional sync failure):**
@@ -230,23 +241,27 @@ If updating related entity fails mid-process:
 
 ### Step 9: Report Update
 
-```markdown
+```
+
 ### UPDATE Complete
 
-**Entity:** {entity-name}
+**Entity:** {project}.{entity-name}
 **Action:** updated
 **Version:** {old_version} → {new_version}
-**Path:** `{graph_path}/entities/{entity-name}.md`
+**Path:** `{graph_path}/entities/{project}.{entity-name}.md`
 
 **Changes:**
+
 - {change_1}
 - {change_2}
 
 **Health cleared:** {stale_files_cleared} stale file(s)
 
 **Bidirectional refs:**
-- [[new-related]] ✓ (link added)
-- [[removed-related]] ✓ (link removed)
+
+- [[{project}.new-related]] ✓ (link added)
+- [[{project}.removed-related]] ✓ (link removed)
+
 ```
 
 ### Step 10: Sync Dashboard Formulas
@@ -256,7 +271,7 @@ If entity template schema changed:
 Follow the workflow in [../bases/ops/UPDATE.md](../bases/ops/UPDATE.md):
 
 1. Detect schema changes (new/removed frontmatter fields)
-2. Prompt to sync graph.base formulas
+2. Prompt to sync {project}.graph.base formulas
 3. Regenerate from template if confirmed
 
 ## Health Check Integration

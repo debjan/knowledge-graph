@@ -21,10 +21,10 @@ mermaid/
 
 Per-project Mermaid diagram file in `{memory}/{project}/`:
 
-| File                     | Diagram Type       | Purpose             |
-| ------------------------ | ------------------ | ------------------- |
-| `graph-sequence.md`      | Sequence Diagram   | Interaction flows   |
-| `graph-relationships.md` | Relationship Graph | Entity dependencies |
+| File                               | Diagram Type       | Purpose             |
+| ---------------------------------- | ------------------ | ------------------- |
+| `{project}.graph-sequence.md`      | Sequence Diagram   | Interaction flows   |
+| `{project}.graph-relationships.md` | Relationship Graph | Entity dependencies |
 
 ## Operation Loading
 

@@ -32,8 +32,8 @@
 
 > When initializing a new project knowledge graph, **attempt to create**:
 >
-> - `graph.base` (Obsidian Bases dashboard)
-> - `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams).
+> - `{project}.graph.base` (Obsidian Bases dashboard)
+> - `{project}.graph-sequence.md`, `{project}.graph-relationships.md` (Mermaid diagrams).
 >
 > These visualizations are essential for human navigation and understanding.
 
@@ -54,7 +54,7 @@ Load `obsidian-markdown` skill
 Before creating, check if entity already exists:
 
 ```
-Read("{graph_path}/entities/{entity-name}.md")
+Read("{graph_path}/entities/{project}.{entity-name}.md")
 ```
 
 **Error:** Cannot check for existing entity
@@ -154,7 +154,7 @@ Present the prepared entity:
 ```
 I'll create this entity node:
 
-**Name:** {entity-name}
+**Name:** {project}.{entity-name}
 **Type:** {type}
 **Category:** {category}
 **Importance:** {importance}
@@ -173,7 +173,7 @@ Wait for user confirmation.
 2. Write the document:
 
 ```
-Write(file_path: "{graph_path}/entities/{entity-name}.md", content: {prepared_content})
+Write(file_path: "{graph_path}/entities/{project}.{entity-name}.md", content: {prepared_content})
 ```
 
 **Error:** Failed to write entity file
@@ -196,18 +196,18 @@ Write(file_path: "{graph_path}/entities/{entity-name}.md", content: {prepared_co
 
 For each entity in `related`:
 
-1. Read the related entity: `Read("{graph_path}/entities/{related}.md")`
+1. Read the related entity: `Read("{graph_path}/entities/{project}.{related}.md")`
 2. Check if new entity is already in `related` field
-3. If not, add it: `Edit(...)` to add `[[{entity-name}]]` to related
-4. If related entity not found, warn: "Related entity [[{related}]] not found"
+3. If not, add it: `Edit(...)` to add `[[{project}.{entity-name}]]` to related
+4. If related entity not found, warn: "Related entity [[{project}.{related}]] not found"
 
 ### Step 10: Report Results
 
-```markdown
+```
 ### ADD Complete
 
-**Entity:** {name}
-**Path:** `{graph_path}/entities/{name}.md`
+**Entity:** {project}.{name}
+**Path:** `{graph_path}/entities/{project}.{name}.md`
 
 **Frontmatter:**
 - Type: {type}
@@ -216,8 +216,8 @@ For each entity in `related`:
 - Related: {count} entities
 
 **Bidirectional refs:**
-- [[related-a]] ✓ (verified)
-- [[related-b]] ✓ (verified)
+- [[{project}.related-a]] ✓ (verified)
+- [[{project}.related-b]] ✓ (verified)
 
 **Metadata initialized:**
 - usage: first use recorded
@@ -244,14 +244,14 @@ If this is a new project initialization (first entity in project):
 
 Follow the workflow in [../templates/index-node.md](../templates/index-node.md):
 
-1. Check if `index.md` exists: `Read("{graph_path}/index.md")`
+1. Check if `{project}.index.md` exists: `Read("{graph_path}/{project}.index.md")`
 2. If not exists, create from template with:
    - Quick stats (entity counts by type)
    - Architecture diagram (simplified Mermaid)
    - Browse by category links
    - Quick links organized by role
    - Search by concern table
-3. If exists, prompt: "index.md already exists. [Skip] [Update]"
+3. If exists, prompt: "{project}.index.md already exists. [Skip] [Update]"
 
 **Note:** Index file provides human-readable landing page for the knowledge graph.
 
@@ -259,7 +259,7 @@ Follow the workflow in [../templates/index-node.md](../templates/index-node.md):
 
 **Default behavior:** Create bases dashboard. Warn and continue if creation fails.
 
-1. Check if `graph.base` already exists: `Read("{graph_path}/graph.base")`
+1. Check if `{project}.graph.base` already exists: `Read("{graph_path}/{project}.graph.base")`
    - If exists: Skip to Step 15
    - If not exists: Proceed to create
 2. Create using `../bases/ops/ADD.md` → `../bases/templates/graph-base.yaml`
@@ -269,14 +269,14 @@ Follow the workflow in [../templates/index-node.md](../templates/index-node.md):
 
 **Note:** This step is a soft default—creation failures are tolerated.
 
-### Step 14: Validate graph.base
+### Step 14: Validate {project}.graph.base
 
 **Requires:** `obsidian cli command`
 
-After creating/updating `graph.base`, validate it:
+After creating/updating `{project}.graph.base`, validate it:
 
 ```shell
-obsidian base:views path="{memory}/{project}/graph.base"
+obsidian base:views path="{memory}/{project}/{project}.graph.base"
 ```
 
 **Validation checks:**
@@ -288,7 +288,7 @@ obsidian base:views path="{memory}/{project}/graph.base"
 
 **If validation fails:**
 
-1. **Warn:** "graph.base validation failed: {details}. Continuing with unvalidated file."
+1. **Warn:** "{project}.graph.base validation failed: {details}. Continuing with unvalidated file."
 2. **Continue operation** — do not block on validation errors
 
 ### Step 15: Create Mermaid Diagrams
@@ -296,8 +296,8 @@ obsidian base:views path="{memory}/{project}/graph.base"
 **Default behavior:** Create Mermaid diagrams. Warn and continue if creation fails.
 
 1. Check if diagram files already exist:
-   - `Read("{graph_path}/graph-sequence.md")`
-   - `Read("{graph_path}/graph-relationships.md")`
+   - `Read("{graph_path}/{project}.graph-sequence.md")`
+   - `Read("{graph_path}/{project}.graph-relationships.md")`
    - If both exist: Skip this step to preserve human customizations
 2. Try to create using `../mermaid/ops/ADD.md` → `../templates/*.md` if available
 3. On any failure (template missing, syntax error):
@@ -317,20 +317,20 @@ obsidian base:views path="{memory}/{project}/graph.base"
 - Validate bidirectional refs before reporting success
 - Warn if related entities not found, but proceed with ADD
 - **Recommended: Create available artifacts on project initialization:**
-  - `index.md` - Landing page
-  - `graph.base` - Obsidian Bases dashboard
-  - `graph-sequence.md` - Mermaid diagrams
-  - `graph-relationships.md` - Mermaid diagrams
+  - `{project}.index.md` - Landing page
+  - `{project}.graph.base` - Obsidian Bases dashboard
+  - `{project}.graph-sequence.md` - Mermaid diagrams
+  - `{project}.graph-relationships.md` - Mermaid diagrams
 
 ## Quick Reference
 
-| Artifact                 | Location                       | Purpose                  | Created When |
-| ------------------------ | ------------------------------ | ------------------------ | ------------ |
-| `index.md`               | `{memory}/{project}/`          | Landing page             | First entity |
-| `graph.base`             | `{memory}/{project}/`          | Obsidian Bases dashboard | First entity |
-| `graph-sequence.md`      | `{memory}/{project}/`          | Mermaid diagrams         | First entity |
-| `graph-relationships.md` | `{memory}/{project}/`          | Mermaid diagrams         | First entity |
-| Entity nodes             | `{memory}/{project}/entities/` | Knowledge nodes          | Each entity  |
+| Artifact                           | Location                       | Purpose                  | Created When |
+| ---------------------------------- | ------------------------------ | ------------------------ | ------------ |
+| `{project}.index.md`               | `{memory}/{project}/`          | Landing page             | First entity |
+| `{project}.graph.base`             | `{memory}/{project}/`          | Obsidian Bases dashboard | First entity |
+| `{project}.graph-sequence.md`      | `{memory}/{project}/`          | Mermaid diagrams         | First entity |
+| `{project}.graph-relationships.md` | `{memory}/{project}/`          | Mermaid diagrams         | First entity |
+| Entity nodes                       | `{memory}/{project}/entities/` | Knowledge nodes          | Each entity  |
 
 ## Optional Skill Dependencies
 

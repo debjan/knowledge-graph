@@ -57,7 +57,7 @@ sequenceDiagram
 
 Focus on operation flows: ADD → Entity Extraction → File Write → Regeneration.
 
-Output to: `{graph_path}/graph-sequence.md`
+Output to: `{graph_path}/{project}.graph-sequence.md`
 
 ### Step 4: Generate Relationship Graph
 
@@ -67,12 +67,12 @@ Structure: `graph TD` or `graph LR` with nodes and edges from entity `related` f
 
 ```mermaid
 graph TD
-    A[auth-module] --> B[session-manager]
-    B --> C[jwt-handler]
+    A[{project}.auth-module] --> B[{project}.session-manager]
+    B --> C[{project}.jwt-handler]
     style A fill:#2d3748
 ```
 
-Output to: `{graph_path}/graph-relationships.md`
+Output to: `{graph_path}/{project}.graph-relationships.md`
 
 ### Step 5: Validate Syntax
 
@@ -106,7 +106,7 @@ Each output file MUST include:
 ### Step 7: Report Results
 
 ```
-✓ Created graph-sequence.md (interaction diagram)
+✓ Created {project}.graph-sequence.md (interaction diagram)
 ```
 
 Or if skipped:
@@ -117,7 +117,7 @@ Or if skipped:
 
 ## Template Content
 
-### graph-sequence.md
+### {project}.graph-sequence.md
 
 Per-project sequence diagram with:
 
@@ -125,7 +125,7 @@ Per-project sequence diagram with:
 - **Interactions**: Related entity connections
 - **Flows**: ADD, UPDATE, DELETE operation flows
 
-### graph-relationships.md
+### {project}.graph-relationships.md
 
 Per-project relationship graph with:
 
@@ -136,12 +136,12 @@ Per-project relationship graph with:
 ## Human Customization
 
 - Humans can customize mermaid files (add participants, change styling)
-- Skill prompts before overwriting: "Update graph-sequence.md?"
-- Custom `.md` diagram files (not `graph-sequence.md`) are never touched by skill
+- Skill prompts before overwriting: "Update {project}.graph-sequence.md?"
+- Custom `.md` diagram files (not `{project}.graph-sequence.md`) are never touched by skill
 
 ## Exclusion from Entity Operations
 
-The `graph-sequence.md` and `graph-relationships.md` files are NOT part of the knowledge graph:
+The `{project}.graph-sequence.md` and `{project}.graph-relationships.md` files are NOT part of the knowledge graph:
 
 - Not scanned by QUERY operation
 - Not affected by entity lifecycle

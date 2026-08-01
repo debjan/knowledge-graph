@@ -134,7 +134,39 @@ In sequence diagrams, every participant declaration MUST start with `participant
 
 **Detection:** Lines with ` as ` that don't start with `participant`, `actor`, or message arrows.
 
-### Rule 7: Commas in Message Content
+### Rule 7: No Dots in Node/Participant IDs
+
+Node and participant IDs must not contain dots — the namespaced `{project}.{name}` identifier goes in the bracketed display text (or `as` alias), never in the ID. Dotted IDs break parsing in several Mermaid renderers.
+
+**Invalid (dotted ID):**
+
+```
+graph TD
+    inference-api.auth-module[Auth Module] --> inference-api.session-manager[Session Manager]  # WRONG!
+```
+
+```
+sequenceDiagram
+    participant inference-api.auth-module  # WRONG! dotted ID
+```
+
+**Valid (dot-free ID, prefixed display text):**
+
+```
+graph TD
+    A[inference-api.auth-module] --> B[inference-api.session-manager]  # ID is A, display text is prefixed name
+```
+
+```
+sequenceDiagram
+    participant A as inference-api.auth-module
+    participant B as inference-api.session-manager
+    A->>B: Operation
+```
+
+**Rule:** Sanitize IDs (strip dots/spaces, use short uppercase IDs like `A`, `B`, `DD`); place the `{project}.{name}` identifier in the bracketed or `as` display text.
+
+### Rule 8: Commas in Message Content
 
 Sequence diagram messages with commas or unescaped quotes will fail to parse.
 
@@ -165,7 +197,7 @@ def sanitize_message(msg: str) -> str:
     return msg
 ```
 
-### Rule 8: JSON Escaping in .base Files
+### Rule 9: JSON Escaping in .base Files
 
 When generating `.base` files (Obsidian Bases) from templates, ensure
 property values with quotes are properly escaped.

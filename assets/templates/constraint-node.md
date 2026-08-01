@@ -1,6 +1,6 @@
 ---
 type: constraint
-name: {kebab-case-identifier}  # Programmatic identifier for API access
+name: {project}.{kebab-case-identifier}  # Programmatic identifier for API access
 category: {gotcha|limitation|warning|edge-case}
 importance: {high|medium|low}
 status: active
@@ -13,7 +13,7 @@ tags:
   - {tag1}
   - {tag2}
 related:
-  - "[[affected-entity]]"
+  - "[[{project}.affected-entity]]"
 usage:
   last_used: {YYYY-MM-DD}
   use_count: 1
@@ -80,9 +80,9 @@ constraints:
 
 ## Related Entities
 
-- [[affected-entity]] — Entity constrained by this
-- [[related-constraint]] — Related constraint
+- [[{project}.affected-entity]] — Entity constrained by this
+- [[{project}.related-constraint]] — Related constraint
 
 ## References
 
-**Applies to:** [[entity-a]], [[entity-b]]
+**Applies to:** [[{project}.entity-a]], [[{project}.entity-b]]

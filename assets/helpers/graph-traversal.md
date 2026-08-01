@@ -78,7 +78,7 @@ graph TD
 
 ### Traversal Steps
 
-1. **Load starting entity**: `Read("{graph_path}/entities/{name}.md")`
+1. **Load starting entity**: `Read("{graph_path}/entities/{project}.{name}.md")`
 2. **Apply migration**: Check and fill missing fields
 3. **Parse `related` field**: Extract wiki-links
 4. **Load Level 1 entities**: Read each related entity, apply migration
@@ -118,7 +118,7 @@ def traverse(entity_name, depth, visited, entities):
 **User override:**
 
 ```
-"Load context for auth-module with depth 3"
+"Load context for {project}.auth-module with depth 3"
 ```
 
 ## Entity Priority
@@ -135,19 +135,19 @@ When presenting traversed entities, prioritize by:
 
 ## Output Structure
 
-```markdown
+```
 ## Context Tree
 
-**Root:** [[auth-module]] (Level 0)
+**Root:** [[{project}.auth-module]] (Level 0)
 
 ### Level 1
-- [[session-manager]] — Handles session lifecycle
-- [[jwt-handler]] — Token creation/validation
-- [[rate-limiter]] — Request throttling
+- [[{project}.session-manager]] — Handles session lifecycle
+- [[{project}.jwt-handler]] — Token creation/validation
+- [[{project}.rate-limiter]] — Request throttling
 
 ### Level 2
-- [[redis-cache]] — Session storage (via session-manager)
-- [[token-pair]] — JWT payload structure (via jwt-handler)
+- [[{project}.redis-cache]] — Session storage (via session-manager)
+- [[{project}.token-pair]] — JWT payload structure (via jwt-handler)
 ```
 
 ## Traversal Implementation
@@ -158,8 +158,8 @@ From frontmatter `related` field:
 
 ```yaml
 related:
-  - "[[session-manager]]"
-  - "[[jwt-handler]]"
+  - "[[{project}.session-manager]]"
+  - "[[{project}.jwt-handler]]"
 ```
 
 Regex to extract:
@@ -172,7 +172,7 @@ Regex to extract:
 
 ```python
 def load_with_migration(entity_name: str) -> Entity:
-    entity_path = f"{graph_path}/entities/{entity_name}.md"
+    entity_path = f"{graph_path}/entities/{project}.{entity_name}.md"
     raw_content = Read(entity_path)
 
     # Parse frontmatter and content
@@ -188,15 +188,15 @@ def load_with_migration(entity_name: str) -> Entity:
 
 ```json
 {
-  "auth-module": {
+  "{project}.auth-module": {
     "level": 0,
     "entity": { ... },
-    "related": ["session-manager", "jwt-handler"]
+    "related": ["{project}.session-manager", "{project}.jwt-handler"]
   },
-  "session-manager": {
+  "{project}.session-manager": {
     "level": 1,
     "entity": { ... },
-    "related": ["redis-cache"]
+    "related": ["{project}.redis-cache"]
   }
 }
 ```
@@ -205,8 +205,8 @@ def load_with_migration(entity_name: str) -> Entity:
 
 When traversing to a wiki-link that doesn't exist:
 
-```markdown
-⚠ **Broken link:** [[missing-entity]] referenced from [[auth-module]]
+```
+⚠ **Broken link:** [[{project}.missing-entity]] referenced from [[{project}.auth-module]]
 
 Options:
 - Create missing entity

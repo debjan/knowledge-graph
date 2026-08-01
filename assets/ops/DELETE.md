@@ -57,14 +57,14 @@ If entity file cannot be read (corrupted, missing permissions):
 
 Show confirmation dialog with actual related entities:
 
-```markdown
-### Delete Entity: {entity-name}
+```
+### Delete Entity: {project}.{entity-name}
 
 **Warning:** This action cannot be undone.
 
 Entity will be removed along with:
-- Bidirectional reference from [[{related-1}]]
-- Bidirectional reference from [[{related-2}]]
+- Bidirectional reference from [[{project}.{related-1}]]
+- Bidirectional reference from [[{project}.{related-2}]]
 
 [Confirm] [Cancel]
 ```
@@ -89,8 +89,8 @@ If file deletion fails after refs are cleaned, entity file exists but has no rel
 
 For each related entity:
 
-1. Load the related entity: `Read("{graph_path}/entities/{related}.md")`
-2. Remove `[[{entity-name}]]` from `related` field
+1. Load the related entity: `Read("{graph_path}/entities/{project}.{related}.md")`
+2. Remove `[[{project}.{entity-name}]]` from `related` field
 3. Check if related entity becomes orphaned (no remaining relations)
 4. Write updated related entity
 5. If orphaned, add to orphaned list for reporting
@@ -98,7 +98,7 @@ For each related entity:
 ### Step 5: Delete Entity File
 
 ```shell
-rm "{graph_path}/entities/{entity-name}.md"
+rm "{graph_path}/entities/{project}.{entity-name}.md"
 ```
 
 If file not found, warn but report references cleaned.
@@ -113,24 +113,24 @@ If file not found, warn but report references cleaned.
 
 ### Step 6: Report Deletion
 
-```markdown
+```
 ### DELETE Complete
 
-**Deleted:** {entity-name}
-**File removed:** `{graph_path}/entities/{entity-name}.md`
+**Deleted:** {project}.{entity-name}
+**File removed:** `{graph_path}/entities/{project}.{entity-name}.md`
 
 **References cleaned:**
-- [[related-a]] — reference removed
-- [[related-b]] — reference removed
+- [[{project}.related-a]] — reference removed
+- [[{project}.related-b]] — reference removed
 
 **Orphaned entities:** None
 ```
 
 If orphaned entities exist:
 
-```markdown
+```
 **Orphaned entities:**
-- [[only-related]] — no remaining relations
+- [[{project}.only-related]] — no remaining relations
 ```
 
 ## Health Check Integration
@@ -161,7 +161,7 @@ Trigger regeneration of visualization artifacts to remove deleted entity:
 
 #### Mermaid Diagrams
 
-1. Check if `graph-sequence.md` or `graph-relationships.md` exists: `Read("{graph_path}/graph-*.md")`
+1. Check if `{project}.graph-sequence.md` or `{project}.graph-relationships.md` exists: `Read("{graph_path}/{project}.graph-*.md")`
 2. If exists, remove any interactions involving deleted entity
 3. Update diagram to reflect removal
 4. Regenerate diagrams with remaining entities
@@ -174,7 +174,7 @@ Trigger regeneration of visualization artifacts to remove deleted entity:
 
 #### Obsidian Bases Dashboard
 
-1. Check if `graph.base` exists: `Read("{graph_path}/graph.base")`
+1. Check if `{project}.graph.base` exists: `Read("{graph_path}/{project}.graph.base")`
 2. Bases will automatically reflect deletion (file-based)
 3. No manual update needed for Bases
 
@@ -182,29 +182,29 @@ Trigger regeneration of visualization artifacts to remove deleted entity:
 
 #### Index File
 
-1. Check if `index.md` exists: `Read("{graph_path}/index.md")`
+1. Check if `{project}.index.md` exists: `Read("{graph_path}/{project}.index.md")`
 2. If mentions deleted entity, mark as stale or remove reference
-3. Log: "Updated index.md references"
+3. Log: "Updated {project}.index.md references"
 
 ### Step 8: Final Report
 
-```markdown
+```
 ### DELETE Complete
 
-**Deleted:** {entity-name}
-**File removed:** `{graph_path}/entities/{entity-name}.md`
+**Deleted:** {project}.{entity-name}
+**File removed:** `{graph_path}/entities/{project}.{entity-name}.md`
 
 **References cleaned:**
-- [[related-a]] — reference removed
-- [[related-b]] — reference removed
+- [[{project}.related-a]] — reference removed
+- [[{project}.related-b]] — reference removed
 
 **Orphaned entities:** None
 
 **Visualizations updated:**
-- ✓ graph-relationship.md — entity removed from diagrams
-- ✓ graph-sequence.md — entity removed from diagrams
-- ✓ graph.base — automatically updated
-- ✓ index.md — references updated (if applicable)
+- ✓ {project}.graph-relationship.md — entity removed from diagrams
+- ✓ {project}.graph-sequence.md — entity removed from diagrams
+- ✓ {project}.graph.base — automatically updated
+- ✓ {project}.index.md — references updated (if applicable)
 
 **Rollback:** If deletion was accidental, restore from git: `git checkout {file-path}`
 ```

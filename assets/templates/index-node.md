@@ -1,5 +1,5 @@
 ---
-name: {project} Knowledge Graph Index
+name: {project}.index
 type: index
 created: {date}
 updated: {date}
@@ -53,12 +53,12 @@ graph LR
 
 ### For Developers
 
-- **Getting Started**: [[{primary_process}]]
-- **Understanding Architecture**: [[{key_decisions}]]
+- **Getting Started**: [[{project}.{primary_process}]]
+- **Understanding Architecture**: [[{project}.{key_decisions}]]
 
 ### For Operations
 
-- **Scheduled Runs**: [[{ops_process}]]
+- **Scheduled Runs**: [[{project}.{ops_process}]]
 
 ## 🔍 Search by Concern
 
@@ -69,10 +69,10 @@ graph LR
 
 ## 📈 Visualizations
 
-- **Sequence Diagrams**: [[graph-sequence]]
-- **Relationships Diagrams**: [[graph-relationships]]
-- **Dashboard**: Use Obsidian Bases (open `graph.base`)
+- **Sequence Diagrams**: [[{project}.graph-sequence]]
+- **Relationships Diagrams**: [[{project}.graph-relationships]]
+- **Dashboard**: Use Obsidian Bases (open `{project}.graph.base`)
 
 ---
 
-*Use the [[graph.base|Dashboard]] for tabular views and filtering*
+*Use the [[{project}.graph.base|Dashboard]] for tabular views and filtering*

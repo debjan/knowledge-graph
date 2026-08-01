@@ -18,13 +18,13 @@ Extract metadata from code files to create entity node documents.
 
 ### Step 2: Extract Basic Metadata
 
-| Field     | Source                                     | Example                       |
-| --------- | ------------------------------------------ | ----------------------------- |
-| `name`    | Kebab-case from filename (no extension)    | `auth-service`                |
-| `title`   | First `#` heading, class name, or filename | `AuthService`                 |
-| `project` | CWD basename or git repo name              | `inference_api`               |
-| `agents`  | Current agent model                        | `deepseek`, `claude-opus-4-6` |
-| `tags`    | Inferred from path, imports, content       | `auth`, `jwt`, `session`      |
+| Field     | Source                                                              | Example                                                                  |
+| --------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `name`    | Kebab-case from filename (no extension), prefixed with `{project}.` | `{project}.{kebab-case-from-filename}` e.g. `inference-api.auth-service` |
+| `title`   | First `#` heading, class name, or filename                          | `AuthService`                                                            |
+| `project` | CWD basename or git repo name, normalized to kebab-case             | `inference-api`                                                          |
+| `agents`  | Current agent model                                                 | `deepseek`, `claude-opus-4-6`                                            |
+| `tags`    | Inferred from path, imports, content                                | `auth`, `jwt`, `session`                                                 |
 
 ### Step 3: Infer Category
 
@@ -66,23 +66,23 @@ class\s+\w+[:\(]
 From imports:
 
 ```python
-from auth.session import SessionManager  # → [[session-manager]]
-from payment.gateway import StripeClient  # → [[stripe-client]]
+from auth.session import SessionManager  # → [[inference-api.session-manager]]
+from payment.gateway import StripeClient  # → [[inference-api.stripe-client]]
 ```
 
 From dependency injection:
 
 ```python
 def __init__(self, db: Database, cache: Redis):
-    # → [[database]], [[redis-cache]]
+    # → [[inference-api.database]], [[inference-api.redis-cache]]
 ```
 
 From docstrings/comments:
 
 ```python
 """
-See [[user-model]] for data structure.
-Depends on [[rate-limiter]] for throttling.
+See [[inference-api.user-model]] for data structure.
+Depends on [[inference-api.rate-limiter]] for throttling.
 """
 ```
 
@@ -196,12 +196,13 @@ class AuthService:
 
 ```yaml
 type: entity
+name: inference-api.auth-service
 category: module
 importance: high  # auth is core
 tags: [auth, jwt, session, token]
 related:
-  - "[[session-manager]]"
-  - "[[jwt-handler]]"
+  - "[[inference-api.session-manager]]"
+  - "[[inference-api.jwt-handler]]"
 ```
 
 **Generated agent-context:**
@@ -231,5 +232,5 @@ checks:
 1. Use `Read` to get file content
 2. Apply regex patterns for extraction
 3. Infer missing fields from context
-4. Keep entity names kebab-case (module name, not class name)
-5. Validate wiki-link format: `[[kebab-case-name]]`
+4. Entity name = kebab-case module name; full identifier = `{project}.{name}`
+5. Validate wiki-link format: `[[{project}.kebab-case-name]]`

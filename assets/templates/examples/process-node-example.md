@@ -1,5 +1,6 @@
 ---
 type: process
+name: my-project.token-refresh-flow
 category: workflow
 importance: high
 status: active
@@ -14,9 +15,9 @@ tags:
   - token
   - refresh
 related:
-  - "[[auth-module]]"
-  - "[[jwt-handler]]"
-  - "[[session-manager]]"
+  - "[[my-project.auth-module]]"
+  - "[[my-project.jwt-handler]]"
+  - "[[my-project.session-manager]]"
 usage:
   last_used: 2026-04-05
   use_count: 1
@@ -135,11 +136,11 @@ patterns:
 
 ## Related Entities
 
-- [[auth-module]] — Orchestrates this flow
-- [[jwt-handler]] — Token generation
-- [[session-manager]] — Session storage
+- [[my-project.auth-module]] — Orchestrates this flow
+- [[my-project.jwt-handler]] — Token generation
+- [[my-project.session-manager]] — Session storage
 
 ## References
 
-**Triggered by:** [[auth-endpoints]]
+**Triggered by:** [[my-project.auth-endpoints]]
 **Produces:** TokenPair

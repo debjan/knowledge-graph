@@ -1,5 +1,6 @@
 ---
 type: entity
+name: inference-api.auth-service
 category: module
 importance: high
 status: active
@@ -14,9 +15,9 @@ tags:
   - session
   - security
 related:
-  - "[[session-manager]]"
-  - "[[jwt-handler]]"
-  - "[[rate-limiter]]"
+  - "[[inference-api.session-manager]]"
+  - "[[inference-api.jwt-handler]]"
+  - "[[inference-api.rate-limiter]]"
 usage:
   last_used: 2026-04-05
   use_count: 1
@@ -80,11 +81,11 @@ checks:
 
 ## Related Entities
 
-- [[session-manager]] — Handles session lifecycle
-- [[jwt-handler]] — Token creation/validation
-- [[rate-limiter]] — Request throttling
+- [[inference-api.session-manager]] — Handles session lifecycle
+- [[inference-api.jwt-handler]] — Token creation/validation
+- [[inference-api.rate-limiter]] — Request throttling
 
 ## References
 
-**Parent:** [[index]]
-**Depends on:** [[redis-cache]]
+**Parent:** [[inference-api.index]]
+**Depends on:** [[inference-api.redis-cache]]

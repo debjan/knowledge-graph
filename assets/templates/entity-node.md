@@ -1,6 +1,6 @@
 ---
 type: entity
-name: {kebab-case-identifier}  # Programmatic identifier for API access
+name: {project}.{kebab-case-identifier}  # Programmatic identifier for API access
 category: {module|class|function|api-endpoint|component}
 importance: {high|medium|low}
 status: active
@@ -15,8 +15,8 @@ tags:
   - {tag1}
   - {tag2}
 related:
-  - "[[related-entity-1]]"
-  - "[[related-entity-2]]"
+  - "[[{project}.related-entity-1]]"
+  - "[[{project}.related-entity-2]]"
 usage:
   last_used: {YYYY-MM-DD}
   use_count: 1
@@ -67,14 +67,14 @@ checks:
 
 ## Related Entities
 
-- [[related-entity-1]] — {Brief description of relationship}
-- [[related-entity-2]] — {Brief description of relationship}
+- [[{project}.related-entity-1]] — {Brief description of relationship}
+- [[{project}.related-entity-2]] — {Brief description of relationship}
 
 ## References
 
-**Parent:** [[index]] ← Link to index if it exists, remove this line if not
-**Depends on:** [[dependency-entity]]
-**Used by:** [[consumer-entity]]
+**Parent:** [[{project}.index]] ← Link to index if it exists, remove this line if not
+**Depends on:** [[{project}.dependency-entity]]
+**Used by:** [[{project}.consumer-entity]]
 
 ## Field Reference
 

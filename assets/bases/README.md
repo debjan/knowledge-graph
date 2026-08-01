@@ -18,9 +18,9 @@ bases/
 
 Per-project base file:
 
-| File         | Location                        | Purpose                                                                   |
-| ------------ | ------------------------------- | ------------------------------------------------------------------------- |
-| `graph.base` | `{memory}/{project}/graph.base` | Per-project dashboard with entity overview, health status, activity views |
+| File                   | Location                                  | Purpose                                                                   |
+| ---------------------- | ----------------------------------------- | ------------------------------------------------------------------------- |
+| `{project}.graph.base` | `{memory}/{project}/{project}.graph.base` | Per-project dashboard with entity overview, health status, activity views |
 
 ## Operation Loading
 
@@ -33,7 +33,7 @@ Per-project base file:
 
 Base creation is triggered:
 
-- On first entity creation in a new project (creates `graph.base`)
+- On first entity creation in a new project (creates `{project}.graph.base`)
 - On explicit "create base" command
 
 See [ADD operation](../ops/ADD.md) for the integration point.

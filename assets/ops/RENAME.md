@@ -47,7 +47,7 @@ Set `{graph_path}` = `{vault}/{memory}/{project}/`
 ### Step 2: Load Existing Entity
 
 ```
-Read("{graph_path}/entities/{old-name}.md")
+Read("{graph_path}/entities/{project}.{old-name}.md")
 ```
 
 **Error handling:** If entity file cannot be read (corrupted, permissions, I/O error):
@@ -67,7 +67,7 @@ Validate entity is healthy enough to rename:
 Check if target name already exists:
 
 ```
-Read("{graph_path}/entities/{new-name}.md")
+Read("{graph_path}/entities/{project}.{new-name}.md")
 ```
 
 If target exists:
@@ -90,25 +90,25 @@ Extract from old entity:
 Prepare new entity document with:
 
 - Same content as old entity
-- `name` updated to `{new-name}`
+- `name` updated to `{project}.{new-name}`
 - `updated` set to {today}
-- Changelog entry added: "Renamed from {old-name} on {today}"
+- Changelog entry added: "Renamed from {project}.{old-name} on {today}"
 - Keep all `usage.*` fields unchanged
 - Keep all `health.*` fields (will be cleared after successful rename)
 
 ### Step 5: Update Bidirectional References
 
-Collect all entities that reference `{old-name}`:
+Collect all entities that reference `{project}.{old-name}`:
 
 ```shell
-Grep(pattern: "\[\[{old-name}\]\]", path: "{graph_path}/entities", type: "md")
+Grep(pattern: "\[\[{project}.{old-name}\]\]", path: "{graph_path}/entities", type: "md")
 ```
 
 For each referencing entity:
 
-1. Load the entity: `Read("{graph_path}/entities/{referrer}.md")`
-2. Replace `[[{old-name}]]` with `[[{new-name}]]` in `related` field
-3. Update timestamp: mention "Updated references: {old-name} → {new-name}"
+1. Load the entity: `Read("{graph_path}/entities/{project}.{referrer}.md")`
+2. Replace `[[{project}.{old-name}]]` with `[[{project}.{new-name}]]` in `related` field
+3. Update timestamp: mention "Updated references: {project}.{old-name} → {project}.{new-name}"
 4. Write updated entity
 
 **Error handling:** If updating a referencing entity fails:
@@ -124,7 +124,7 @@ Create new entity file:
 
 ```shell
 mkdir -p "{graph_path}/entities/"
-Write("{graph_path}/entities/{new-name}.md", {prepared_content})
+Write("{graph_path}/entities/{project}.{new-name}.md", {prepared_content})
 ```
 
 **Error handling:** If `Write()` fails:
@@ -139,19 +139,19 @@ Write("{graph_path}/entities/{new-name}.md", {prepared_content})
 
 Create tombstone file at old path with redirect:
 
-```markdown
+```
 ---
-name: {old-name}
+name: {project}.{old-name}
 type: tombstone
-redirect_to: [[{new-name}]]
+redirect_to: [[{project}.{new-name}]]
 created: {today}
 ---
 
 # Entity Moved
 
-**{old-name}** has been renamed to **[[{new-name}]]**.
+**{project}.{old-name}** has been renamed to **[[{project}.{new-name}]]**.
 
-See: [[{new-name}]] for current entity information.
+See: [[{project}.{new-name}]] for current entity information.
 
 ---
 
@@ -173,7 +173,7 @@ If tombstone created successfully:
 Remove old entity file (replaced by tombstone):
 
 ```shell
-rm "{graph_path}/entities/{old-name}.md"
+rm "{graph_path}/entities/{project}.{old-name}.md"
 ```
 
 **Note:** Only delete if tombstone exists. If tombstone failed, keep old file and note: "Old entity kept due to tombstone failure".
@@ -201,14 +201,14 @@ Update visualization artifacts:
 
 #### Mermaid Diagrams
 
-1. Check if `graph-sequence.md` or `graph-relationships.md` exists: `Read("{graph_path}/graph-*.md")`
-2. Regenerate: Replace `{old-name}` with `{new-name}` in diagram
+1. Check if `{project}.graph-sequence.md` or `{project}.graph-relationships.md` exists: `Read("{graph_path}/{project}.graph-*.md")`
+2. Regenerate: Replace `{project}.{old-name}` with `{project}.{new-name}` in diagram
 3. Update diagrams where entity participates
-4. Include note: "Entity renamed: {old-name} → {new-name}"
+4. Include note: "Entity renamed: {project}.{old-name} → {project}.{new-name}"
 
 #### Obsidian Bases Dashboard
 
-1. `graph.base` will auto-reflect (file-based)
+1. `{project}.graph.base` will auto-reflect (file-based)
 2. No manual update needed for Bases
 
 #### Index File
@@ -218,45 +218,45 @@ Update visualization artifacts:
 
 ### Step 11: Report RENAME
 
-```markdown
+```
 ### RENAME Complete
 
-**Entity:** {old-name} → {new-name}
+**Entity:** {project}.{old-name} → {project}.{new-name}
 
 **History preserved:**
 - Usage count: {use_count}
 - Last used: {last_used}
 - Changelog entries: {changelog_count}
 
-**New path:** `{graph_path}/entities/{new-name}.md`
-**Old path (tombstone):** `{graph_path}/entities/{old-name}.md`
+**New path:** `{graph_path}/entities/{project}.{new-name}.md`
+**Old path (tombstone):** `{graph_path}/entities/{project}.{old-name}.md`
 
 **Bidirectional references updated:**
-- [[referrer-a]] → Updated ✓
-- [[referrer-b]] → Updated ✓
+- [[{project}.referrer-a]] → Updated ✓
+- [[{project}.referrer-b]] → Updated ✓
 
 **Visualizations:**
-- ✓ graph-sequence.md — entity renamed in diagrams
-- ✓ graph.base — automatically updated
-- ✓ index.md — references updated
+- ✓ {project}.graph-sequence.md — entity renamed in diagrams
+- ✓ {project}.graph.base — automatically updated
+- ✓ {project}.index.md — references updated
 
 **Tombstone:** Created at old path (redirects to new entity)
 ```
 
 If partial success:
 
-```markdown
+```
 ### RENAME Complete (Partial)
 
-**Entity:** {old-name} → {new-name} ✓ Created
+**Entity:** {project}.{old-name} → {project}.{new-name} ✓ Created
 
 **Warnings:**
-- Bidirectional refs incomplete: [[failed-referrer]] could not be updated
+- Bidirectional refs incomplete: [[{project}.failed-referrer]] could not be updated
 - Tombstone not created: manual redirect needed
 
 **Action required:**
 1. Check file permissions in {graph_path}/entities/
-2. Manually update [[failed-referrer]] to reference [[{new-name}]]
+2. Manually update [[{project}.failed-referrer]] to reference [[{project}.{new-name}]]
 3. Consider creating tombstone at {old-path}
 ```
 
@@ -271,12 +271,12 @@ Use [lifecycle-management.md](../helpers/lifecycle-management.md) to update enti
 Verify references are correctly updated:
 
 ```python
-new_entity = Read("{graph_path}/entities/{new-name}.md")
+new_entity = Read("{graph_path}/entities/{project}.{new-name}.md")
 for ref in new_entity.related:
-    ref_entity = Read("{graph_path}/entities/{ref}.md")
-    if "{new-name}" not in ref_entity.related:
-        warn(f"Bidirectional ref broken: {ref} doesn't reference {new-name}")
-        ref_entity.related.append("{new-name}")
+    ref_entity = Read("{graph_path}/entities/{project}.{ref}.md")
+    if "{project}.{new-name}" not in ref_entity.related:
+        warn(f"Bidirectional ref broken: {ref} doesn't reference {project}.{new-name}")
+        ref_entity.related.append("{project}.{new-name}")
         Write(ref_entity)
 ```
 

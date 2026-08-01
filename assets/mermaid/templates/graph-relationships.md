@@ -16,9 +16,9 @@ Generate Mermaid relationship graphs (node-link diagrams) showing entity depende
 ```mermaid
 graph TD
     %% Entities as nodes
-    A[auth-module] --> B[session-manager]
-    A --> C[jwt-handler]
-    B --> D[user-model]
+    A[{project}.auth-module] --> B[{project}.session-manager]
+    A --> C[{project}.jwt-handler]
+    B --> D[{project}.user-model]
     C --> D
 
     %% Styling by importance
@@ -39,8 +39,8 @@ graph TD
 ```mermaid
 graph LR
     %% Alternative layout
-    A[auth-module] --> B[session-manager]
-    B --> C[jwt-handler]
+    A[{project}.auth-module] --> B[{project}.session-manager]
+    B --> C[{project}.jwt-handler]
 
     %% Class definitions for styling
     classDef high fill:#2d3748,stroke:#4a5568,color:#fff
@@ -54,11 +54,13 @@ graph LR
 
 ### Node Naming
 
-| Rule            | Valid             | Invalid              |
-| --------------- | ----------------- | -------------------- |
-| Use ID          | `A[Display Name]` | `Display Name` alone |
-| No spaces in ID | `authModule`      | `auth module`        |
-| Link by ID      | `A --> B`         | `A --> Display Name` |
+| Rule            | Valid                       | Invalid                        |
+| --------------- | --------------------------- | ------------------------------ |
+| Use ID          | `A[Display Name]`           | `Display Name` alone           |
+| No spaces in ID | `authModule`                | `auth module`                  |
+| No dots in ID   | `A`                         | `inference-api.auth-module`    |
+| Link by ID      | `A --> B`                   | `A --> Display Name`           |
+| Prefixed text   | `A[{project}.auth-module]`  | `[auth-module]` (no prefix)    |
 
 ### Styling by Category
 
@@ -121,9 +123,9 @@ graph TD
 
 ## Output Structure
 
-### Generated File: `graph-relationships.md`
+### Generated File: `{project}.graph-relationships.md`
 
-```markdown
+```
 <!-- Generated: YYYY-MM-DD HH:MM:SS -->
 
 # {Project} Knowledge Graph - Relationships
@@ -178,7 +180,7 @@ graph TD
 
 Before generating, verify:
 
-- [ ] All node IDs are valid (no spaces)
+- [ ] All node IDs are valid (no spaces or dots — put `{project}.{name}` in display text)
 - [ ] Edges use `-->` not arrows with spaces
 - [ ] Class definitions come before usage
 - [ ] No cycles unless intentional (documented)

@@ -29,7 +29,7 @@ Manage context size by counting tokens and enforcing budget limits during QUERY 
 **User override:**
 
 ```
-"Load context for auth-module with budget 10000"
+"Load context for {project}.auth-module with budget 10000"
 ```
 
 ## Token Counting
@@ -143,12 +143,12 @@ block-beta
 
 For entities that don't fit in full detail:
 
-```markdown
-#### [[{entity-name}]] (relevance: {score}) — *Summary*
+```
+#### [[{project}.{entity-name}]] (relevance: {score}) — *Summary*
 
 - Type: {type} ({category})
 - Key constraint: {most_important_constraint}
-- Related: [[{related-1}]],[[related-2}]]
+- Related: [[{project}.related-1]], [[{project}.related-2]]
 - Implementation: `{primary_file}`
 ```
 
@@ -197,7 +197,7 @@ def get_most_important_constraint(entity: Entity) -> str:
 
 When budget is exceeded:
 
-```markdown
+```
 ### Context Briefing
 
 **Loaded:** 8 entities (4500 tokens)
@@ -214,7 +214,7 @@ When budget is exceeded:
 
 ---
 
-*{omitted_count} lower-relevance entities omitted. Use "load full context for {entity-name}" to see specific entities.*
+*{omitted_count} lower-relevance entities omitted. Use "load full context for {project}.{entity-name}" to see specific entities.*
 ```
 
 ### User Request for Full Context
@@ -222,7 +222,7 @@ When budget is exceeded:
 If user requests full context for a specific entity:
 
 ```
-"Load full context for auth-service"
+"Load full context for {project}.auth-service"
 ```
 
 Load the entity in full detail, even if previously summarized or omitted.
@@ -232,7 +232,7 @@ Load the entity in full detail, even if previously summarized or omitted.
 ### User-Specified Budget
 
 ```
-"Load context for auth-module with budget 10000"
+"Load context for {project}.auth-module with budget 10000"
 ```
 
 Use the specified budget instead of default.
@@ -240,7 +240,7 @@ Use the specified budget instead of default.
 ### No Budget (Load All)
 
 ```
-"Load full context for auth-module"
+"Load full context for {project}.auth-module"
 ```
 
 Load all entities without budget limit. Warn if total exceeds 15000 tokens.

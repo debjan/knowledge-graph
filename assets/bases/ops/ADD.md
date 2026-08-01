@@ -26,32 +26,32 @@ If ambiguous, enforce [Critical Rule 1](../../../SKILL.md#rule-1-resolve-paths-o
 
 Set `{graph_path}` = `{vault}/{memory}/{project}/`
 
-### Step 3: Create Project Dashboard (graph.base)
+### Step 3: Create Project Dashboard ({project}.graph.base)
 
-1. Check if `graph.base` exists:
+1. Check if `{project}.graph.base` exists:
 
 ```
-Read("{graph_path}/graph.base")
+Read("{graph_path}/{project}.graph.base")
 ```
 
 2. If not exists, create from template:
 
 ```
 Read("assets/bases/templates/graph-base.yaml")
-Write("{graph_path}/graph.base", template_content)
+Write("{graph_path}/{project}.graph.base", template_content)
 ```
 
 3. If exists, prompt:
 
 ```
-graph.base already exists for this project.
+{project}.graph.base already exists for this project.
 [Skip] — Keep existing dashboard
 [Update] — Regenerate from template
 ```
 
 ### Step 4: Validate YAML Output
 
-**Before writing graph.base, validate:**
+**Before writing {project}.graph.base, validate:**
 
 1. **Check YAML syntax**: Ensure valid YAML structure
 2. **Check filters format**: Must use `and:`, `or:`, or `not:` NOT lists
@@ -68,10 +68,10 @@ graph.base already exists for this project.
 
 **Requires:** `obsidian cli command`
 
-After writing `graph.base`, validate the file:
+After writing `{project}.graph.base`, validate the file:
 
 ```shell
-obsidian base:views path="{memory}/{project}/graph.base"
+obsidian base:views path="{memory}/{project}/{project}.graph.base"
 ```
 
 **Expected output:**
@@ -86,7 +86,7 @@ obsidian base:views path="{memory}/{project}/graph.base"
 ### Step 6: Report Results
 
 ```
-✓ Created graph.base (project dashboard)
+✓ Created {project}.graph.base (project dashboard)
 ```
 
 Or if skipped:
@@ -97,7 +97,7 @@ Or if skipped:
 
 ## Template Content
 
-### graph.base
+### {project}.graph.base
 
 Per-project dashboard with:
 
@@ -115,8 +115,8 @@ Per-project dashboard with:
 ## Human Customization
 
 - Humans can customize base files (add views, change formulas)
-- Skill prompts before overwriting: "Update graph.base to match template?"
-- Custom `.base` files (not `graph.base`) are never touched by skill
+- Skill prompts before overwriting: "Update {project}.graph.base to match template?"
+- Custom `.base` files (not `{project}.graph.base`) are never touched by skill
 
 ## Error Handling
 

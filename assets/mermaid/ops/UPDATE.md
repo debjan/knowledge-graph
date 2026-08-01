@@ -27,10 +27,10 @@ If ambiguous, enforce [Critical Rule 1](../../../SKILL.md#rule-1-resolve-paths-o
 
 Set `{graph_path}` = `{vault}/{memory}/{project}/`
 
-2. Check if `graph-sequence.md` or `graph-relationships.md` exists:
+2. Check if `{project}.graph-sequence.md` or `{project}.graph-relationships.md` exists:
 
 ```
-Read("{graph_path}/graph-*.md")
+Read("{graph_path}/{project}.graph-*.md")
 ```
 
 3. If not exists, defer to ADD operation
@@ -91,7 +91,7 @@ Update timestamp in output:
 ### Step 7: Report Results
 
 ```
-✓ Regenerated graph-sequence.md
+✓ Regenerated {project}.graph-sequence.md
   - {entity_count} entities
   - {relationship_count} relationships
 ```
@@ -102,7 +102,7 @@ Update timestamp in output:
 
 After creating a new entity:
 
-1. Check if `graph-sequence.md` exists
+1. Check if `{project}.graph-sequence.md` exists
 2. If yes: Regenerate sequence diagram with new entity
 3. Include new timestamp
 
@@ -110,7 +110,7 @@ After creating a new entity:
 
 After updating an entity:
 
-1. Check if `graph-sequence.md` exists
+1. Check if `{project}.graph-sequence.md` exists
 2. If yes: Regenerate sequence diagram (relationships may have changed)
 3. Include new timestamp
 
@@ -124,13 +124,13 @@ After deleting an entity:
 
 ## Human Customization Preservation
 
-If human has modified `graph-sequence.md`:
+If human has modified `{project}.graph-sequence.md`:
 
 1. Prompt before overwrite
 2. If user declines, keep existing
 3. Human must manually merge changes if needed
 
-Custom diagram files (not `graph-sequence.md`) are never touched by regeneration.
+Custom diagram files (not `{project}.graph-sequence.md`) are never touched by regeneration.
 
 ## Manual Regeneration Request
 

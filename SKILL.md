@@ -97,13 +97,13 @@ auto-loading context when working on matching files, auto-updating after non-tri
 
 **What a knowledge graph is:**
 
-A collection of markdown documents representing entities, concepts, decisions, constraints, and processes — connected via Obsidian wiki-links (`[[entity-name]]`).
+A collection of markdown documents representing entities, concepts, decisions, constraints, and processes — connected via namespaced Obsidian wiki-links (`[[{project}.entity-name]]`).
 Enriched with:
 
 - `agent-context` executable blocks
-- `index.md` (human landing page)
-- `graph.base` (Obsidian Bases dashboard)
-- `graph-sequence.md`, `graph-relationships.md` (Mermaid diagrams) for navigation
+- `{project}.index.md` (human landing page)
+- `{project}.graph.base` (Obsidian Bases dashboard)
+- `{project}.graph-sequence.md`, `{project}.graph-relationships.md` (Mermaid diagrams) for navigation
 
 ## Critical Rules
 
@@ -126,6 +126,7 @@ Enriched with:
 > **Project name:**
 >
 > - Derive from working directory basename or git repo name
+> - Normalize to kebab-case (lowercase, hyphens). This id is the `{project}.` namespace prefix for all wiki-links and node filenames.
 >
 > Set write path to: {vault}/{memory}/{project}
 >
@@ -157,24 +158,34 @@ Enriched with:
 
 > When initializing a new project knowledge graph, **attempt to create**:
 >
-> - `graph.base` (Obsidian Bases dashboard)
-> - `graph-sequence.md` and `graph-relationships.md` (Mermaid diagrams)
+> - `{project}.graph.base` (Obsidian Bases dashboard)
+> - `{project}.graph-sequence.md` and `{project}.graph-relationships.md` (Mermaid diagrams)
 >
 > These are soft defaults—creation failures are logged as warnings, not errors. Humans can customize or delete these files without consequence.
 
+### RULE 8: NAMESPACED WIKI-LINKS
+
+> Every wiki-link and node filename must be namespaced with the project id: `[[{project}.{name}]]` → file `{graph_path}/{type}/{project}.{name}.md`.
+>
+> - Frontmatter `name:` = `{project}.{name}`; frontmatter `project:` = `{project}` (short kebab-case id).
+> - Alias form: `[[{project}.{name}|Alias]]`.
+> - Root artifacts are prefixed too: `{project}.index.md`, `{project}.graph.base`, `{project}.graph-sequence.md`, `{project}.graph-relationships.md`.
+> - The prefix prevents collisions between projects sharing a vault (e.g. `my-project.session-manager` vs `inference-api.session-manager`).
+> - VERIFY CHECK 8 enforces this; a link or file missing the `{project}.` prefix is a FAIL.
+
 ## Operation Detection
 
-| Operation      | Signals                                                                  | What It Does                                           |
-| -------------- | ------------------------------------------------------------------------ | ------------------------------------------------------ |
-| **AUTO-QUERY** | Session start                                                            | Proactively load context based on current work         |
-| **ADD**        | "remember this", "save to memory", "create entity", "this is important"  | Create new entity nodes                                |
-| **UPDATE**     | "update entity", "refresh entity", "update the graph"                    | Modify existing entity nodes                           |
-| **DELETE**     | "delete entity", "remove entity"                                         | Remove entity nodes with reference cleanup             |
-| **RENAME**     | "rename entity", "move entity"                                           | Rename entity while preserving history                 |
-| **QUERY**      | "load context", "what do we know", "check graph", "show knowledge graph" | Load entities matching current work (within budget)    |
-| **SYNC**       | "sync the graph", "synchronize with codebase", "update graph from codebase" | Walk codebase, compare with entities, produce diff report for ADD/UPDATE/DELETE batch operations |
-| **VERIFY**     | "verify graph", "check graph integrity", "validate knowledge graph"      | Run automated checks: wiki-links resolve, backlinks bidirectional, implementation files exist, frontmatter complete |
-| **HEALTH**     | "check health", "review stale", "cleanup"                                | Scan for stale/unused entities, offer batch operations |
+| Operation      | Signals                                                                     | What It Does                                                                                                                                            |
+| -------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **AUTO-QUERY** | Session start                                                               | Proactively load context based on current work                                                                                                          |
+| **ADD**        | "remember this", "save to memory", "create entity", "this is important"     | Create new entity nodes                                                                                                                                 |
+| **UPDATE**     | "update entity", "refresh entity", "update the graph"                       | Modify existing entity nodes                                                                                                                            |
+| **DELETE**     | "delete entity", "remove entity"                                            | Remove entity nodes with reference cleanup                                                                                                              |
+| **RENAME**     | "rename entity", "move entity"                                              | Rename entity while preserving history                                                                                                                  |
+| **QUERY**      | "load context", "what do we know", "check graph", "show knowledge graph"    | Load entities matching current work (within budget)                                                                                                     |
+| **SYNC**       | "sync the graph", "synchronize with codebase", "update graph from codebase" | Walk codebase, compare with entities, produce diff report for ADD/UPDATE/DELETE batch operations                                                        |
+| **VERIFY**     | "verify graph", "check graph integrity", "validate knowledge graph"         | Run automated checks: wiki-links resolve, backlinks bidirectional, implementation files exist, frontmatter complete, `{project}.` namespace conformance |
+| **HEALTH**     | "check health", "review stale", "cleanup"                                   | Scan for stale/unused entities, offer batch operations                                                                                                  |
 
 **Disambiguation**: If intent is unclear, ask:
 
@@ -194,13 +205,13 @@ Use when you want to create a new entity:
 
 The knowledge graph supports multiple node types. Use the appropriate template:
 
-| Node Type      | When to Create                 | Template                                                    | Example                                        |
-| -------------- | ------------------------------ | ----------------------------------------------------------- | ---------------------------------------------- |
-| **Entity**     | Code modules, classes, APIs    | [entity-node.md](./assets/templates/entity-node.md)         | `[[auth-service]]` — Auth module               |
-| **Concept**    | Design patterns, conventions   | [concept-node.md](./assets/templates/concept-node.md)       | `[[repository-pattern]]` — Data access pattern |
-| **Decision**   | Architecture decisions (ADR)   | [decision-node.md](./assets/templates/decision-node.md)     | `[[ADR-001]]` — Why we chose Redis             |
-| **Constraint** | Gotchas, limitations, warnings | [constraint-node.md](./assets/templates/constraint-node.md) | `[[rate-limit-warning]]` — API limits          |
-| **Process**    | Workflows, algorithms          | [process-node.md](./assets/templates/process-node.md)       | `[[deploy-pipeline]]` — Deployment workflow    |
+| Node Type      | When to Create                 | Template                                                    | Example                                                  |
+| -------------- | ------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------- |
+| **Entity**     | Code modules, classes, APIs    | [entity-node.md](./assets/templates/entity-node.md)         | `[[{project}.auth-service]]` — Auth module               |
+| **Concept**    | Design patterns, conventions   | [concept-node.md](./assets/templates/concept-node.md)       | `[[{project}.repository-pattern]]` — Data access pattern |
+| **Decision**   | Architecture decisions (ADR)   | [decision-node.md](./assets/templates/decision-node.md)     | `[[{project}.ADR-001]]` — Why we chose Redis             |
+| **Constraint** | Gotchas, limitations, warnings | [constraint-node.md](./assets/templates/constraint-node.md) | `[[{project}.rate-limit-warning]]` — API limits          |
+| **Process**    | Workflows, algorithms          | [process-node.md](./assets/templates/process-node.md)       | `[[{project}.deploy-pipeline]]` — Deployment workflow    |
 
 **How to Create:**
 
@@ -280,7 +291,7 @@ Use to run automated consistency checks across the entire graph:
 
 > Verify the knowledge graph.
 
-Checks all wiki-links resolve, all backlinks are bidirectional, all implementation files exist, and all entities have complete frontmatter. Produces a tabular PASS/FAIL report.
+Checks all wiki-links resolve, all backlinks are bidirectional, all implementation files exist, all entities have complete frontmatter, and every link/file carries the `{project}.` namespace prefix. Produces a tabular PASS/FAIL report.
 
 **Assets to read now:** [VERIFY.md](./assets/ops/VERIFY.md)
 
@@ -288,7 +299,7 @@ Checks all wiki-links resolve, all backlinks are bidirectional, all implementati
 
 Created automatically when initializing a new project knowledge graph:
 
-> index.md — Human-readable landing page with quick stats and navigation
+> {project}.index.md — Human-readable landing page with quick stats and navigation
 
 ### Dashboards
 

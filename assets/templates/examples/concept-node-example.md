@@ -1,5 +1,6 @@
 ---
 type: concept
+name: my-project.repository-pattern
 category: pattern
 importance: high
 status: active
@@ -14,8 +15,8 @@ tags:
   - architecture
   - repository
 related:
-  - "[[database-module]]"
-  - "[[unit-of-work]]"
+  - "[[my-project.database-module]]"
+  - "[[my-project.unit-of-work]]"
 usage:
   last_used: 2026-04-05
   use_count: 1
@@ -94,10 +95,10 @@ class UserRepository:
 
 ## Related Entities
 
-- [[database-module]] — Database connection management
-- [[user-service]] — Uses UserRepository
+- [[my-project.database-module]] — Database connection management
+- [[my-project.user-service]] — Uses UserRepository
 
 ## References
 
-**Applies to:** [[user-service]], [[order-service]], [[payment-service]]
-**Related concepts:** [[unit-of-work]], [[domain-driven-design]]
+**Applies to:** [[my-project.user-service]], [[my-project.order-service]], [[my-project.payment-service]]
+**Related concepts:** [[my-project.unit-of-work]], [[my-project.domain-driven-design]]

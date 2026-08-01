@@ -113,10 +113,10 @@ A code module exists but has no corresponding entity file.
 **Output:**
 
 ```
-| Entity Name         | Source File        | Lines | Type   |
-| ------------------- | ------------------ | ----- | ------ |
-| [[acp-autocomplete]]| modules/acp_autocomplete.py | 45  | module |
-| [[acp-logger]]      | modules/logger.py  | 30    | module |
+| Entity Name          | Source File                 | Lines | Type   |
+| -------------------- | --------------------------- | ----- | ------ |
+| [[acp.autocomplete]] | modules/acp_autocomplete.py | 45    | module |
+| [[acp.logger]]       | modules/logger.py           | 30    | module |
 ```
 
 #### CATEGORY B: CHANGED (entity exists, code changed)
@@ -132,12 +132,13 @@ An entity exists but its implementation files have changed (different line count
 **Output:**
 
 ```
-| Entity             | Change                 | Old Value    | New Value      |
-| ------------------ | ---------------------- | ------------ | -------------- |
-| [[acp-daemon]]     | File consolidated      | 4 files      | modules/daemon.py |
-| [[acp-daemon]]     | Lines                  | 23           | 641            |
-| [[acp-permissions]]| File renamed           | daemon_permissions.py | permissions.py |
-| [[acp-daemon]]     | File missing           | modules/daemon_state.py | (deleted) |
+| Entity              | Change            | Old Value               | New Value         |
+| ------------------- | ----------------- | ----------------------- | ----------------- |
+| [[acp.daemon]]      | File consolidated | 4 files                 | modules/daemon.py |
+| [[acp.daemon]]      | Lines             | 23                      | 641               |
+| [[acp.permissions]] | File renamed      | daemon_permissions.py   | permissions.py    |
+| [[acp.daemon]]      | File missing      | modules/daemon_state.py | (deleted)         |
+
 ```
 
 #### CATEGORY C: STALE (entity exists, code gone)
@@ -149,10 +150,12 @@ An entity exists but all its implementation files are missing from disk.
 **Output:**
 
 ```
-| Entity             | Missing Files                    |
-| ------------------ | -------------------------------- |
-| [[acp-daemon-state]]   | modules/daemon_state.py (deleted)    |
-| [[acp-daemon-lifecycle]] | modules/daemon_lifecycle.py (deleted) |
+
+| Entity                   | Missing Files                         |
+| ------------------------ | ------------------------------------- |
+| [[acp.daemon-state]]     | modules/daemon_state.py (deleted)     |
+| [[acp.daemon-lifecycle]] | modules/daemon_lifecycle.py (deleted) |
+
 ```
 
 #### CATEGORY D: ORPHAN (referenced but missing backlinks)
@@ -163,7 +166,7 @@ An entity is referenced by others but does not have reciprocal backlinks. See [V
 
 Collect all findings into a single tabular report:
 
-```markdown
+```
 ### Graph Sync Diff Report
 
 **Project:** acp
@@ -172,25 +175,30 @@ Collect all findings into a single tabular report:
 **Changes detected:** 8
 
 #### NEW (2)
-| Entity | File | Lines | Type |
-| ------ | ---- | ----- | ---- |
-| [[acp-autocomplete]] | modules/autocomplete.py | 45 | module |
+
+| Entity               | File                    | Lines | Type   |
+| -------------------- | ----------------------- | ----- | ------ |
+| [[acp.autocomplete]] | modules/autocomplete.py | 45    | module |
 
 #### CHANGED (4)
-| Entity | Change | Old | New |
-| ------ | ------ | --- | --- |
-| [[acp-daemon]] | Lines | 23 | 641 |
-| [[acp-permissions]] | File | daemon_permissions.py | permissions.py |
+
+| Entity              | Change | Old                   | New            |
+| ------------------- | ------ | --------------------- | -------------- |
+| [[acp.daemon]]      | Lines  | 23                    | 641            |
+| [[acp.permissions]] | File   | daemon_permissions.py | permissions.py |
 
 #### STALE (2)
-| Entity | Missing Files |
-| ------ | ------------- |
-| [[acp-daemon-state]] | modules/daemon_state.py |
+
+| Entity               | Missing Files           |
+| -------------------- | ----------------------- |
+| [[acp.daemon-state]] | modules/daemon_state.py |
 
 **Options:**
+
 - [Review Each] — Walk through each change individually
 - [Batch Apply] — Apply all changes with auto-generated updates
 - [Skip] — Dismiss and do nothing
+
 ```
 
 ### Step 5: Process Changes
@@ -208,16 +216,18 @@ For each NEW candidate, use the [ADD.md](./ADD.md) workflow:
 
 For batch ADD, present all candidates and confirm as a group:
 
-```markdown
+```
 ### Batch ADD Confirmation
 
 The following entities will be created:
-| Entity | File | Lines |
-| ------ | ---- | ----- |
-| [[acp-autocomplete]] | modules/autocomplete.py | 45 |
-| [[acp-logger]] | modules/logger.py | 30 |
+
+| Entity               | File                    | Lines |
+| -------------------- | ----------------------- | ----- |
+| [[acp.autocomplete]] | modules/autocomplete.py | 45    |
+| [[acp.logger]]       | modules/logger.py       | 30    |
 
 [Confirm All] [Review Each] [Cancel]
+
 ```
 
 #### CATEGORY B: UPDATE
@@ -251,17 +261,19 @@ For each orphan issue, add the missing backlink to the target entity's `related`
 After all changes are applied, automatically run [VERIFY.md](./VERIFY.md):
 
 ```
+
 1. Check all wiki-links resolve
 2. Check all backlinks are bidirectional
 3. Check all implementation files exist
 4. Check all entities have complete frontmatter
+
 ```
 
 If VERIFY fails, report issues and offer to fix them (re-run verify after fixes).
 
 ### Step 7: Report Summary
 
-```markdown
+```
 ### Graph Sync Complete
 
 **Project:** {project}

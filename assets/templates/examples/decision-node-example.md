@@ -1,5 +1,6 @@
 ---
 type: decision
+name: my-project.ADR-002
 category: adr
 importance: high
 status: active
@@ -14,8 +15,8 @@ tags:
   - redis
   - architecture
 related:
-  - "[[auth-module]]"
-  - "[[session-manager]]"
+  - "[[my-project.auth-module]]"
+  - "[[my-project.session-manager]]"
 usage:
   last_used: 2026-04-05
   use_count: 1
@@ -90,9 +91,9 @@ constraints:
 
 ## Related Entities
 
-- [[auth-module]] — Uses sessions for auth
-- [[session-manager]] — Redis session implementation
+- [[my-project.auth-module]] — Uses sessions for auth
+- [[my-project.session-manager]] — Redis session implementation
 
 ## References
 
-**Related:** [[ADR-001-database-choice]]
+**Related:** [[my-project.ADR-001-database-choice]]

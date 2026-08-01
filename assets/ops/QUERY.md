@@ -43,13 +43,13 @@ Set `{graph_path}` = `{vault}/{memory}/{project}/`
 
 ### Step 2: Identify Query Type
 
-| Query Type      | Example                               | Action                                      |
-| --------------- | ------------------------------------- | ------------------------------------------- |
-| **File match**  | Agent working on `src/auth/service.py`| Find entities with matching trigger patterns|
-| **Entity name** | "Load context for auth-module"        | Load specific entity by name                |
-| **Search**      | "What entities relate to auth?"       | Grep for patterns                           |
-| **Explore**     | "Show me the knowledge graph"         | Load index.md or list entities              |
-| **Auto-query**  | Session start                         | Proactive context loading (see below)       |
+| Query Type      | Example                                  | Action                                       |
+| --------------- | ---------------------------------------- | -------------------------------------------- |
+| **File match**  | Agent working on `src/auth/service.py`   | Find entities with matching trigger patterns |
+| **Entity name** | "Load context for {project}.auth-module" | Load specific entity by name                 |
+| **Search**      | "What entities relate to auth?"          | Grep for patterns                            |
+| **Explore**     | "Show me the knowledge graph"            | Load {project}.index.md or list entities     |
+| **Auto-query**  | Session start                            | Proactive context loading (see below)        |
 
 ### Step 3: Find Matching Entities
 
@@ -69,7 +69,7 @@ Read each → check triggers in agent-context block
 #### Entity Name
 
 ```
-Read("{graph_path}/entities/{entity-name}.md")
+Read("{graph_path}/entities/{project}.{entity-name}.md")
 ```
 
 #### Search
@@ -109,10 +109,10 @@ For each matching entity:
 
 **Error handling:** If frontmatter is malformed (missing `---`, invalid YAML):
 
-- Log: "Malformed frontmatter in [[{entity}]]: {error}"
+- Log: "Malformed frontmatter in [[{project}.{entity}]]: {error}"
 - Skip parsing for this entity
 - Continue with remaining entities
-- Note in report: "Skipped {entity} — malformed frontmatter"
+- Note in report: "Skipped {project}.{entity} — malformed frontmatter"
 
 ### Step 6: Traverse Related Entities
 
@@ -136,7 +136,7 @@ Use [token-budget.md](../helpers/token-budget.md):
 
 ### Step 8: Present Context Briefing
 
-```markdown
+```
 ### Context Briefing
 
 **Loaded:** {count} entities ({tokens} tokens)
@@ -145,7 +145,7 @@ Use [token-budget.md](../helpers/token-budget.md):
 
 ---
 
-#### [[{entity-1}]] (relevance: 0.92)
+#### [[{project}.{entity-1}]] (relevance: 0.92)
 
 **Type:** {type} | **Category:** {category} | **Importance:** {importance}
 **Last updated:** {updated}
@@ -162,8 +162,8 @@ Use [token-budget.md](../helpers/token-budget.md):
 - {check_2}
 
 ##### Related Entities
-- [[{related-1}]] — {brief description}
-- [[{related-2}]] — {brief description}
+- [[{project}.related-1]] — {brief description}
+- [[{project}.related-2]] — {brief description}
 
 ##### Implementation Files
 - `{file_1}` — {description}
@@ -171,11 +171,11 @@ Use [token-budget.md](../helpers/token-budget.md):
 
 ---
 
-#### [[{entity-2}]] (relevance: 0.78) — *Summary*
+#### [[{project}.{entity-2}]] (relevance: 0.78) — *Summary*
 
 - Type: {type} ({category})
 - Key constraint: {most_important_constraint}
-- Related: [[{related-1}]],[[related-2}]]
+- Related: [[{project}.related-1]], [[{project}.related-2]]
 
 ---
 
@@ -190,13 +190,13 @@ For each implementation file listed:
 2. If not found:
    - Add to `health.stale_files`
    - Set `health.needs_update = true`
-   - Warn: "⚠ [[{entity}]] may be stale: {file} not found"
+   - Warn: "⚠ [[{project}.{entity}]] may be stale: {file} not found"
 
 **Error handling:** If `test -f` command fails (permissions, invalid path):
 
 - Log: "Cannot check file existence: {error}"
 - Mark file as "unknown status" rather than stale
-- Warn: "⚠ Cannot verify [[{entity}]] implementation file"
+- Warn: "⚠ Cannot verify [[{project}.{entity}]] implementation file"
 
 ### Step 10: Update Usage Metadata
 
@@ -279,7 +279,7 @@ graph TD
 ### Controlled Traversal
 
 ```
-User: "Load context for auth-module with depth 3"
+User: "Load context for {project}.auth-module with depth 3"
 ```
 
 Traverse 3 levels deep, presenting all constraints and patterns.
@@ -301,8 +301,8 @@ Would you like to:
 
 ```
 No exact match for "{query}". Similar entities:
-- [[auth-module]] — Authentication module
-- [[auth-middleware]] — Request auth middleware
+- [[{project}.auth-module]] — Authentication module
+- [[{project}.auth-middleware]] — Request auth middleware
 
 Select one or create new?
 ```
@@ -311,7 +311,7 @@ Select one or create new?
 
 ### Successful Load
 
-```markdown
+```
 ### QUERY Complete
 
 **Matched:** {count} entities
@@ -331,7 +331,7 @@ Select one or create new?
 
 ### No Match
 
-```markdown
+```
 ### QUERY Result: No Match
 
 Searched for: {query}
@@ -347,7 +347,7 @@ Suggestions:
 
 After presenting query results, offer to generate a Mermaid diagram:
 
-```markdown
+```
 **Generate Mermaid diagram of these results?** [Yes] [No]
 ```
 
@@ -432,7 +432,7 @@ def cache_query_result(query_params, entities):
 
 If cache hit, indicate in results:
 
-```markdown
+```
 ### QUERY Complete (Cached)
 **Cached:** Results from {cache_age} seconds ago
 **Loaded:** {count} entities ({tokens} tokens)

@@ -30,7 +30,7 @@ sequenceDiagram
 ## Syntax Validation Checklist
 
 - [ ] No list syntax conflicts
-- [ ] Participant names use valid identifiers (no spaces in IDs)
+- [ ] Participant names use valid identifiers (no spaces or dots in IDs — put the `{project}.{name}` in the `as` display text)
 - [ ] Messages use proper arrow syntax (`->>`, `-->>`, `--x`)
 - [ ] No emoji in participant names or messages
 - [ ] Proper activation/deactivation pairing (`+`/`-`)
@@ -98,7 +98,7 @@ sequenceDiagram
 ## Output File Location
 
 Generated sequence diagrams should be written to:
-`{memory}/{project}/graph-sequence.md`
+`{memory}/{project}/{project}.graph-sequence.md`
 
 ## Timestamp Format
 
@@ -134,8 +134,8 @@ For explicit cycle visualization, generate a **separate relationship graph** usi
 
 ```mermaid
 graph LR
-    A[auth-module] --> B[session-manager]
-    B --> C[jwt-handler]
+    A[{project}.auth-module] --> B[{project}.session-manager]
+    B --> C[{project}.jwt-handler]
     C --> A
 
     %% Cycle indicator: use different styling

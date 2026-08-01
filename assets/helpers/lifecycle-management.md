@@ -48,10 +48,10 @@ flowchart TD
 
 ### Example Output
 
-```markdown
+```
 ⚠ **Stale Entity Detected**
 
-Entity: [[auth-service]]
+Entity: [[inference-api.auth-service]]
 Missing files:
  - `src/auth/legacy_handler.py` (deleted)
  - `src/utils/deprecated_util.py` (moved)
@@ -107,8 +107,8 @@ stateDiagram-v2
 
 ### Diff Format
 
-```markdown
-### Entity Update: auth-service
+```
+### Entity Update: inference-api.auth-service
 
 **Changes detected:**
 
@@ -138,7 +138,7 @@ stateDiagram-v2
 
 ```
 1. Show confirmation prompt:
-   "Delete 'auth-service'?"
+   "Delete 'inference-api.auth-service'?"
    "This will remove the entity and its bidirectional references."
 
 2. On confirmation:
@@ -152,29 +152,29 @@ stateDiagram-v2
 
 ### Confirmation Prompt
 
-```markdown
-### Delete Entity: auth-service
+```
+### Delete Entity: inference-api.auth-service
 
 **Warning:** This action cannot be undone.
 
 Entity will be removed along with:
- - Bidirectional reference from [[session-manager]]
- - Bidirectional reference from [[jwt-handler]]
+ - Bidirectional reference from [[inference-api.session-manager]]
+ - Bidirectional reference from [[inference-api.jwt-handler]]
 
 [Confirm] [Cancel]
 ```
 
 ### Result Report
 
-```markdown
+```
 ### DELETE Complete
 
-**Deleted:** auth-service
-**File removed:** `memory/project/entities/auth-service.md`
+**Deleted:** inference-api.auth-service
+**File removed:** `memory/project/entities/inference-api.auth-service.md`
 
 **References cleaned:**
- - [[session-manager]] — removed reference
- - [[jwt-handler]] — removed reference
+ - [[inference-api.session-manager]] — removed reference
+ - [[inference-api.jwt-handler]] — removed reference
 
 **Orphaned entities:** None
 ```
@@ -200,7 +200,7 @@ Entity will be removed along with:
 
 ### Health Check Output
 
-```markdown
+```
 ### Health Check Results
 
 **Total entities:** 45
@@ -209,13 +209,13 @@ Entity will be removed along with:
 
 #### Entities Needing Attention
 
-| Entity             | Issue       | Details                 |
-| ------------------ | ----------- | ----------------------- |
-| [[auth-service]]   | Stale files | 2 files missing         |
-| [[old-module]]     | Unused      | Not used in 45 days     |
-| [[deprecated-api]] | Flagged     | needs_delete = true     |
-| [[payment-v1]]     | Deprecated  | status = deprecated     |
-| [[legacy-handler]] | Stale       | Not verified in 60 days |
+| Entity                           | Issue       | Details                 |
+| -------------------------------- | ----------- | ----------------------- |
+| [[inference-api.auth-service]]   | Stale files | 2 files missing         |
+| [[inference-api.old-module]]     | Unused      | Not used in 45 days     |
+| [[inference-api.deprecated-api]] | Flagged     | needs_delete = true     |
+| [[inference-api.payment-v1]]     | Deprecated  | status = deprecated     |
+| [[inference-api.legacy-handler]] | Stale       | Not verified in 60 days |
 
 #### Batch Operations
 [Review Each] [Batch Update Stale] [Batch Delete Unused] [Dismiss]
@@ -278,7 +278,7 @@ if config.show_health_summary:
 
 ### Computed Lifecycle State
 
-The `graph.base` dashboard computes entity lifecycle state dynamically using the `lifecycle_state` formula:
+The `{project}.graph.base` dashboard computes entity lifecycle state dynamically using the `lifecycle_state` formula:
 
 ```yaml
 lifecycle_state: |
@@ -342,21 +342,21 @@ When multiple source files are merged into one (the most common bulk-sync scenar
 
 #### Old State
 
-| Entity           | Implementation Files                      |
-| ---------------- | ----------------------------------------- |
-| daemon-state     | `modules/daemon_state.py` (200 lines)     |
-| daemon-lifecycle | `modules/daemon_lifecycle.py` (150 lines) |
-| daemon-session   | `modules/daemon_session.py` (180 lines)   |
-| daemon           | `modules/daemon.py` (23 lines, facade)    |
+| Entity                 | Implementation Files                      |
+| ---------------------- | ----------------------------------------- |
+| acp.daemon-state       | `modules/daemon_state.py` (200 lines)     |
+| acp.daemon-lifecycle   | `modules/daemon_lifecycle.py` (150 lines) |
+| acp.daemon-session     | `modules/daemon_session.py` (180 lines)   |
+| acp.daemon             | `modules/daemon.py` (23 lines, facade)    |
 
 #### New State
 
-| Entity           | Change                                                                 |
-| ---------------- | ---------------------------------------------------------------------- |
-| daemon           | UPDATE: `implementation_files = ["modules/daemon.py"]`, lines 23 → 641 |
-| daemon-state     | DELETE: all files gone                                                 |
-| daemon-lifecycle | DELETE: all files gone                                                 |
-| daemon-session   | DELETE: all files gone                                                 |
+| Entity                 | Change                                                                     |
+| ---------------------- | -------------------------------------------------------------------------- |
+| acp.daemon             | UPDATE: `implementation_files = ["modules/daemon.py"]`, lines 23 → 641     |
+| acp.daemon-state       | DELETE: all files gone                                                     |
+| acp.daemon-lifecycle   | DELETE: all files gone                                                     |
+| acp.daemon-session     | DELETE: all files gone                                                     |
 
 #### Steps
 
@@ -373,7 +373,7 @@ When multiple source files are merged into one (the most common bulk-sync scenar
 
 3. **Delete consumed entities:**
    - For each entity to delete:
-     - Remove its `[[entity-name]]` references from all related entities' `related` fields
+     - Remove its `[[{project}.{entity-name}]]` references from all related entities' `related` fields
      - Delete its entity file
    - Check if any remaining entity has empty `related` after cleanup
 
@@ -382,7 +382,7 @@ When multiple source files are merged into one (the most common bulk-sync scenar
    - Update any remaining wiki-links in body text that point to now-deleted entities — either remove or redirect
 
 5. **Fix body references:**
-   - In all non-deleted entities, find body references `[[deleted-entity]]` and decide: remove or redirect
+   - In all non-deleted entities, find body references `[[{project}.deleted-entity]]` and decide: remove or redirect
 
 6. **Verify:**
    - All wiki-links resolve
@@ -401,7 +401,7 @@ When a single file is renamed:
 
 1. **Rename entity:** Use RENAME operation to move the entity file
 2. **Update implementation_file:** Update path in renamed entity
-3. **Update backlinks:** Update all `[[old-name]]` references across the graph to `[[new-name]]`
+3. **Update backlinks:** Update all `[[{project}.old-name]]` references across the graph to `[[{project}.new-name]]`
 4. **Verify:** All links resolve, backlinks are bidirectional
 
 ## Best Practices

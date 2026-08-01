@@ -1,6 +1,6 @@
 ---
 type: process
-name: {kebab-case-identifier}  # Programmatic identifier for API access
+name: {project}.{kebab-case-identifier}  # Programmatic identifier for API access
 category: {workflow|algorithm|lifecycle|sequence}
 importance: {high|medium|low}
 status: active
@@ -13,7 +13,7 @@ tags:
   - {tag1}
   - {tag2}
 related:
-  - "[[related-entity]]"
+  - "[[{project}.related-entity]]"
 usage:
   last_used: {YYYY-MM-DD}
   use_count: 1
@@ -89,10 +89,10 @@ patterns:
 
 ## Related Entities
 
-- [[involved-entity]] — Entity involved in this process
-- [[related-process]] — Related process
+- [[{project}.involved-entity]] — Entity involved in this process
+- [[{project}.related-process]] — Related process
 
 ## References
 
-**Triggered by:** [[trigger-entity]]
-**Produces:** [[output-entity]]
+**Triggered by:** [[{project}.trigger-entity]]
+**Produces:** [[{project}.output-entity]]

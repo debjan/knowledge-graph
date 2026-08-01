@@ -1,5 +1,6 @@
 ---
 type: constraint
+name: my-project.no-direct-database-access
 category: gotcha
 importance: high
 status: active
@@ -13,8 +14,8 @@ tags:
   - architecture
   - security
 related:
-  - "[[database-module]]"
-  - "[[user-service]]"
+  - "[[my-project.database-module]]"
+  - "[[my-project.user-service]]"
 usage:
   last_used: 2026-04-05
   use_count: 1
@@ -98,9 +99,9 @@ async def get_user(user_id: str, user_repo: UserRepository):
 
 ## Related Entities
 
-- [[database-module]] — Database connection management
-- [[user-repository]] — Proper data access layer
+- [[my-project.database-module]] — Database connection management
+- [[my-project.user-repository]] — Proper data access layer
 
 ## References
 
-**Applies to:** [[user-service]], [[order-service]], [[payment-service]]
+**Applies to:** [[my-project.user-service]], [[my-project.order-service]], [[my-project.payment-service]]

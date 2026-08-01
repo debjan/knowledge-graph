@@ -1,6 +1,6 @@
 ---
 type: decision
-name: {kebab-case-identifier}  # Programmatic identifier for API access
+name: {project}.{kebab-case-identifier}  # Programmatic identifier for API access
 category: {adr|choice|tradeoff}
 importance: {high|medium|low}
 status: {active|deprecated|superseded}
@@ -13,8 +13,8 @@ tags:
   - adr
   - {domain}
 related:
-  - "[[affected-entity-1]]"
-  - "[[affected-entity-2]]"
+  - "[[{project}.affected-entity-1]]"
+  - "[[{project}.affected-entity-2]]"
 usage:
   last_used: {YYYY-MM-DD}
   use_count: 1
@@ -78,10 +78,10 @@ constraints:
 
 ## Related Entities
 
-- [[affected-entity]] — Entity affected by this decision
-- [[related-decision]] — Related ADR
+- [[{project}.affected-entity]] — Entity affected by this decision
+- [[{project}.related-decision]] — Related ADR
 
 ## References
 
-**Supersedes:** [[ADR-{N-1}]] (if applicable)
-**Superseded by:** [[ADR-{N+1}]] (if applicable)
+**Supersedes:** [[{project}.ADR-{N-1}]] (if applicable)
+**Superseded by:** [[{project}.ADR-{N+1}]] (if applicable)

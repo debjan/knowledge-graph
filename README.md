@@ -5,7 +5,7 @@ A proactive knowledge graph system for AI agents that maintains entities, decisi
 ## Features
 
 - **AUTO-QUERY**: Proactively load relevant context at session start
-- **ADD/UPDATE/DELETE/RENAME**: Manage entity nodes with reference cleanup
+- **ADD/UPDATE/DELETE/RENAME/SYNC/VERIFY**: Manage entity nodes with reference cleanup
 - **QUERY**: Load relevant entities with relevance scoring and budget awareness
 - **LIFECYCLE**: Detect stale entities, manage updates and deletions
 

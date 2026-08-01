@@ -1,6 +1,6 @@
 ---
 type: concept
-name: {kebab-case-identifier}  # Programmatic identifier for API access
+name: {project}.{kebab-case-identifier}  # Programmatic identifier for API access
 category: {pattern|convention|principle|style-guide}
 importance: {high|medium|low}
 status: active
@@ -13,7 +13,7 @@ tags:
   - {tag1}
   - {tag2}
 related:
-  - "[[related-entity-or-concept]]"
+  - "[[{project}.related-entity-or-concept]]"
 usage:
   last_used: {YYYY-MM-DD}
   use_count: 1
@@ -69,10 +69,10 @@ patterns:
 
 ## Related Entities
 
-- [[implementing-entity]] — Entity that implements this concept
-- [[related-concept]] — Related concept
+- [[{project}.implementing-entity]] — Entity that implements this concept
+- [[{project}.related-concept]] — Related concept
 
 ## References
 
-**Applies to:** [[entity-a]], [[entity-b]]
-**Related concepts:** [[concept-x]]
+**Applies to:** [[{project}.entity-a]], [[{project}.entity-b]]
+**Related concepts:** [[{project}.concept-x]]
