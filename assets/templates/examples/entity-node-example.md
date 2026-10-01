@@ -73,17 +73,17 @@ checks:
 
 ## Implementation Files
 
-- `src/auth/__init__.py` — Module exports
-- `src/auth/service.py` — Core authentication logic
-- `src/auth/middleware.py` — Request protection
-- `src/auth/jwt_handler.py` — Token creation/validation
-- `src/auth/decorators.py` — Auth decorators
+- `src/auth/__init__.py` - Module exports
+- `src/auth/service.py` - Core authentication logic
+- `src/auth/middleware.py` - Request protection
+- `src/auth/jwt_handler.py` - Token creation/validation
+- `src/auth/decorators.py` - Auth decorators
 
 ## Related Entities
 
-- [[inference-api.session-manager]] — Handles session lifecycle
-- [[inference-api.jwt-handler]] — Token creation/validation
-- [[inference-api.rate-limiter]] — Request throttling
+- [[inference-api.session-manager]] - Handles session lifecycle
+- [[inference-api.jwt-handler]] - Token creation/validation
+- [[inference-api.rate-limiter]] - Request throttling
 
 ## References
 

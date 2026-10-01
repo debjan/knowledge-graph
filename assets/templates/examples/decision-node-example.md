@@ -91,8 +91,8 @@ constraints:
 
 ## Related Entities
 
-- [[my-project.auth-module]] — Uses sessions for auth
-- [[my-project.session-manager]] — Redis session implementation
+- [[my-project.auth-module]] - Uses sessions for auth
+- [[my-project.session-manager]] - Redis session implementation
 
 ## References
 

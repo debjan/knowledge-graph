@@ -95,8 +95,8 @@ class UserRepository:
 
 ## Related Entities
 
-- [[my-project.database-module]] — Database connection management
-- [[my-project.user-service]] — Uses UserRepository
+- [[my-project.database-module]] - Database connection management
+- [[my-project.user-service]] - Uses UserRepository
 
 ## References
 

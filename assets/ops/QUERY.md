@@ -1,4 +1,4 @@
-# QUERY Operation — Read from Knowledge Graph
+# QUERY Operation - Read from Knowledge Graph
 
 ## When to Use This Operation
 
@@ -112,7 +112,7 @@ For each matching entity:
 - Log: "Malformed frontmatter in [[{project}.{entity}]]: {error}"
 - Skip parsing for this entity
 - Continue with remaining entities
-- Note in report: "Skipped {project}.{entity} — malformed frontmatter"
+- Note in report: "Skipped {project}.{entity} - malformed frontmatter"
 
 ### Step 6: Traverse Related Entities
 
@@ -229,8 +229,8 @@ flowchart TD
 
 User can skip or disable:
 
-- "Skip auto-query" — Skip this session
-- "Disable auto-query" — Don't run in future sessions
+- "Skip auto-query" - Skip this session
+- "Disable auto-query" - Don't run in future sessions
 
 Store preference in `{graph_path}/.auto-query-config`:
 
@@ -446,7 +446,7 @@ If cache hit, indicate in results:
 | File match  | Yes       | 2 min  |
 | Entity name | Yes       | 10 min |
 | Search      | Yes       | 5 min  |
-| Explore     | No        | —      |
+| Explore     | No        | -      |
 
 ### When NOT to Cache
 
@@ -460,13 +460,13 @@ If cache hit, indicate in results:
 
 **Related Operations:**
 
-- [ADD](./ADD.md) — Create new entities
-- [UPDATE](./UPDATE.md) — Modify existing entities
-- [DELETE](./DELETE.md) — Remove entities
-- [RENAME](./RENAME.md) — Rename/move entities
+- [ADD](./ADD.md) - Create new entities
+- [UPDATE](./UPDATE.md) - Modify existing entities
+- [DELETE](./DELETE.md) - Remove entities
+- [RENAME](./RENAME.md) - Rename/move entities
 
 **Related Assets:**
 
-- [graph-traversal.md](../helpers/graph-traversal.md) — Traverse related entities
-- [relevance-scoring.md](../helpers/relevance-scoring.md) — Compute relevance scores
-- [token-budget.md](../helpers/token-budget.md) — Manage token budget
+- [graph-traversal.md](../helpers/graph-traversal.md) - Traverse related entities
+- [relevance-scoring.md](../helpers/relevance-scoring.md) - Compute relevance scores
+- [token-budget.md](../helpers/token-budget.md) - Manage token budget

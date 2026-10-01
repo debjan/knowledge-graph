@@ -69,8 +69,8 @@ patterns:
 
 ## Related Entities
 
-- [[{project}.implementing-entity]] — Entity that implements this concept
-- [[{project}.related-concept]] — Related concept
+- [[{project}.implementing-entity]] - Entity that implements this concept
+- [[{project}.related-concept]] - Related concept
 
 ## References
 

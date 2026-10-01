@@ -84,6 +84,11 @@ Before writing, validate Mermaid syntax:
    - **PASS:** `participant API as MOEPP API`
 3. **Valid arrow syntax**: Use `->>`, `-->>`, `--x`
 4. **No emoji**: Replace with text labels
+5. **Labels are escaped and content-derived text is contained** (enforce [content-safety.md](../../helpers/content-safety.md) RULE C5):
+   - IDs are generated (`A`, `B`, `C`), never entity names
+   - Display text is quoted: `participant A as "{project}.{name}"`
+   - `"` inside a label becomes `&quot;`; `-->`, `;`, `%`, and newlines are stripped
+   - Any `%%{` in generated output is a validation failure - entity content must never emit Mermaid directives
 
 **Auto-validation code (run before write):**
 

@@ -136,7 +136,7 @@ In sequence diagrams, every participant declaration MUST start with `participant
 
 ### Rule 7: No Dots in Node/Participant IDs
 
-Node and participant IDs must not contain dots — the namespaced `{project}.{name}` identifier goes in the bracketed display text (or `as` alias), never in the ID. Dotted IDs break parsing in several Mermaid renderers.
+Node and participant IDs must not contain dots - the namespaced `{project}.{name}` identifier goes in the bracketed display text (or `as` alias), never in the ID. Dotted IDs break parsing in several Mermaid renderers.
 
 **Invalid (dotted ID):**
 

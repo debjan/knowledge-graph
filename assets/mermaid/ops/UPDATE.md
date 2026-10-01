@@ -76,6 +76,7 @@ Before writing, validate Mermaid syntax:
 2. **Proper participant naming**: Use `participant ID as Display Name` format
 3. **Valid arrow syntax**: Use `->>`, `-->>`, `--x`
 4. **No emoji**: Replace with text labels
+5. **Labels escaped, content contained**: IDs generated (never entity names), display text quoted, `"` escaped as `&quot;`, `-->`/`;`/`%`/newlines stripped, and no `%%{` directive may come from entity content (enforce [content-safety.md](../../helpers/content-safety.md) RULE C5)
 
 [Reference](../helpers/syntax-validation.md)
 

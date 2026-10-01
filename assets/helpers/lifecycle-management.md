@@ -226,7 +226,7 @@ Entity will be removed along with:
 | Threshold | Days  | Action                  |
 | --------- | ----- | ----------------------- |
 | Recent    | 0-30  | Normal use              |
-| Aging     | 31-60 | Monitor, no warning     |
+| Aging     | 31-60 | Monitor                 |
 | Stale     | 61-90 | Suggest verification    |
 | Unused    | 90+   | Flag for cleanup review |
 
@@ -297,7 +297,7 @@ lifecycle_state: |
 | ACTIVE     | Recently used (within 90 days)                        | 90+ days unused          | Show as "Active"                |
 | STALE      | Files missing OR needs_update flag OR 90+ days unused | User verifies entity     | Show "🔄 Update" or "⏰ Verify" |
 | DEPRECATED | needs_delete flag set                                 | Entity deleted           | Show "⚠️ Delete"                |
-| DELETED    | Entity file removed                                   | —                        | Removed from base               |
+| DELETED    | Entity file removed                                   | -                        | Removed from base               |
 
 ## Bulk Sync (Multiple Entities)
 
@@ -379,7 +379,7 @@ When multiple source files are merged into one (the most common bulk-sync scenar
 
 4. **Fix re-routed references:**
    - In surviving entity, ensure it now references entities that the consumed entities previously referenced (if the consolidated code still touches them)
-   - Update any remaining wiki-links in body text that point to now-deleted entities — either remove or redirect
+   - Update any remaining wiki-links in body text that point to now-deleted entities - either remove or redirect
 
 5. **Fix body references:**
    - In all non-deleted entities, find body references `[[{project}.deleted-entity]]` and decide: remove or redirect

@@ -63,11 +63,11 @@ flowchart TD
 
 **UPDATE is triggered when:**
 
-1. **Entity exists and code changed** — The file being modified already has a corresponding entity in the knowledge graph
-2. **Implementation files modified** — Changes to files listed in entity's `implementation_files` field
-3. **Import changes in existing entity** — New dependencies or removed dependencies in an entity's code
-4. **User explicitly requests update** — "update entity X", "refresh entity X"
-5. **Entity flagged as stale** — `needs_update: true` from health check
+1. **Entity exists and code changed** - The file being modified already has a corresponding entity in the knowledge graph
+2. **Implementation files modified** - Changes to files listed in entity's `implementation_files` field
+3. **Import changes in existing entity** - New dependencies or removed dependencies in an entity's code
+4. **User explicitly requests update** - "update entity X", "refresh entity X"
+5. **Entity flagged as stale** - `needs_update: true` from health check
 
 **UPDATE workflow:**
 
@@ -81,9 +81,9 @@ flowchart TD
 
 **ADD is triggered when:**
 
-1. **New file created** — No corresponding entity exists
-2. **New entity candidate detected** — New class, function, or module with no existing entity
-3. **User explicitly requests creation** — "remember this", "save to memory", "create entity"
+1. **New file created** - No corresponding entity exists
+2. **New entity candidate detected** - New class, function, or module with no existing entity
+3. **User explicitly requests creation** - "remember this", "save to memory", "create entity"
 
 **ADD workflow:**
 
@@ -95,9 +95,9 @@ flowchart TD
 
 **DELETE is triggered when:**
 
-1. **Entity flagged for deletion** — `needs_delete: true` from health check
-2. **User explicitly requests deletion** — "delete entity X", "remove entity X"
-3. **Implementation files no longer exist** — All files in `implementation_files` removed
+1. **Entity flagged for deletion** - `needs_delete: true` from health check
+2. **User explicitly requests deletion** - "delete entity X", "remove entity X"
+3. **Implementation files no longer exist** - All files in `implementation_files` removed
 
 **DELETE workflow:**
 
@@ -185,26 +185,26 @@ Should I update the entity?
 
 Files matching these patterns are never analyzed:
 
-- `*.test.py`, `*.spec.ts` — Test files
-- `__pycache__/`, `.venv/`, `node_modules/` — Cache/modules
-- `*.config.js`, `*.config.py` — Config files
-- `README.md`, `CHANGELOG.md` — Documentation
+- `*.test.py`, `*.spec.ts` - Test files
+- `__pycache__/`, `.venv/`, `node_modules/` - Cache/modules
+- `*.config.js`, `*.config.py` - Config files
+- `README.md`, `CHANGELOG.md` - Documentation
 
 ## Implementation Notes
 
 1. Use `Grep` with regex patterns for detection
 2. Parse file content with `Read` for detailed analysis
 3. Check entity existence before deciding ADD vs UPDATE
-4. Keep heuristics conservative — better to miss than over-capture
+4. Keep heuristics conservative - better to miss than over-capture
 5. Log all detections for debugging (don't prompt for low-confidence)
 
 ## When to Use RENAME
 
 **RENAME is triggered when:**
 
-1. **User explicitly requests rename** — "rename entity X to Y", "move entity X"
-2. **File renamed with same content** — git shows `git mv` or content similarity >0.8
-3. **Entity name is misleading** — rename for clarity
+1. **User explicitly requests rename** - "rename entity X to Y", "move entity X"
+2. **File renamed with same content** - git shows `git mv` or content similarity >0.8
+3. **Entity name is misleading** - rename for clarity
 
 **RENAME vs DELETE+ADD:**
 

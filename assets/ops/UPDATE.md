@@ -1,4 +1,4 @@
-# UPDATE Operation — Modify Entity in Knowledge Graph
+# UPDATE Operation - Modify Entity in Knowledge Graph
 
 ## When to Use This Operation
 
@@ -68,7 +68,7 @@ changelog:
 - Lead with action verb: "Added", "Fixed", "Updated", "Removed"
 - Never modify or delete existing changelog entries - append only
 
-### RULE 4 — HEALTH FLAGS CLEARED
+### RULE 4 - HEALTH FLAGS CLEARED
 
 > Clear all health flags after successful UPDATE.
 
@@ -81,6 +81,14 @@ Resolve `{vault}`, `{memory}` and `{project}`:
 If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
 Set `{graph_path}` = `{vault}/{memory}/{project}/`
+
+Validate `{project}` and `{entity-name}` before building any path (enforce [safe-paths.md](../helpers/safe-paths.md)):
+
+1. Both match `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$` - lowercase kebab-case, 1-64 chars
+2. Each is a single path component - no `/`, `\`, `..`, quotes, `$`, backticks, whitespace, or leading `-`
+3. The resolved target stays inside `{graph_path}/entities/` and ends in `.md`
+
+If validation fails, report the offending value and abort. Never update a path that fails containment.
 
 Load `obsidian-markdown` skill
 
@@ -208,6 +216,8 @@ On confirmation:
 6. Set `health.last_verified = {today}`
 7. Write updated entity
 
+**Serialization:** merged values keep their original provenance and are serialized per [content-safety.md](../helpers/content-safety.md). Never splice a new description, tag, or changelog string into the frontmatter by hand - re-serialize the whole block.
+
 **Error handling:** If `Write()` fails (disk full, permissions):
 
 - Report: "Failed to write updated entity: {error}"
@@ -309,14 +319,15 @@ Read [mermaid](../mermaid/ops/UPDATE.md)
 
 **Related Operations:**
 
-- [ADD](./ADD.md) — Create new entities
-- [DELETE](./DELETE.md) — Remove entities
-- [RENAME](./RENAME.md) — Rename/move entities
-- [QUERY](./QUERY.md) — Load entity context
-- [SYNC](./SYNC.md) — Bulk sync graph from codebase (for multi-entity changes)
-- [VERIFY](./VERIFY.md) — Graph integrity verification
+- [ADD](./ADD.md) - Create new entities
+- [DELETE](./DELETE.md) - Remove entities
+- [RENAME](./RENAME.md) - Rename/move entities
+- [QUERY](./QUERY.md) - Load entity context
+- [SYNC](./SYNC.md) - Bulk sync graph from codebase (for multi-entity changes)
+- [VERIFY](./VERIFY.md) - Graph integrity verification
 
 **Related Assets:**
 
-- [entity-extraction.md](../helpers/entity-extraction.md) — Extract entity metadata
-- [lifecycle-management.md](../helpers/lifecycle-management.md) — Manage entity lifecycle
+- [entity-extraction.md](../helpers/entity-extraction.md) - Extract entity metadata
+- [content-safety.md](../helpers/content-safety.md) - Re-serialize merged values safely
+- [lifecycle-management.md](../helpers/lifecycle-management.md) - Manage entity lifecycle

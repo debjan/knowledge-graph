@@ -78,8 +78,8 @@ constraints:
 
 ## Related Entities
 
-- [[{project}.affected-entity]] — Entity affected by this decision
-- [[{project}.related-decision]] — Related ADR
+- [[{project}.affected-entity]] - Entity affected by this decision
+- [[{project}.related-decision]] - Related ADR
 
 ## References
 

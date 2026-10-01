@@ -89,8 +89,8 @@ patterns:
 
 ## Related Entities
 
-- [[{project}.involved-entity]] — Entity involved in this process
-- [[{project}.related-process]] — Related process
+- [[{project}.involved-entity]] - Entity involved in this process
+- [[{project}.related-process]] - Related process
 
 ## References
 

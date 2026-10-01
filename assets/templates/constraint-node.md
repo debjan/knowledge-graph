@@ -80,8 +80,8 @@ constraints:
 
 ## Related Entities
 
-- [[{project}.affected-entity]] — Entity constrained by this
-- [[{project}.related-constraint]] — Related constraint
+- [[{project}.affected-entity]] - Entity constrained by this
+- [[{project}.related-constraint]] - Related constraint
 
 ## References
 

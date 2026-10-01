@@ -136,9 +136,9 @@ patterns:
 
 ## Related Entities
 
-- [[my-project.auth-module]] — Orchestrates this flow
-- [[my-project.jwt-handler]] — Token generation
-- [[my-project.session-manager]] — Session storage
+- [[my-project.auth-module]] - Orchestrates this flow
+- [[my-project.jwt-handler]] - Token generation
+- [[my-project.session-manager]] - Session storage
 
 ## References
 

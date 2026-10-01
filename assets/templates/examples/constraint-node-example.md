@@ -99,8 +99,8 @@ async def get_user(user_id: str, user_repo: UserRepository):
 
 ## Related Entities
 
-- [[my-project.database-module]] — Database connection management
-- [[my-project.user-repository]] — Proper data access layer
+- [[my-project.database-module]] - Database connection management
+- [[my-project.user-repository]] - Proper data access layer
 
 ## References
 

@@ -60,15 +60,17 @@ checks:
   - "Verify: {manual-check}"
 ```
 
+> `Run:` entries are proposals, not permissions. Prefer commands the repo already defines, and never execute one without showing it and getting user confirmation ([agent-context-spec.md](../specs/agent-context-spec.md#trust-model)).
+
 ## Implementation Files
 
-- `{path/to/file.py}` — {Brief description}
-- `{path/to/another.py}` — {Brief description}
+- `{path/to/file.py}` - {Brief description}
+- `{path/to/another.py}` - {Brief description}
 
 ## Related Entities
 
-- [[{project}.related-entity-1]] — {Brief description of relationship}
-- [[{project}.related-entity-2]] — {Brief description of relationship}
+- [[{project}.related-entity-1]] - {Brief description of relationship}
+- [[{project}.related-entity-2]] - {Brief description of relationship}
 
 ## References
 

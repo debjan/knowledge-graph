@@ -180,7 +180,7 @@ graph TD
 
 Before generating, verify:
 
-- [ ] All node IDs are valid (no spaces or dots — put `{project}.{name}` in display text)
+- [ ] All node IDs are valid (no spaces or dots - put `{project}.{name}` in display text)
 - [ ] Edges use `-->` not arrows with spaces
 - [ ] Class definitions come before usage
 - [ ] No cycles unless intentional (documented)

@@ -30,7 +30,7 @@ sequenceDiagram
 ## Syntax Validation Checklist
 
 - [ ] No list syntax conflicts
-- [ ] Participant names use valid identifiers (no spaces or dots in IDs — put the `{project}.{name}` in the `as` display text)
+- [ ] Participant names use valid identifiers (no spaces or dots in IDs - put the `{project}.{name}` in the `as` display text)
 - [ ] Messages use proper arrow syntax (`->>`, `-->>`, `--x`)
 - [ ] No emoji in participant names or messages
 - [ ] Proper activation/deactivation pairing (`+`/`-`)

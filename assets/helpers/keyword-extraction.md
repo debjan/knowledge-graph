@@ -6,10 +6,10 @@ Extract keywords from entity metadata and current context for proactive retrieva
 
 ## Keyword Sources
 
-1. **ENTITY TRIGGERS** — pattern: `src/auth/service.py` → `["auth", "service"]`
-2. **ENTITY TAGS** — tags: `[auth, jwt, session, token]` → direct use
-3. **TASK DESCRIPTION** — "Fix the authentication token refresh bug" → `["authentication", "token", "refresh", "bug"]`
-4. **OPEN FILES** — Current file paths → path components
+1. **ENTITY TRIGGERS** - pattern: `src/auth/service.py` → `["auth", "service"]`
+2. **ENTITY TAGS** - tags: `[auth, jwt, session, token]` → direct use
+3. **TASK DESCRIPTION** - "Fix the authentication token refresh bug" → `["authentication", "token", "refresh", "bug"]`
+4. **OPEN FILES** - Current file paths → path components
 
 ## Extraction Methods
 
@@ -50,7 +50,7 @@ def extract_from_trigger(pattern: str) -> list[str]:
 
 ### From Tags
 
-Tags are already keywords — use directly.
+Tags are already keywords - use directly.
 
 ```python
 def extract_from_tags(tags: list[str]) -> list[str]:

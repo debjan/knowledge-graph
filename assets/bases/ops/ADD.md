@@ -57,12 +57,14 @@ Write("{graph_path}/{project}.graph.base", template_content)
 2. **Check filters format**: Must use `and:`, `or:`, or `not:` NOT lists
 3. **Check formulas**: All string formulas properly quoted
 4. **Check properties**: All `formula.X` references have matching `X` in formulas section
+5. **Check provenance**: formulas, filters, and property paths come only from the template - never from entity file content ([content-safety.md](../../helpers/content-safety.md) RULE C5). Folder names interpolated into `file.inFolder(...)` must be validated identifiers ([safe-paths.md](../../helpers/safe-paths.md)).
 
 **Validation errors to catch:**
 
 - `filters: [{property: ...}]` ❌ → Must be `filters: {or: [...]}`
 - Formulas with unescaped quotes
 - Missing formula definitions
+- A quoted value that closes its expression early or spans a newline
 
 ### Step 5: Validate with Obsidian CLI
 
@@ -71,6 +73,7 @@ Write("{graph_path}/{project}.graph.base", template_content)
 After writing `{project}.graph.base`, validate the file:
 
 ```shell
+# {memory} and {project} validated per safe-paths.md; single literal path, no globs
 obsidian base:views path="{memory}/{project}/{project}.graph.base"
 ```
 
@@ -103,9 +106,9 @@ Per-project dashboard with:
 
 - **Filters:** In-folder checks for all entity types (entities, concepts, decisions, constraints, processes)
 - **Formulas:**
-  - `days_since_used` — Days since last usage
-  - `health_status` — Visual health indicator (Delete/Update/OK)
-  - `activity_level` — Usage activity (Active/Used/Never)
+  - `days_since_used` - Days since last usage
+  - `health_status` - Visual health indicator (Delete/Update/OK)
+  - `activity_level` - Usage activity (Active/Used/Never)
 - **Views:**
   - Overview table
   - Needs Attention table (filtered by health flags)

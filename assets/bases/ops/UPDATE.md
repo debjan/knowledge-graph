@@ -63,8 +63,9 @@ On confirmation:
 
 1. Load `obsidian-bases` skill
 2. Read [graph-base template](../templates/graph-base.yaml)
-3. Write to: `{graph_path}/{project}.graph.base`
-4. Report: "{project}.graph.base updated with {count} formulas"
+3. Substitute folder names only from validated identifiers; keep formulas and filter expressions byte-identical to the template (no entity content inlined)
+4. Write to: `{graph_path}/{project}.graph.base`
+5. Report: "{project}.graph.base updated with {count} formulas"
 
 ### Step 5: Report Results
 

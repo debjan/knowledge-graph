@@ -1,4 +1,4 @@
-# SYNC Operation — Bulk Reconcile Graph with Codebase
+# SYNC Operation - Bulk Reconcile Graph with Codebase
 
 ## When to Use This Operation
 
@@ -22,7 +22,7 @@
 
 ### RULE 2: ATOMICITY PER ENTITY
 
-> Each entity operation within a sync (ADD/UPDATE/DELETE) must follow that operation's atomicity rules. If one entity fails, the others should still complete — log partial results.
+> Each entity operation within a sync (ADD/UPDATE/DELETE) must follow that operation's atomicity rules. If one entity fails, the others should still complete - log partial results.
 
 ### RULE 3: AUTO-VERIFY AFTER SYNC
 
@@ -205,6 +205,8 @@ Collect all findings into a single tabular report:
 
 For each category, apply the corresponding operation:
 
+**Validate every batch item first.** Names and paths derived from the diff are untrusted input: run [safe-paths.md](../helpers/safe-paths.md) on each entity name and [content-safety.md](../helpers/content-safety.md) on each extracted field before delegating to ADD, UPDATE, or DELETE. Skip and report an item that fails validation instead of creating a node with a bad name.
+
 #### CATEGORY A: ADD
 
 For each NEW candidate, use the [ADD.md](./ADD.md) workflow:
@@ -297,7 +299,7 @@ If VERIFY fails, report issues and offer to fix them (re-run verify after fixes)
 ## Best Practices
 
 - Run SYNC after every significant refactor (file moves, merges, renames, deletions)
-- Always review the diff report before applying changes — the agent's automatic categorization may need human judgment
+- Always review the diff report before applying changes - the agent's automatic categorization may need human judgment
 - For consolidation events (multiple files → one), prefer UPDATE on the surviving entity + DELETE on the consumed entities, then verify bidirectional references
 - For rename events, use the RENAME operation on the entity rather than DELETE + ADD to preserve changelog history
 - If the diff report shows too many false positives, tighten the significance heuristics (line count thresholds, file type filters)
@@ -306,14 +308,15 @@ If VERIFY fails, report issues and offer to fix them (re-run verify after fixes)
 
 **Related Operations:**
 
-- [ADD](./ADD.md) — Create new entities
-- [UPDATE](./UPDATE.md) — Modify existing entities
-- [DELETE](./DELETE.md) — Remove entities
-- [RENAME](./RENAME.md) — Rename/move entities
-- [VERIFY](./VERIFY.md) — Graph integrity verification
+- [ADD](./ADD.md) - Create new entities
+- [UPDATE](./UPDATE.md) - Modify existing entities
+- [DELETE](./DELETE.md) - Remove entities
+- [RENAME](./RENAME.md) - Rename/move entities
+- [VERIFY](./VERIFY.md) - Graph integrity verification
 
 **Related Assets:**
 
-- [entity-extraction.md](../helpers/entity-extraction.md) — Extract entity metadata
-- [lifecycle-management.md](../helpers/lifecycle-management.md) — Bulk sync and lifecycle management
-- [change-detection.md](../helpers/change-detection.md) — Code change heuristics
+- [entity-extraction.md](../helpers/entity-extraction.md) - Extract entity metadata
+- [lifecycle-management.md](../helpers/lifecycle-management.md) - Bulk sync and lifecycle management
+- [content-safety.md](../helpers/content-safety.md) - Serialize batch-extracted values safely
+- [change-detection.md](../helpers/change-detection.md) - Code change heuristics

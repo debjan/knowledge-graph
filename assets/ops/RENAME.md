@@ -1,4 +1,4 @@
-# RENAME Operation — Rename Entity in Knowledge Graph
+# RENAME Operation - Rename Entity in Knowledge Graph
 
 Rename an entity while preserving its history, usage metadata, and relationships.
 
@@ -13,7 +13,7 @@ Rename an entity while preserving its history, usage metadata, and relationships
 
 - User wants to create a new entity (use ADD operation)
 - User wants to update entity content without changing its identity (use UPDATE operation)
-- User wants to delete and start fresh (use DELETE then ADD — loses history intentionally)
+- User wants to delete and start fresh (use DELETE then ADD - loses history intentionally)
 - Entity doesn't exist (entity must exist to be renamed)
 
 ## Critical Rules
@@ -36,13 +36,21 @@ Rename an entity while preserving its history, usage metadata, and relationships
 
 ## Workflow
 
-### Step 1: Resolve Paths
+### Step 1: Resolve and Validate Paths
 
 Resolve `{vault}`, `{memory}` and `{project}`:
 
 If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
 Set `{graph_path}` = `{vault}/{memory}/{project}/`
+
+Validate both names before they reach a path (enforce [safe-paths.md](../helpers/safe-paths.md)):
+
+1. `{project}`, `{old-name}` and `{new-name}` match `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$`
+2. Each name is a single path component - no `/`, `\`, `..`, quotes, `$`, backticks, whitespace, or leading `-`
+3. Every resolved path stays inside `{graph_path}/entities/` and ends in `.md`
+
+If a name fails validation, report the offending value and abort. Never escape or trim it into something valid.
 
 ### Step 2: Load Existing Entity
 
@@ -82,10 +90,10 @@ Extract from old entity:
 
 - All frontmatter fields (preserve exactly)
 - Full document content
-- Usage statistics (`usage.last_used`, `usage.use_count` — do NOT reset)
+- Usage statistics (`usage.last_used`, `usage.use_count` - do NOT reset)
 - Changelog (preserve full history)
 - Health flags (note current state, clear after successful rename)
-- Bidirectional references (`related` field — list of entities pointing to old name)
+- Bidirectional references (`related` field - list of entities pointing to old name)
 
 Prepare new entity document with:
 
@@ -98,11 +106,21 @@ Prepare new entity document with:
 
 ### Step 5: Update Bidirectional References
 
-Collect all entities that reference `{project}.{old-name}`:
+Collect all entities that reference `{project}.{old-name}`.
 
-```shell
-Grep(pattern: "\[\[{project}.{old-name}\]\]", path: "{graph_path}/entities", type: "md")
+The search pattern is built from a validated name and escaped, so a crafted name cannot widen or break the match:
+
+```python
+import re
+
+# {old-name} validated per Step 1 (allowlist, single component)
+pattern = re.escape(f"[[{{project}}.{old_name}]]")
+matches = Grep(pattern=pattern, path="{graph_path}/entities", type="md")
 ```
+
+If the Grep tool supports fixed-string search, prefer it over a regex (`fixed_strings: true` / literal mode) - no escaping needed.
+
+Never pass `{old-name}` into a regex or shell pattern raw: an unescaped `.` matches any character, and `*`, `[`, `(` or `\` change the pattern or fail outright.
 
 For each referencing entity:
 
@@ -130,7 +148,7 @@ Write("{graph_path}/entities/{project}.{new-name}.md", {prepared_content})
 **Error handling:** If `Write()` fails:
 
 - Report: "Failed to create new entity file: {error}"
-- DO NOT delete old entity — preserve original
+- DO NOT delete old entity - preserve original
 - Abort operation without changing bidirectional refs
 - Rollback any bidirectional ref updates if possible
 - User must resolve file system issue and retry
@@ -170,11 +188,19 @@ See: [[{project}.{new-name}]] for current entity information.
 
 If tombstone created successfully:
 
-Remove old entity file (replaced by tombstone):
+Remove the old entity file (replaced by tombstone), using the literal validated path only:
 
 ```shell
-rm "{graph_path}/entities/{project}.{old-name}.md"
+rm -- "{graph_path}/entities/{project}.{old-name}.md"
 ```
+
+**Windows:** `rm` maps to `Remove-Item`, which has no `--`. Use `-LiteralPath` and never add `-Recurse`:
+
+```powershell
+Remove-Item -LiteralPath "{graph_path}\entities\{project}.{old-name}.md" -Confirm:$false
+```
+
+**Post-condition:** the old path no longer exists and the tombstone is still present. Do not retry with a glob or recursive delete.
 
 **Note:** Only delete if tombstone exists. If tombstone failed, keep old file and note: "Old entity kept due to tombstone failure".
 
@@ -193,7 +219,7 @@ Mark rename as complete in new entity:
 3. Set `health.needs_delete = false`
 4. Set `health.stale_files = []`
 
-**Note:** Preserve `usage.*` fields — do not modify.
+**Note:** Preserve `usage.*` fields - do not modify.
 
 ### Step 10: Propagate Rename to Visualizations
 
@@ -290,8 +316,8 @@ if tombstone.exists():
 
 ## Best Practices
 
-- Always confirm before renaming — user must explicitly approve
-- **RESERVED:** Never rename core system entities (ADD, UPDATE, DELETE, QUERY, RENAME) — could break operation detection
+- Always confirm before renaming - user must explicitly approve
+- **RESERVED:** Never rename core system entities (ADD, UPDATE, DELETE, QUERY, RENAME) - could break operation detection
 - Rename early in project lifecycle to minimize broken references
 - Use tombstone redirects for graceful migration over time
 - After rename, do a quick grep to find any remaining hardcoded references
@@ -325,12 +351,13 @@ if old_file.exists() and not new_file.exists() and content_similarity > 0.8:
 
 **Related Operations:**
 
-- [ADD](./ADD.md) — Create new entities
-- [UPDATE](./UPDATE.md) — Modify existing entities
-- [DELETE](./DELETE.md) — Remove entities
-- [QUERY](./QUERY.md) — Load entity context
+- [ADD](./ADD.md) - Create new entities
+- [UPDATE](./UPDATE.md) - Modify existing entities
+- [DELETE](./DELETE.md) - Remove entities
+- [QUERY](./QUERY.md) - Load entity context
 
 **Related Assets:**
 
-- [change-detection.md](../helpers/change-detection.md) — Detect file renames
-- [lifecycle-management.md](../helpers/lifecycle-management.md) — Manage entity lifecycle
+- [change-detection.md](../helpers/change-detection.md) - Detect file renames
+- [safe-paths.md](../helpers/safe-paths.md) - Validate old and new names before any file operation
+- [lifecycle-management.md](../helpers/lifecycle-management.md) - Manage entity lifecycle

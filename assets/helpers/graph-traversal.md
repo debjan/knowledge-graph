@@ -111,7 +111,7 @@ def traverse(entity_name, depth, visited, entities):
 | Depth | Use Case                    |
 | ----- | --------------------------- |
 | 1     | Direct dependencies only    |
-| 2     | Default — immediate context |
+| 2     | Default - immediate context |
 | 3     | Broader architecture view   |
 | 4+    | Full graph (expensive)      |
 
