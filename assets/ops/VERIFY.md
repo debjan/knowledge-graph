@@ -38,9 +38,41 @@
 
 If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
-### Step 2: Run Verification Checks
+### Step 2: Run the Mechanical Checks First
 
-Run all ten checks sequentially. Each check produces PASS/FAIL with details.
+Ten checks must run. All ten are mechanical enough to script, so **run the bundled validator before reviewing anything by hand**:
+
+```shell
+# --codebase is the project root; it resolves implementation_files for CHECK 4
+python scripts/validate_graph.py "{graph_path}" --codebase "{codebase}"
+```
+
+Options:
+
+- `--json` - machine-readable report, one row per check (`checks[].status`), plus `agent_context_commands`
+- `--strict` - treat warnings as failures
+- `--codebase <path>` - where `implementation_files` are relative to; defaults to the current directory
+
+Exit codes: `0` clean, `1` findings (errors, or warnings under `--strict`), `2` usage or path error.
+
+**What the script does and does not cover:**
+
+| Check | Script | Then do by hand |
+| ----- | ------ | --------------- |
+| 1. Wiki-Link Resolution | yes - resolves every `[[target]]` against node names and filenames | review anything the resolver could not decide |
+| 2. Bidirectional Backlinks | yes - reads `related` on both sides | fix through UPDATE, not by hand-editing |
+| 3. Duplicate Related Entries | yes | - |
+| 4. Implementation Files | yes, when `--codebase` is correct | confirm a missing file means "moved", not "deleted" |
+| 5. Frontmatter Completeness | yes - required fields per type, plus `health.*` for entities | - |
+| 6. Updated Date Freshness | yes, > 90 days is a warning | judge whether content is actually stale |
+| 7. Changelog Consistency | yes - duplicate versions, backwards dates | - |
+| 8. Namespace Conformance | yes - filenames, `name:`, `project:`, links | bulk migrations |
+| 9. Path Safety | yes - identifiers, containment, symlinks, case collisions | - |
+| 10. Content Safety | yes - frontmatter breakouts, fences, invisible chars, Mermaid directives | prompt-injection review, which no parser can do |
+
+If `scripts/validate_graph.py` is missing or Python is unavailable, run the checks below manually and say so in the report - do not claim a check passed when it was not run.
+
+The manual descriptions below remain the normative definition: the script implements them, so a disagreement between the two is a bug in the script.
 
 ---
 
@@ -450,14 +482,16 @@ FAIL: 2 issues found:
 
 ### Step 3: Aggregate Report
 
-Compile all check results into a single summary:
+Start from the script's JSON output and fill in the checks it cannot judge. Compile a single summary:
 
 ```
 ### Graph Integrity Report
 
 **Graph:** {graph_path}
+**Codebase:** {codebase}
 **Total files:** 25 (14 entities, 2 concepts, 2 decisions, 1 constraint, 2 processes, 4 root)
 **Last verified:** {today}
+**Mechanical check:** `validate_graph.py` exit {code} ({errors} error(s), {warnings} warning(s))
 
 #### Results Summary
 

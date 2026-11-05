@@ -48,7 +48,7 @@ Resolve `{vault}`, `{memory}`, `{project}`, and `{codebase}`:
 
 If ambiguous, enforce [Critical Rule 1](../../SKILL.md#rule-1-resolve-paths-once)
 
-Load `obsidian-markdown` skill
+If the host supports skill-to-skill invocation, load the `obsidian-markdown` skill; otherwise follow its conventions manually
 
 ### Step 2: Scan Codebase
 
@@ -260,18 +260,15 @@ For each orphan issue, add the missing backlink to the target entity's `related`
 
 ### Step 6: Verify Integrity
 
-After all changes are applied, automatically run [VERIFY.md](./VERIFY.md):
+After all changes are applied, run the mechanical validator, then [VERIFY.md](./VERIFY.md) for the checks a script cannot judge:
 
+```shell
+python scripts/validate_graph.py "{graph_path}" --codebase "{codebase}"
 ```
 
-1. Check all wiki-links resolve
-2. Check all backlinks are bidirectional
-3. Check all implementation files exist
-4. Check all entities have complete frontmatter
+Report the exit code and the full CHECK 1-10 table. Do not summarize a failing run as "sync complete"; a bulk operation is exactly when links and backlinks break.
 
-```
-
-If VERIFY fails, report issues and offer to fix them (re-run verify after fixes).
+If VERIFY reports issues, present them and offer to fix them through UPDATE (re-run the validator after fixes).
 
 ### Step 7: Report Summary
 
@@ -289,7 +286,7 @@ If VERIFY fails, report issues and offer to fix them (re-run verify after fixes)
 - BACKLINK: {n} orphan references fixed
 
 **Entities after:** {n}
-**Graph integrity:** PASS (verified)
+**Graph integrity:** PASS (`validate_graph.py` exit 0)
 
 **Paths:**
 - Entities: `{graph_path}/entities/`

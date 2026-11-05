@@ -90,7 +90,7 @@ Validate `{project}` and `{entity-name}` before building any path (enforce [safe
 
 If validation fails, report the offending value and abort. Never update a path that fails containment.
 
-Load `obsidian-markdown` skill
+If the host supports skill-to-skill invocation, load the `obsidian-markdown` skill; otherwise follow its conventions manually
 
 ### Step 2: Codebase Discovery (Bulk Awareness)
 

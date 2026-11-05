@@ -24,17 +24,31 @@ assets/
 │       RENAME.md — Rename entity workflow
 │       SYNC.md — Synchronize entity workflow
 │       UPDATE.md — Modify entity workflow
-│       Verify.md — Verify entity workflow
+│       VERIFY.md — Verify entity workflow
 ├───specs/
 │       agent-context-spec.md — Executable block schema specification
-└───templates/
-        concept-node.md — Concept document template
-        constraint-node.md — Constraint document template
-        decision-node.md — ADR document template
-        entity-node.md — Entity document template
-        process-node.md — Process document template
-        templates.md - Templates usage description
+├───templates/
+│       concept-node.md — Concept document template
+│       constraint-node.md — Constraint document template
+│       decision-node.md — ADR document template
+│       entity-node.md — Entity document template
+│       process-node.md — Process document template
+│       index-node.md — Project landing page template
+│       templates.md - Templates usage description
+│       examples/ - One filled-in example per node type
+├───mermaid/
+│       README.md, ops/, templates/ (optional)
+│       helpers/syntax-validation.md
+└───bases/
+        README.md, ops/, templates/graph-base.yaml (optional)
+
+scripts/  (sibling of assets/)
+        validate_graph.py - Mechanical implementation of VERIFY CHECK 1-10
+tests/
+        test_validate_graph.py - unittest suite for the validator
 ```
+
+The [scripts](../scripts/) and [tests](../tests/) folders sit next to `assets/`, at the skill root.
 
 ## Operation Loading
 
@@ -47,6 +61,15 @@ assets/
 | **SYNC**   | `ops/SYNC.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`, `helpers/lifecycle-management.md`, `helpers/safe-paths.md`, `helpers/content-safety.md` |
 | **VERIFY** | `ops/VERIFY.md` → `helpers/lifecycle-management.md`, `helpers/safe-paths.md`, `helpers/content-safety.md`                                                              |
 | **QUERY**  | `ops/QUERY.md` → `helpers/graph-traversal.md`                                                                                                                          |
+
+### Scripts
+
+| File | Purpose |
+| ---- | ------- |
+| `scripts/validate_graph.py` | Runs VERIFY CHECK 1-10; `--json` for machine-readable output, `--codebase` for CHECK 4, `--strict` to fail on warnings |
+| `tests/test_validate_graph.py` | Coverage for the validator: identifiers, containment, content safety, the new integrity checks, and serializer round-trips |
+
+Run the tests with `python -m unittest discover -s tests`.
 
 ### Optional features
 

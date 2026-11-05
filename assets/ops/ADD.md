@@ -55,7 +55,7 @@ Validate `{project}` and `{entity-name}` before building any path (enforce [safe
 
 If validation fails, ask for a kebab-case name. Never silently normalize an unsafe value into a "close enough" path.
 
-Load `obsidian-markdown` skill
+If the host supports skill-to-skill invocation, load the `obsidian-markdown` skill; otherwise follow its conventions manually
 
 ### Step 2: Check if Entity Exists
 

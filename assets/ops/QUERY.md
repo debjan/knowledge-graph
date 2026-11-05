@@ -31,6 +31,15 @@
 
 > Load context within budget. Prioritize high-relevance entities. Summarize overflow.
 
+### RULE 5: QUERY IS READ-ONLY BY DEFAULT
+
+> Loading context must not change the graph. Steps 9 and 10 below describe optional bookkeeping, and both are **skipped unless the user asks for them**:
+>
+> - Staleness findings are reported, not written. Use UPDATE if the user wants `health.*` persisted.
+> - `usage.*` is only refreshed when the user says "track this query" (or equivalent), because it rewrites every loaded node.
+>
+> This keeps QUERY safe to run proactively: a read that silently rewrites twenty files is a surprise, and it makes the whole graph dirty before the user has decided anything. If bookkeeping is requested, it is a write and follows RULE 3 of SKILL.md (confirm before writing).
+
 ## Workflow
 
 ### Step 1: Resolve Paths
@@ -189,7 +198,9 @@ Use [token-budget.md](../helpers/token-budget.md):
 *{omitted_count} lower-relevance entities omitted. Use "load full context for {name}" to see all.*
 ```
 
-### Step 9: Stale Entity Check
+### Step 9: Stale Entity Check (report only)
+
+**Do not write.** Report what you find; persisting `health.*` is an UPDATE operation.
 
 For each implementation file listed:
 
@@ -199,9 +210,9 @@ For each implementation file listed:
    Glob(pattern: "{implementation_file}")   # literal path, no shell involved
    ```
 2. If not found:
-   - Add to `health.stale_files`
-   - Set `health.needs_update = true`
    - Warn: "⚠ [[{project}.{entity}]] may be stale: {file} not found"
+   - Offer: "Mark this entity `needs_update`? [Yes] [No]" - only on yes does STEP 10b below run
+   - Never update the file as part of a plain read
 
 **Error handling:** If the existence check fails (permissions, malformed path):
 
@@ -209,9 +220,11 @@ For each implementation file listed:
 - Mark file as "unknown status" rather than stale
 - Warn: "⚠ Cannot verify [[{project}.{entity}]] implementation file"
 
-### Step 10: Update Usage Metadata
+### Step 10: Usage Metadata (opt-in)
 
-For each entity loaded (full or summarized):
+**Skip by default.** Run this only when the user asks to track the query, because it rewrites every loaded entity.
+
+When requested, for each entity loaded (full or summarized), propose the change and confirm before writing:
 
 ```yaml
 usage:
@@ -219,37 +232,37 @@ usage:
   use_count: {previous_count + 1}
 ```
 
-Update entity file with new usage values.
+Present one confirmation covering the batch ("Update usage on 4 entities? [Yes] [No]"), then write. If the graph is in version control, say so - the diff will be noisy.
+
+### Step 10b: Persist Stale Flags (opt-in)
+
+Only after the user answers *Yes* in Step 9. Re-serialize the frontmatter through UPDATE (never hand-edit): set `health.stale_files` and `health.needs_update`, and add a changelog entry noting the staleness check.
 
 ## Auto-Query
 
-Auto-query triggers at session start (skill initialization).
+Auto-query runs when the skill is invoked for a task. It is a first step, not a hook.
 
 ### Auto-Query Flow
 
 ```mermaid
 flowchart TD
-    A[Session Start] --> B[Detect context: open files, task description, current directory]
+    A[Skill invoked for a task] --> B[Detect context: open files, task description, current directory]
     B --> C[Proactive Retrieval: Glob triggers, Ripgrep keywords, Merge results]
     C --> D[Compute Relevance: Score each entity, Sort descending]
     D --> E[Apply Token Budget: Load top 70% full, Summarize 30%]
     E --> F[Present Context: Briefing, Feedback prompt]
 ```
 
+**Auto-query is opportunistic, not automatic.** A skill cannot hook "session start": it only runs when the description matches or the user invokes it. So treat this as "run QUERY once at the start of *this* invocation, before the real work", not as a background process. If the user's first message is not about the codebase (small talk, an unrelated question), skip it.
+
 ### Skip/Disable Auto-Query
 
-User can skip or disable:
+The user can decline for the session ("skip auto-query") or turn it off. Keep that preference **in the conversation**, not on disk:
 
-- "Skip auto-query" - Skip this session
-- "Disable auto-query" - Don't run in future sessions
+- Skip: drop the context load for the current invocation and continue
+- Disable: stop offering it for the rest of the session; re-enable if the user asks
 
-Store preference in `{graph_path}/.auto-query-config`:
-
-```yaml
-auto_query:
-  enabled: true|false
-  last_skipped: {date}
-```
+Do **not** write `{graph_path}/.auto-query-config` (or any dotfile) into the graph. It is not a node, it breaks VERIFY CHECK 9 (unexpected root artifact), and it pollutes a directory a human browses. If a durable preference is genuinely needed, ask the user to put it in their global agent config instead.
 
 ## Proactive Retrieval
 
@@ -381,92 +394,17 @@ If user accepts:
 - Compute relevance before loading to prioritize
 - Respect token budget to avoid context explosion
 
-## Query Result Caching
+## Reusing Results Within a Turn
 
-### Purpose
+There is no persistent query cache. An agent has no process to hold one between turns, so "cache with a 5-minute TTL" is fiction - and the pseudo-code it used to contain did not even parse.
 
-Cache query results to avoid recomputing identical queries within a session.
+What does help:
 
-### Cache Key
+- **Within one turn**, load an entity once and reuse it rather than re-reading the same path for each follow-up question.
+- **Across turns**, just run QUERY again. It is a few small file reads; the token budget already limits how much is loaded.
+- If the user says "fresh" or "reload", ignore anything already in context and re-read from disk.
 
-Cache key = hash of: query type + query term + depth + budget
-
-```python
-cache_key = f"{query_type}:{query_term}:{depth}:{budget}"
-```
-
-### Cache Storage
-
-Store in session state (memory only, not persisted):
-
-```python
-query_cache: Dict[str, CachedResult] = {}
-
-class CachedResult:
-    entities: List[Entity]
-    timestamp: datetime
-    ttl_seconds: int = 300  # 5 minutes
-```
-
-### Cache Lookup
-
-Before running QUERY workflow:
-
-```python
-def check_query_cache(query_params) -> Optional[CachedResult]:
-    key = generate_cache_key(query_params)
-    if key in query_cache:
-        cached = query_cache[key]
-        if (now() - cached.timestamp).seconds < cached.ttl_seconds:
-            return cached.entities
-        else:
-            del query_cache[key]  # Expired
-    return None
-```
-
-### Cache Population (After Step 10)
-
-After computing final results:
-
-```python
-def cache_query_result(query_params, entities):
-    key = generate_cache_key(query_params)
-    query_cache[key] = CachedResult(
-        entities=entities,
-        timestamp=now()
-        ttl_seconds=300
-    )
-    # Prune old entries if cache > 100 items
-    if len(query_cache) > 100:
-        oldest = min(query_cache.items(), key=lambda x: x[1].timestamp)
-        del query_cache[oldest[0]]
-```
-
-### Cache Hit Reporting
-
-If cache hit, indicate in results:
-
-```
-### QUERY Complete (Cached)
-**Cached:** Results from {cache_age} seconds ago
-**Loaded:** {count} entities ({tokens} tokens)
-```
-
-### When to Cache
-
-| Query Type  | Cacheable | TTL    |
-| ----------- | --------- | ------ |
-| Auto-query  | Yes       | 5 min  |
-| File match  | Yes       | 2 min  |
-| Entity name | Yes       | 10 min |
-| Search      | Yes       | 5 min  |
-| Explore     | No        | -      |
-
-### When NOT to Cache
-
-- **Health check queries**: Real-time stale detection
-- **User override "fresh"**: Explicit "fresh" or "reload" in query
-- **Budget change**: Different token budget = different results
+If you need the same context repeatedly in a long session, say so in the briefing ("loaded 6 entities") so the user can see what is already in context.
 
 ---
 

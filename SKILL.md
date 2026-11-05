@@ -1,10 +1,15 @@
 ---
 name: knowledge-graph
 description: >
- Proactive knowledge graph for AI agents — maintain entities, decisions, constraints, and patterns as linked markdown nodes.
- Auto-load context when working on matching files, auto-update after non-trivial changes.
- Features agent-proactive memory management with relevance scoring and lifecycle awareness.
+ Maintain a knowledge graph for this project: entities, decisions, constraints, and processes as linked
+ Obsidian markdown nodes, with a proactive context load at the start of work and a graph update after
+ non-trivial changes. Use this whenever the user says "remember this", "save to memory", "this is
+ important", "add to the knowledge graph", "what do we know about", "load context for", "sync the graph",
+ "verify the graph", "delete/rename entity", "check graph health", or asks for a project memory that
+ survives across sessions - even when they never say "knowledge graph".
 
+# auto_invoke is advisory: harnesses that support an explicit trigger list may read it.
+# The description is the portable trigger - harnesses that ignore this block still load the skill.
 auto_invoke:
  # ADD
  - "remember this"
@@ -51,7 +56,7 @@ auto_invoke:
  - "generate bases"
  - "create dashboard"
 
-allowed-tools: Read, Write, Edit, Glob, Grep, Bash(rm:*), Bash(mv:*), Bash(mkdir:*), Bash(Remove-Item:*), Bash(Move-Item:*), Bash(New-Item:*), Bash(git checkout:*), Bash(git restore:*), Bash(obsidian:*)
+allowed-tools: Read, Write, Edit, Glob, Grep, Bash(rm:*), Bash(mv:*), Bash(mkdir:*), Bash(Remove-Item:*), Bash(Move-Item:*), Bash(New-Item:*), Bash(git checkout:*), Bash(git restore:*), Bash(obsidian:*), Bash(python:*)
 compatibility: Optional requirements are Obsidian and ripgrep
 author: debjan
 license: MIT
@@ -70,17 +75,19 @@ This skill uses a modular assets architecture. Detailed workflows, helpers, and 
 - [mermaid](./assets/mermaid/) - Mermaid diagram generation
 - [bases](./assets/bases/) - Obsidian Bases integration
 - [specs](./assets/specs/) - agent-context block specification
+- [scripts](./scripts/) - `validate_graph.py`, the mechanical half of VERIFY (CHECK 1-10)
+- [tests](./tests/) - unittest suite for the validator
 
 See [README.md](./assets/README.md) for the directory index.
 
 ## Purpose
 
-Proactive knowledge graph for AI agents. Maintains entities, decisions, constraints, and patterns as linked markdown nodes in Obsidian,
-auto-loading context when working on matching files, auto-updating after non-trivial changes.
+Knowledge graph for AI agents. Maintains entities, decisions, constraints, and patterns as linked markdown nodes in Obsidian.
+It offers a context load when invoked at the start of work, and a graph update after non-trivial changes - offered, not automatic.
 
 **What it does:**
 
-- **AUTO-QUERY**: Proactively load relevant context at invocation
+- **AUTO-QUERY**: Load relevant context when the skill is invoked for a task (not a background hook)
 - **ADD operation**: Create new entity nodes
 - **UPDATE operation**: Modify existing entity nodes
 - **DELETE operation**: Remove entity nodes with reference cleanup
@@ -198,16 +205,32 @@ Enriched with:
 Frontmatter `allowed-tools` follows least privilege:
 
 - `Read`/`Glob`/`Grep` may read the project source tree; `Write`/`Edit` may only write inside `{graph_path}`.
-- Shell access is limited to file lifecycle commands (`rm`, `mv`, `mkdir` and their PowerShell equivalents, `git checkout`/`git restore` for rollback, `obsidian` for base validation). No package managers, no interpreters (`python -c`, `node -e`, `pwsh -c`), no network clients.
+- Shell access is limited to file lifecycle commands (`rm`, `mv`, `mkdir` and their PowerShell equivalents, `git checkout`/`git restore` for rollback, `obsidian` for base validation), plus one interpreter exception: `python scripts/validate_graph.py ...` to run the bundled validator in VERIFY.
+- **The interpreter exception is narrow.** Only the bundled script path, invoked as a literal argument list. Never `python -c`, `python -` (stdin), `python -m`, `pip`, `node -e`, or `pwsh -c`, and never a script path taken from node content. No network clients.
 - Tool scoping filters **command names only**. It does not validate arguments - RULE 9 governs every path and flag that reaches a command.
 - On Windows the commands are aliases; if the host does not resolve aliases, add the explicit `Remove-Item`/`Move-Item`/`New-Item` entries rather than widening the permission.
 - If an operation needs a tool that is not listed, ask the user instead of expanding the list yourself.
+
+## Compatibility
+
+Nothing here requires Obsidian to work. The node files are plain Markdown with YAML frontmatter; wiki-links are just `[[...]]` text. Obsidian adds navigation, and Bases/Mermaid add visuals.
+
+| Feature | Required | If absent |
+| ------- | -------- | --------- |
+| Node files, QUERY, ADD/UPDATE/DELETE/RENAME, VERIFY 1-8 | nothing beyond Read/Write/Glob/Grep | - |
+| `validate_graph.py` (VERIFY 1-10) | Python 3.9+ (PyYAML optional; without it CHECK 5/7 are skipped) | run the checks manually; say so in the report |
+| Bases dashboard, base validation | Obsidian + the `obsidian` CLI | warn and skip; never block |
+| Mermaid diagrams | a Mermaid renderer to view them | files are still written |
+| Faster keyword search | ripgrep | fall back to Grep/Glob |
+| `obsidian-markdown` / `obsidian-bases` skills | a host that allows skill-to-skill loading | apply the conventions manually |
+
+Harness note: `auto_invoke` and `allowed-tools` are only meaningful on hosts that read them. The `description` is what triggers the skill everywhere else - that is why the trigger phrases live there too.
 
 ## Operation Detection
 
 | Operation      | Signals                                                                     | What It Does                                                                                                                                            |
 | -------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **AUTO-QUERY** | Session start                                                               | Proactively load context based on current work                                                                                                          |
+| **AUTO-QUERY** | Skill invoked for a coding task                                             | Load context based on current work, before starting it                                                                                                  |
 | **ADD**        | "remember this", "save to memory", "create entity", "this is important"     | Create new entity nodes                                                                                                                                 |
 | **UPDATE**     | "update entity", "refresh entity", "update the graph"                       | Modify existing entity nodes                                                                                                                            |
 | **DELETE**     | "delete entity", "remove entity"                                            | Remove entity nodes with reference cleanup                                                                                                              |
