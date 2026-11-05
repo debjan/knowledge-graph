@@ -1,6 +1,7 @@
 ---
 type: decision
-name: my-project.ADR-002
+name: my-project.adr-002
+title: "ADR-002: Use Redis for Session Storage"
 category: adr
 importance: high
 status: active
@@ -96,4 +97,4 @@ constraints:
 
 ## References
 
-**Related:** [[my-project.ADR-001-database-choice]]
+**Related:** [[my-project.adr-001-database-choice]]

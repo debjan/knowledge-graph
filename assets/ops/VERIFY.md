@@ -212,6 +212,9 @@ Stale files count: 2
 | decision   | `type`, `name`, `title`, `status`, `created`, `updated`, `related`                                                                  |
 | constraint | `type`, `name`, `category`, `importance`, `status`, `created`, `updated`, `related`                                                 |
 | process    | `type`, `name`, `category`, `importance`, `status`, `created`, `updated`, `related`                                                 |
+| tombstone  | `type`, `name`, `redirect_to`, `created`                                                                                            |
+
+`tombstone` is the node RENAME leaves at the old path. It is intentionally minimal: it carries `redirect_to` and no `usage`/`health` block, so do not report those as missing. A tombstone whose `redirect_to` target does not exist is a CHECK 1 failure like any other broken link.
 
 **Health sub-fields:**
 

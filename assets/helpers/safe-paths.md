@@ -21,16 +21,21 @@ Load this helper before **any** write, move, rename or delete: ADD, UPDATE, DELE
 
 Identifiers are validated as **single path components** against an allowlist. Anything that does not match is rejected, never "cleaned up" or escaped.
 
-| Identifier                          | Rule                                                                     |
-| ----------------------------------- | ------------------------------------------------------------------------ |
-| `{project}`, `{memory}`             | `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$` (kebab-case, 1-64 chars)         |
-| `{name}`, `{entity-name}`, `{related}`, `{old-name}`, `{new-name}` | `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$` (kebab-case, 1-64 chars) |
-| `{type}`                            | one of `entities`, `concepts`, `decisions`, `constraints`, `processes`    |
-| `{vault}`                           | absolute path, resolved from `OBSIDIAN_VAULT`, discovery, or explicit user input |
+Two different validation profiles apply, because two different things are being named.
+
+| Identifier                                                                             | Profile      | Rule                                                                                 |
+| -------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------ |
+| `{project}`, `{name}`, `{entity-name}`, `{related}`, `{old-name}`, `{new-name}` | **created**  | `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$` (lowercase kebab-case, 1-64 chars)          |
+| `{memory}`                                                                             | **existing** | `^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$` (single component; **case preserved** as detected) |
+| `{type}`                                                                               | fixed        | one of `entities`, `concepts`, `decisions`, `constraints`, `processes`             |
+| `{vault}`                                                                              | absolute     | absolute path, from `OBSIDIAN_VAULT`, discovery, or explicit user input               |
+
+**Why two profiles.** The skill *creates* project ids and node names, so it can insist on lowercase kebab-case. It does **not** create the memory folder - that folder may already exist as `Memory`, `memory`, or `MEMORY`, and on a case-sensitive filesystem rewriting it silently produces a path that does not exist. So `{memory}` is validated as a safe single component while keeping its detected case verbatim.
 
 Notes:
 
-- Names are normalized to lowercase kebab-case at creation time. Validation rejects uppercase rather than lowercasing silently.
+- Node and project names are normalized to lowercase kebab-case at creation time. Validation rejects uppercase rather than lowercasing silently. Include the ADR number in the name in lowercase: `adr-002-use-redis`, not `ADR-002`.
+- A decision's human-readable form (`ADR-002: Use Redis for Session Storage`) belongs in the `title` field, never in the identifier. Identifiers stay machine-safe; titles may contain anything.
 - A dot is only allowed as the `{project}.{name}` separator, never inside a component.
 - 64 characters is a hard limit; longer names are rejected, not truncated.
 

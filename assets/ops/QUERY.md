@@ -55,28 +55,35 @@ Set `{graph_path}` = `{vault}/{memory}/{project}/`
 
 #### File Match (Auto-load)
 
-```shell
-Grep(pattern: "pattern:.*{file_path}", path: "{graph_path}", type: "md")
-```
-
-Or:
+Match against the `triggers` list inside each node's `agent-context` block. Read the block, then compare the current file path with each `pattern` in-process - do not grep a pattern built from a file path, since a path containing regex metacharacters would change the query.
 
 ```
 Glob(pattern: "{graph_path}/entities/*.md")
-Read each → check triggers in agent-context block
+Read each → parse agent-context triggers → match against the current file path
 ```
 
 #### Entity Name
+
+Validate `{project}` and `{entity-name}` per [safe-paths.md](../helpers/safe-paths.md) before building the path (same check as ADD/UPDATE Step 1). Then:
 
 ```
 Read("{graph_path}/entities/{project}.{entity-name}.md")
 ```
 
+An unsafe or non-existent name is reported, never passed to a shell command.
+
 #### Search
 
+Search for the user's term as **plain text**, not as a regex. `{search_term}` comes from a user message and may contain any character.
+
 ```shell
-Grep(pattern: "{search_term}", path: "{graph_path}", type: "md", -i: true)
+# Fixed-string (literal) search: the term is data, never a pattern
+rg -l -F -i --glob "*.md" -- "{search_term}" "{graph_path}"
 ```
+
+If the Grep tool is used instead, pass it in literal/fixed-string mode (`fixed_strings: true`), or escape the term before use. Never interpolate `{search_term}` into a regex raw: `(`, `[`, `*` and `\` either change the match or fail outright.
+
+**Scope:** `{graph_path}` is a validated, quoted, single path component chain. Never widen a search to the vault root or to `$HOME`.
 
 #### Proactive Retrieval (Auto-Query)
 
@@ -186,15 +193,19 @@ Use [token-budget.md](../helpers/token-budget.md):
 
 For each implementation file listed:
 
-1. Check if file exists: `Bash("test -f {file}")`
+1. Check existence with the read-only file tools, **never** by interpolating the stored path into a shell command. `implementation_files` entries come from node content, which RULE 10 treats as untrusted; a path like `x; rm -rf ~` must not reach a shell. Use `Glob` with the literal path, or a filesystem existence check, and treat a parse error as "unknown".
+
+   ```
+   Glob(pattern: "{implementation_file}")   # literal path, no shell involved
+   ```
 2. If not found:
    - Add to `health.stale_files`
    - Set `health.needs_update = true`
    - Warn: "⚠ [[{project}.{entity}]] may be stale: {file} not found"
 
-**Error handling:** If `test -f` command fails (permissions, invalid path):
+**Error handling:** If the existence check fails (permissions, malformed path):
 
-- Log: "Cannot check file existence: {error}"
+- Log: "Cannot check file existence: {error}" (report the path quoted, never execute it)
 - Mark file as "unknown status" rather than stale
 - Warn: "⚠ Cannot verify [[{project}.{entity}]] implementation file"
 
@@ -252,11 +263,14 @@ Use [keyword-extraction.md](../helpers/keyword-extraction.md):
 
 ### Ripgrep Search
 
-If ripgrep available:
+If ripgrep is available, search the codebase with the extracted keywords. Keywords are derived from node content and file paths, so build the alternation from escaped words (or pass them as repeated fixed-string patterns) and never paste free text in:
 
 ```shell
-rg -l -i "keyword1|keyword2|keyword3" --type code {project_path}
+# keywords come from validated extraction; each is a fixed string
+rg -l -F -i -e "auth" -e "service" -e "middleware" -- "{codebase}"
 ```
+
+There is no `--type code` type in ripgrep (`rg: unrecognized file type: code`). Either omit `--type` or use a real type such as `--type py` / `--type ts`.
 
 Timeout: 5 seconds.
 

@@ -173,7 +173,8 @@ Enriched with:
 
 > Validate every identifier against an allowlist before it reaches a path or a shell command.
 >
-> - Allowed identifier form: `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$` (kebab-case, 1-64 chars). Applies to `{project}`, `{memory}`, and every node name.
+> - **Created identifiers** (`{project}` and every node name): `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$` (lowercase kebab-case, 1-64 chars). Names are created by the skill, so it may reject uppercase outright. Decision names carry the ADR number in lowercase (`adr-002-use-redis`); the readable `ADR-002: ...` text goes in `title`.
+> - **`{memory}` is not created by the skill**: it must be a safe single component (`^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$`) whose **case is preserved exactly as detected**, since rewriting it can point at a folder that does not exist on a case-sensitive filesystem.
 > - Reject `..`, `/`, `\`, `$`, backticks, quotes, glob characters, whitespace, control characters, and any value starting with `-`. Reject, never sanitize.
 > - Confirm the resolved path is still inside `{graph_path}` and still matches `{graph_path}/{type}/{project}.{name}.md`.
 > - Never pass raw user text to `rm`, `mv`, `git checkout`, `find -delete`, or `eval`. Use literal, validated paths with `--` before the path.
@@ -238,7 +239,7 @@ The knowledge graph supports multiple node types. Use the appropriate template:
 | -------------- | ------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------- |
 | **Entity**     | Code modules, classes, APIs    | [entity-node.md](./assets/templates/entity-node.md)         | `[[{project}.auth-service]]` - Auth module               |
 | **Concept**    | Design patterns, conventions   | [concept-node.md](./assets/templates/concept-node.md)       | `[[{project}.repository-pattern]]` - Data access pattern |
-| **Decision**   | Architecture decisions (ADR)   | [decision-node.md](./assets/templates/decision-node.md)     | `[[{project}.ADR-001]]` - Why we chose Redis             |
+| **Decision**   | Architecture decisions (ADR)   | [decision-node.md](./assets/templates/decision-node.md)     | `[[{project}.adr-001-use-redis]]` - Why we chose Redis   |
 | **Constraint** | Gotchas, limitations, warnings | [constraint-node.md](./assets/templates/constraint-node.md) | `[[{project}.rate-limit-warning]]` - API limits          |
 | **Process**    | Workflows, algorithms          | [process-node.md](./assets/templates/process-node.md)       | `[[{project}.deploy-pipeline]]` - Deployment workflow    |
 

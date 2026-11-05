@@ -187,26 +187,39 @@ def weight_keywords(keywords: dict[str, str]) -> dict[str, float]:
 ### Building Search Pattern
 
 ```python
-def build_ripgrep_pattern(keywords: list[str]) -> str:
-    """
-    Build ripgrep search pattern from keywords.
+import re
 
-    ["auth", "jwt", "token"] → "auth|jwt|token"
+def build_ripgrep_args(keywords: list[str]) -> list[str]:
     """
-    return "|".join(keywords)
+    Build ripgrep arguments from keywords.
+
+    ["auth", "jwt", "token"] → ["-e", "auth", "-e", "jwt", "-e", "token"]
+
+    Each keyword is a separate fixed-string pattern. Escape it if you ever need
+    regex mode, otherwise keywords like "c++" or "foo|bar" change the search.
+    """
+    args: list[str] = []
+    for keyword in keywords:
+        if not keyword or not keyword.strip():
+            continue
+        args.extend(["-e", re.escape(keyword)])
+    return args
 ```
 
 ### Search Command
 
 ```shell
-rg -l -i "auth|jwt|token" --type code {project_path}
+# Each keyword is passed separately, so no alternation or shell quoting is involved
+rg -l -i -e "auth" -e "jwt" -e "token" -- "{codebase}"
 ```
 
 Flags:
 
 - `-l`: List files only (not matching lines)
 - `-i`: Case insensitive
-- `--type code`: Limit to code files
+- `-e`: One pattern per keyword (repeatable); avoids building an alternation string
+- `--type <name>`: Optional, and only for real ripgrep types (`py`, `js`, `ts`, `rust`, …). There is **no** `--type code`; ripgrep fails with `unrecognized file type: code`. Omit the flag to search everything and filter by extension yourself.
+- `--`: End of options, so a leading-dash path is never parsed as a flag
 
 ### Timeout
 

@@ -1,6 +1,7 @@
 ---
 type: decision
 name: {project}.{kebab-case-identifier}  # Programmatic identifier for API access
+title: "ADR-{N}: {Decision Title}"        # Human-readable; VERIFY CHECK 5 requires title for decisions
 category: {adr|choice|tradeoff}
 importance: {high|medium|low}
 status: {active|deprecated|superseded}
@@ -83,5 +84,5 @@ constraints:
 
 ## References
 
-**Supersedes:** [[{project}.ADR-{N-1}]] (if applicable)
-**Superseded by:** [[{project}.ADR-{N+1}]] (if applicable)
+**Supersedes:** [[{project}.adr-{N-1}-{slug}]] (if applicable)
+**Superseded by:** [[{project}.adr-{N+1}-{slug}]] (if applicable)

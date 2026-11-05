@@ -104,7 +104,26 @@ Prepare new entity document with:
 - Keep all `usage.*` fields unchanged
 - Keep all `health.*` fields (will be cleared after successful rename)
 
-### Step 5: Update Bidirectional References
+### Step 5: Write New Entity
+
+Write the new entity **before** touching references or the old file. Every later step depends on the new path existing, so this is the ordering that keeps the graph resolvable at every point.
+
+The `entities/` folder already exists (the old entity lives in it), so no directory work is needed:
+
+```
+Write("{graph_path}/entities/{project}.{new-name}.md", {prepared_content})
+```
+
+**Error handling:** If `Write()` fails:
+
+- Report: "Failed to create new entity file: {error}"
+- DO NOT delete or modify the old entity - preserve original
+- Abort operation before any reference or tombstone change
+- Nothing changed on disk except the failed write; retry after fixing the filesystem issue
+
+**Post-condition:** `{graph_path}/entities/{project}.{new-name}.md` exists and the old file is untouched. Do not continue until this holds.
+
+### Step 6: Update Bidirectional References
 
 Collect all entities that reference `{project}.{old-name}`.
 
@@ -122,6 +141,11 @@ If the Grep tool supports fixed-string search, prefer it over a regex (`fixed_st
 
 Never pass `{old-name}` into a regex or shell pattern raw: an unescaped `.` matches any character, and `*`, `[`, `(` or `\` change the pattern or fail outright.
 
+**Two-phase update (recommended):**
+
+1. **Collect:** read every referrer, record its current `related` list, and build the edited content. Do not write yet.
+2. **Apply:** if all referrers were read successfully, write them all. The new entity from Step 5 already exists, so an updated link always resolves.
+
 For each referencing entity:
 
 1. Load the entity: `Read("{graph_path}/entities/{project}.{referrer}.md")`
@@ -129,39 +153,33 @@ For each referencing entity:
 3. Update timestamp: mention "Updated references: {project}.{old-name} → {project}.{new-name}"
 4. Write updated entity
 
-**Error handling:** If updating a referencing entity fails:
+**Error handling:** If a referencing entity cannot be updated:
 
-- Log which entities succeeded/failed
-- Continue with remaining entities
-- Report partial success with list of failed updates
-- User must manually fix remaining refs after rename completes
+- Roll back the referrer edits already applied, using the `related` lists recorded in the collect phase
+- If rollback succeeds: remove the new entity file created in Step 5 (the only file this operation created) and abort, leaving the graph exactly as it was
+- If rollback fails: keep the new entity, do **not** create the tombstone (the old name must keep resolving), and report partial success with the list of failed referrers
+- Never leave a referrer pointing at `{project}.{new-name}` when that file does not exist
 
-### Step 6: Write New Entity
+### Step 7: Replace Old Entity with Tombstone
 
-Create new entity file:
+The old path is **overwritten** with tombstone content - it is not written and then deleted. A separate write-then-delete pair can fail between the two steps and destroy both the old node and the redirect; a single overwrite cannot.
 
-```shell
-mkdir -p "{graph_path}/entities/"
-Write("{graph_path}/entities/{project}.{new-name}.md", {prepared_content})
+Writing to the old path overwrites an existing file, so the explicit user confirmation from the rename request is required here (RULE 9). Present it as:
+
+```
+Replace {project}.{old-name}.md with a redirect tombstone?
+- New entity: {graph_path}/entities/{project}.{new-name}.md (written)
+- Old path keeps a tombstone pointing at the new entity
+[Replace with tombstone] [Keep old file unchanged]
 ```
 
-**Error handling:** If `Write()` fails:
-
-- Report: "Failed to create new entity file: {error}"
-- DO NOT delete old entity - preserve original
-- Abort operation without changing bidirectional refs
-- Rollback any bidirectional ref updates if possible
-- User must resolve file system issue and retry
-
-### Step 7: Create Tombstone
-
-Create tombstone file at old path with redirect:
+Tombstone content:
 
 ```
 ---
 name: {project}.{old-name}
 type: tombstone
-redirect_to: [[{project}.{new-name}]]
+redirect_to: "[[{project}.{new-name}]]"
 created: {today}
 ---
 
@@ -177,40 +195,16 @@ See: [[{project}.{new-name}]] for current entity information.
 *Remove this file after 30 days or when all references are updated.*
 ```
 
-**Error handling:** If tombstone write fails:
+**Error handling:** If the tombstone write fails:
 
-- Warn: "Could not create tombstone at {old-path}"
-- Rename operation succeeded but old location is empty
-- Note in report: "Manual tombstone creation may be needed"
-- Continue operation
+- Warn: "Could not write tombstone at {old-path}"
+- The old entity keeps its original content (a failed overwrite leaves the file intact), so the old name still resolves to valid content
+- Note in report: "Old entity kept unchanged; manual tombstone creation may be needed"
+- Continue operation - this is a degraded but consistent state
 
-### Step 8: Delete Old Entity (Optional Cleanup)
+**Post-condition:** `{graph_path}/entities/{project}.{new-name}.md` exists and `{graph_path}/entities/{project}.{old-name}.md` contains the tombstone with `redirect_to`. Never run a delete, `rm`, or glob to "finish" the rename; overwriting is the whole operation.
 
-If tombstone created successfully:
-
-Remove the old entity file (replaced by tombstone), using the literal validated path only:
-
-```shell
-rm -- "{graph_path}/entities/{project}.{old-name}.md"
-```
-
-**Windows:** `rm` maps to `Remove-Item`, which has no `--`. Use `-LiteralPath` and never add `-Recurse`:
-
-```powershell
-Remove-Item -LiteralPath "{graph_path}\entities\{project}.{old-name}.md" -Confirm:$false
-```
-
-**Post-condition:** the old path no longer exists and the tombstone is still present. Do not retry with a glob or recursive delete.
-
-**Note:** Only delete if tombstone exists. If tombstone failed, keep old file and note: "Old entity kept due to tombstone failure".
-
-**Error handling:** If `rm` fails (permissions, file locked):
-
-- Warn: "Could not remove old entity file: {error}"
-- Tombstone exists, so old file shouldn't be accessed
-- Note: "Manual cleanup may be needed"
-
-### Step 9: Clear Health Flags
+### Step 8: Clear Health Flags
 
 Mark rename as complete in new entity:
 
@@ -221,7 +215,7 @@ Mark rename as complete in new entity:
 
 **Note:** Preserve `usage.*` fields - do not modify.
 
-### Step 10: Propagate Rename to Visualizations
+### Step 9: Propagate Rename to Visualizations
 
 Update visualization artifacts:
 
@@ -242,7 +236,7 @@ Update visualization artifacts:
 1. Update entity counts
 2. Update any direct references to old name
 
-### Step 11: Report RENAME
+### Step 10: Report RENAME
 
 ```
 ### RENAME Complete
@@ -286,9 +280,7 @@ If partial success:
 3. Consider creating tombstone at {old-path}
 ```
 
-## Health
-
- Check Integration
+## Health Check Integration
 
 Use [lifecycle-management.md](../helpers/lifecycle-management.md) to update entity lifecycle.
 
@@ -306,12 +298,10 @@ for ref in new_entity.related:
         Write(ref_entity)
 ```
 
-If tombstone exists, schedule it for cleanup after 30 days:
+The tombstone needs no extra metadata: it is a `type: tombstone` node with `redirect_to`, and the audit trail lives in the renamed entity's changelog. Do not invent a cleanup field such as `health.auto_delete_after` - it is not in the node schema and VERIFY CHECK 5 would flag it. Record the intended removal date in the report instead:
 
-```python
-if tombstone.exists():
-    tombstone.health.auto_delete_after = {today} + 30_days
-    Write(tombstone)
+```
+Tombstone removal: review {project}.{old-name} after 30 days or when no references remain.
 ```
 
 ## Best Practices

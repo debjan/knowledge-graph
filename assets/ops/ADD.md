@@ -181,11 +181,34 @@ Proceed? [Yes / No / Edit]
 
 Wait for user confirmation.
 
-### Step 8: Write Entity Document
+### Step 8: Create Project Directory Structure
 
-1 Ensure [directories exists](#step-11-create-project-directory-structure)
+**When first entity in new project, create all folders:**
 
-2. Write the document:
+```shell
+mkdir -p "{graph_path}/entities"
+mkdir -p "{graph_path}/concepts"
+mkdir -p "{graph_path}/decisions"
+mkdir -p "{graph_path}/constraints"
+mkdir -p "{graph_path}/processes"
+```
+
+**Why:** Graph traversal expects all folders to exist. Prevents errors in subsequent operations.
+
+
+**Windows:** `mkdir -p` is unavailable; use `New-Item` with `-ItemType Directory` and `-Force` (idempotent, never recursive-deletes):
+
+```powershell
+New-Item -ItemType Directory -Force -Path "{graph_path}\entities", "{graph_path}\concepts", "{graph_path}\decisions", "{graph_path}\constraints", "{graph_path}\processes" | Out-Null
+```
+
+**Post-condition:** all five folders exist. The entity write in Step 9 depends on this; if any folder is missing, stop and report it rather than writing into a partial tree.
+
+### Step 9: Write Entity Document
+
+The target folder was created in Step 8; confirm it exists before writing.
+
+1. Write the document:
 
 ```
 Write(file_path: "{graph_path}/entities/{project}.{entity-name}.md", content: {prepared_content})
@@ -203,7 +226,7 @@ Before writing, run the pre-write checklist in [content-safety.md](../helpers/co
 - Abort: Cancel operation without writing
 - Do not report success if write failed
 
-### Step 9: Maintain Bidirectional References
+### Step 10: Maintain Bidirectional References
 
 **Two-phase approach (Recommended):**
 
@@ -218,44 +241,7 @@ For each entity in `related`:
 3. If not, add it: `Edit(...)` to add `[[{project}.{entity-name}]]` to related
 4. If related entity not found, warn: "Related entity [[{project}.{related}]] not found"
 
-### Step 10: Report Results
-
-```
-### ADD Complete
-
-**Entity:** {project}.{name}
-**Path:** `{graph_path}/entities/{project}.{name}.md`
-
-**Frontmatter:**
-- Type: {type}
-- Category: {category}
-- Importance: {importance}
-- Related: {count} entities
-
-**Bidirectional refs:**
-- [[{project}.related-a]] ✓ (verified)
-- [[{project}.related-b]] ✓ (verified)
-
-**Metadata initialized:**
-- usage: first use recorded
-- health: verified
-```
-
-### Step 11: Create Project Directory Structure
-
-**When first entity in new project, create all folders:**
-
-```shell
-mkdir -p "{graph_path}/entities"
-mkdir -p "{graph_path}/concepts"
-mkdir -p "{graph_path}/decisions"
-mkdir -p "{graph_path}/constraints"
-mkdir -p "{graph_path}/processes"
-```
-
-**Why:** Graph traversal expects all folders to exist. Prevents errors in subsequent operations.
-
-### Step 12: Create Index File
+### Step 11: Create Index File
 
 If this is a new project initialization (first entity in project):
 
@@ -272,21 +258,21 @@ Follow the workflow in [../templates/index-node.md](../templates/index-node.md):
 
 **Note:** Index file provides human-readable landing page for the knowledge graph.
 
-### Step 13: Create Obsidian Bases Dashboard
+### Step 12: Create Obsidian Bases Dashboard
 
 **Default behavior:** Create bases dashboard. Warn and continue if creation fails.
 
 1. Check if `{project}.graph.base` already exists: `Read("{graph_path}/{project}.graph.base")`
-   - If exists: Skip to Step 15
+   - If exists: Skip to Step 14
    - If not exists: Proceed to create
 2. Create using `../bases/ops/ADD.md` → `../bases/templates/graph-base.yaml`
 3. On any failure (template missing, validation error):
    - Log warning: "Bases dashboard creation failed: {reason}. Continuing without."
-   - Continue to Step 14
+   - Continue to Step 13
 
-**Note:** This step is a soft default-creation failures are tolerated.
+**Note:** This is a soft default: a creation failure is a warning, not an error.
 
-### Step 14: Validate {project}.graph.base
+### Step 13: Validate {project}.graph.base
 
 **Requires:** `obsidian cli command`
 
@@ -308,7 +294,7 @@ obsidian base:views path="{memory}/{project}/{project}.graph.base"
 1. **Warn:** "{project}.graph.base validation failed: {details}. Continuing with unvalidated file."
 2. **Continue operation** - do not block on validation errors
 
-### Step 15: Create Mermaid Diagrams
+### Step 14: Create Mermaid Diagrams
 
 **Default behavior:** Create Mermaid diagrams. Warn and continue if creation fails.
 
@@ -319,9 +305,39 @@ obsidian base:views path="{memory}/{project}/{project}.graph.base"
 2. Try to create using `../mermaid/ops/ADD.md` → `../templates/*.md` if available
 3. On any failure (template missing, syntax error):
    - Log warning: "Mermaid diagram creation failed: {reason}. Continuing without."
-   - Continue to report results
+   - Continue to Step 15
 
-**Note:** This step is a soft default-creation failures are tolerated. The feature can be disabled by deleting the `.md` files and ignoring warnings.
+**Note:** This is a soft default: a creation failure is a warning, not an error. The feature can be disabled by deleting the `.md` files and ignoring the warnings.
+
+### Step 15: Report Results
+
+Run this **last**, after every artifact step above has succeeded or been explicitly skipped. Never report `ADD Complete` before the entity is written and the graph is consistent.
+
+```
+### ADD Complete
+
+**Entity:** {project}.{name}
+**Path:** `{graph_path}/entities/{project}.{name}.md`
+
+**Frontmatter:**
+- Type: {type}
+- Category: {category}
+- Importance: {importance}
+- Related: {count} entities
+
+**Bidirectional refs:**
+- [[{project}.related-a]] ✓ (verified)
+- [[{project}.related-b]] ✓ (verified)
+
+**Metadata initialized:**
+- usage: first use recorded
+- health: verified
+
+**Artifacts (new project only):**
+- {project}.index.md — created / skipped / failed
+- {project}.graph.base — created / skipped / failed
+- {project}.graph-sequence.md, {project}.graph-relationships.md — created / skipped / failed
+```
 
 ## Best Practices
 
