@@ -166,18 +166,7 @@ Entity will be removed along with:
 
 ### Result Report
 
-```
-### DELETE Complete
-
-**Deleted:** inference-api.auth-service
-**File removed:** `memory/project/entities/inference-api.auth-service.md`
-
-**References cleaned:**
- - [[inference-api.session-manager]] — removed reference
- - [[inference-api.jwt-handler]] — removed reference
-
-**Orphaned entities:** None
-```
+Use the single report format defined in [DELETE.md](../ops/DELETE.md#step-7-final-report). Do not define a second one here - the confirmation block above is an example of Step 3, and the only `DELETE Complete` template lives in the DELETE operation.
 
 ## Health Check Command
 

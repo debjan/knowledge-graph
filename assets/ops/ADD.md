@@ -1,4 +1,4 @@
-# ADD Operation - Create Entity in Knowledge Graph
+s# ADD Operation - Create Entity in Knowledge Graph
 
 ## When to Use This Operation
 
@@ -194,7 +194,6 @@ mkdir -p "{graph_path}/processes"
 ```
 
 **Why:** Graph traversal expects all folders to exist. Prevents errors in subsequent operations.
-
 
 **Windows:** `mkdir -p` is unavailable; use `New-Item` with `-ItemType Directory` and `-Force` (idempotent, never recursive-deletes):
 

@@ -90,19 +90,13 @@ Wait for user confirmation. If user cancels, abort without changes.
 
 ### Step 4: Clean Bidirectional References
 
-**⚠️ ATOMICITY REQUIREMENT:**
+**Order matters.** Clean references *before* deleting the file: while the entity still exists, every referrer's link still resolves, and a failure at this stage is recoverable. Deleting first leaves dangling links in every referrer until cleanup succeeds.
 
-Bidirectional ref cleanup and file deletion should be atomic.
-If file deletion fails after refs are cleaned, entity file exists but has no relations (orphaned).
+1. **Collect** the referrers whose `related` lists contain `[[{project}.{entity-name}]]`. Read each one and record its current list; do not write yet.
+2. **Apply** the removals. Each write is independent and idempotent, so a retry is safe.
+3. **On failure:** stop before touching the entity file. Report which referrers were cleaned and which were not. The entity and its file are untouched, so the graph is still consistent - the user can retry.
 
-**Recommended approach:**
-
-1. Mark entity: Set `health.pending_deletion = true` before cleaning refs
-2. Clean refs: Remove bidirectional references (safe to retry)
-3. Delete file: Only after refs cleaned
-4. On file delete failure: Entity orphaned - refs gone, file remains
-
-**Note:** DELETE cannot be fully rolled back once refs are cleaned.
+If the collect phase finds zero referrers, say so and continue: a node with no inbound links is a legitimate delete.
 
 For each related entity:
 
@@ -112,6 +106,8 @@ For each related entity:
 4. Check if related entity becomes orphaned (no remaining relations)
 5. Write updated related entity
 6. If orphaned, add to orphaned list for reporting
+
+**Do not set any flag on the entity before deleting it.** An earlier draft of this workflow proposed `health.pending_deletion = true`, but that field is not in the node schema: VERIFY CHECK 5 ignores it, the templates do not contain it, and it would be deleted moments later anyway. If the delete fails and you need a breadcrumb, report it - do not invent frontmatter.
 
 ### Step 5: Delete Entity File
 
@@ -131,6 +127,7 @@ Remove-Item -LiteralPath "{graph_path}\entities\{project}.{entity-name}.md" -Con
 **Pre-conditions (all must hold):**
 
 - User confirmed in Step 3
+- Step 4 completed without unreported failures
 - Target resolved inside `{graph_path}/entities/`
 - Target is a regular `.md` file, not a directory or external symlink
 
@@ -142,86 +139,35 @@ If file not found, warn but report references cleaned.
 
 - Report: "Cannot delete entity file: {error}"
 - Check file permissions and ownership
-- Offer: "Retry as admin / Skip file deletion / Abort"
-- If skipped: Entity remains but bidirectional refs are cleaned
-- Note in report: "File deletion failed, manual removal required"
+- Offer: "Retry / Skip file deletion / Abort"
+- If skipped: the entity file remains, but its references are already cleaned - tell the user the node is now orphaned and needs UPDATE (re-add links) or another DELETE attempt
+- Never report `DELETE Complete` when the file is still present
 
-### Step 6: Report Deletion
+### Step 6: Propagate Deletion to Visualizations
 
-```
-### DELETE Complete
-
-**Deleted:** {project}.{entity-name}
-**File removed:** `{graph_path}/entities/{project}.{entity-name}.md`
-
-**References cleaned:**
-- [[{project}.related-a]] — reference removed
-- [[{project}.related-b]] — reference removed
-
-**Orphaned entities:** None
-```
-
-If orphaned entities exist:
-
-```
-**Orphaned entities:**
-- [[{project}.only-related]] — no remaining relations
-```
-
-## Health Check Integration
-
-Use [lifecycle-management.md](../helpers/lifecycle-management.md) for health operations.
-
-### During DELETE
-
-Before deletion, verify entity is not critical to other operations:
-
-```python
-if entity.importance == "critical":
-    warn("Entity marked as critical. Confirm deletion.")
-```
-
-## Best Practices
-
-- Never delete without confirmation
-- Always collect related entities before deletion
-- Clean bidirectional refs from ALL related entities
-- Warn about orphaned entities in report
-- Provide clear rollback instructions if deletion was accidental (restore from git)
-- Consider offering "archive" option instead of delete for important entities
-
-### Step 7: Propagate Deletion to Visualizations
-
-Trigger regeneration of visualization artifacts to remove deleted entity:
+Regenerate the visualization artifacts after the file is gone:
 
 #### Mermaid Diagrams
 
 1. Check if `{project}.graph-sequence.md` or `{project}.graph-relationships.md` exists: `Read("{graph_path}/{project}.graph-*.md")`
-2. If exists, remove any interactions involving deleted entity
-3. Update diagram to reflect removal
-4. Regenerate diagrams with remaining entities
+2. If exists, remove any interactions involving the deleted entity
+3. Regenerate diagrams with the remaining entities
 
-**If regeneration fails:**
-
-- Log: "Mermaid diagram update failed: {error}"
-- Report: "⚠️ Manual diagram update may be needed"
-- Continue without failing the DELETE operation
+**If regeneration fails:** log "Mermaid diagram update failed: {error}", warn that manual update may be needed, and continue - a diagram is not a reason to fail a delete.
 
 #### Obsidian Bases Dashboard
 
-1. Check if `{project}.graph.base` exists: `Read("{graph_path}/{project}.graph.base")`
-2. Bases will automatically reflect deletion (file-based)
-3. No manual update needed for Bases
-
-**Note:** The base dashboard updates automatically on file deletion.
+`{project}.graph.base` is file-based and reflects the deletion automatically. No rewrite needed; do not touch it.
 
 #### Index File
 
 1. Check if `{project}.index.md` exists: `Read("{graph_path}/{project}.index.md")`
-2. If mentions deleted entity, mark as stale or remove reference
-3. Log: "Updated {project}.index.md references"
+2. Remove or mark stale any reference to the deleted entity
+3. Update the entity counts
 
-### Step 8: Final Report
+### Step 7: Final Report
+
+This is the **only** report. Do not also emit an interim report before the visualization step.
 
 ```
 ### DELETE Complete
@@ -236,21 +182,53 @@ Trigger regeneration of visualization artifacts to remove deleted entity:
 **Orphaned entities:** None
 
 **Visualizations updated:**
-- ✓ {project}.graph-relationship.md — entity removed from diagrams
-- ✓ {project}.graph-sequence.md — entity removed from diagrams
-- ✓ {project}.graph.base — automatically updated
-- ✓ {project}.index.md — references updated (if applicable)
+- ✓ {project}.graph-relationships.md — entity removed
+- ✓ {project}.graph-sequence.md — entity removed
+- ✓ {project}.graph.base — automatic (file-based)
+- ✓ {project}.index.md — references and counts updated
 
-**Rollback:** If deletion was accidental, restore the validated path from git:
+**Rollback:** if this was a mistake, restore the file from version control, then re-add the inbound links.
+```
+
+Only mention rollback if the graph directory is actually under version control. Check before promising it:
 
 ```shell
-git checkout -- "{graph_path}/entities/{project}.{entity-name}.md"
+git -C "{graph_path}" rev-parse --is-inside-work-tree 2>/dev/null && echo "versioned" || echo "not versioned"
 ```
 
-Never interpolate a raw path into a shell string - see [safe-paths.md](../helpers/safe-paths.md).
+If it is versioned, the restore command takes the same literal path validated in Step 1:
+
+```shell
+git -C "{vault}" checkout -- "{memory}/{project}/entities/{project}.{entity-name}.md"
 ```
+
+If it is not versioned, say so plainly: "Not under version control - restore from your backup." Never present `git checkout` as a recovery path that does not exist.
 
 ---
+
+## Health Check Integration
+
+Use [lifecycle-management.md](../helpers/lifecycle-management.md) for health operations.
+
+### During DELETE
+
+Before deletion, check whether the entity is load-bearing:
+
+```python
+if entity.importance == "high" and len(inbound_refs) > 3:
+    warn("Entity is high-importance and referenced by %d nodes. Confirm deletion." % len(inbound_refs))
+```
+
+Suggest the alternative explicitly: "Archive instead of delete? Set `status: deprecated` and keep the node." For an entity a human still browses, that is usually the better outcome.
+
+## Best Practices
+
+- Never delete without confirmation
+- Clean references before deleting the file, never after
+- Warn about orphaned entities in the report
+- Offer `status: deprecated` before deletion for high-importance nodes
+- Do not promise a git rollback unless the graph is a git working tree
+- Never set frontmatter fields that are not in the schema (`pending_deletion` and friends)
 
 ## See Also
 

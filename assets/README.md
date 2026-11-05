@@ -41,35 +41,21 @@ assets/
 │       helpers/syntax-validation.md
 └───bases/
         README.md, ops/, templates/graph-base.yaml (optional)
-
-scripts/  (sibling of assets/)
-        validate_graph.py - Mechanical implementation of VERIFY CHECK 1-10
-tests/
-        test_validate_graph.py - unittest suite for the validator
 ```
-
-The [scripts](../scripts/) and [tests](../tests/) folders sit next to `assets/`, at the skill root.
 
 ## Operation Loading
 
-| Operation  | Load These Assets                                                                                                                                                      |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **ADD**    | `ops/ADD.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`, `helpers/safe-paths.md`, `helpers/content-safety.md`, `templates/entity-node.md`         |
-| **UPDATE** | `ops/UPDATE.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`, `helpers/safe-paths.md`, `helpers/content-safety.md`                                  |
-| **DELETE** | `ops/DELETE.md` → `helpers/lifecycle-management.md`, `helpers/safe-paths.md`                                                                                           |
-| **RENAME** | `ops/RENAME.md` → `helpers/safe-paths.md`                                                                                                                              |
-| **SYNC**   | `ops/SYNC.md` → `helpers/change-detection.md`, `helpers/entity-extraction.md`, `helpers/lifecycle-management.md`, `helpers/safe-paths.md`, `helpers/content-safety.md` |
-| **VERIFY** | `ops/VERIFY.md` → `helpers/lifecycle-management.md`, `helpers/safe-paths.md`, `helpers/content-safety.md`                                                              |
-| **QUERY**  | `ops/QUERY.md` → `helpers/graph-traversal.md`                                                                                                                          |
+Helpers are **on demand**, not a fixed bundle. Start with the operation doc and the required helper; load the rest only when a step names it. That keeps a single ADD or QUERY from spending ~15-20 K tokens on reference material before it reads a single node.
 
-### Scripts
-
-| File | Purpose |
-| ---- | ------- |
-| `scripts/validate_graph.py` | Runs VERIFY CHECK 1-10; `--json` for machine-readable output, `--codebase` for CHECK 4, `--strict` to fail on warnings |
-| `tests/test_validate_graph.py` | Coverage for the validator: identifiers, containment, content safety, the new integrity checks, and serializer round-trips |
-
-Run the tests with `python -m unittest discover -s tests`.
+| Operation  | Load These Assets                                                                                                                                                                                 |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **ADD**    | `ops/ADD.md` → `helpers/safe-paths.md`, `helpers/content-safety.md`, `templates/<type>-node.md`, plus `helpers/entity-extraction.md` / `helpers/change-detection.md` when extracting or detecting |
+| **UPDATE** | `ops/UPDATE.md` → `helpers/safe-paths.md`, `helpers/content-safety.md`, plus `helpers/entity-extraction.md` / `helpers/change-detection.md` when needed                                           |
+| **DELETE** | `ops/DELETE.md` → `helpers/safe-paths.md` (required), `helpers/lifecycle-management.md` when the entity is high-importance                                                                        |
+| **RENAME** | `ops/RENAME.md` → `helpers/safe-paths.md`                                                                                                                                                         |
+| **SYNC**   | `ops/SYNC.md` → `helpers/safe-paths.md`, `helpers/content-safety.md`, `helpers/change-detection.md`, `helpers/lifecycle-management.md` (extraction only for NEW items)                            |
+| **VERIFY** | `ops/VERIFY.md` → run `scripts/validate_graph.py` first; load `helpers/safe-paths.md` / `helpers/content-safety.md` only to explain a finding                                                     |
+| **QUERY**  | `ops/QUERY.md` → `helpers/safe-paths.md` (required), then at most **one** of `relevance-scoring.md`, `graph-traversal.md`, `token-budget.md`, `keyword-extraction.md` when a step asks for it     |
 
 ### Optional features
 

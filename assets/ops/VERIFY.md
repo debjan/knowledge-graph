@@ -57,18 +57,18 @@ Exit codes: `0` clean, `1` findings (errors, or warnings under `--strict`), `2` 
 
 **What the script does and does not cover:**
 
-| Check | Script | Then do by hand |
-| ----- | ------ | --------------- |
-| 1. Wiki-Link Resolution | yes - resolves every `[[target]]` against node names and filenames | review anything the resolver could not decide |
-| 2. Bidirectional Backlinks | yes - reads `related` on both sides | fix through UPDATE, not by hand-editing |
-| 3. Duplicate Related Entries | yes | - |
-| 4. Implementation Files | yes, when `--codebase` is correct | confirm a missing file means "moved", not "deleted" |
-| 5. Frontmatter Completeness | yes - required fields per type, plus `health.*` for entities | - |
-| 6. Updated Date Freshness | yes, > 90 days is a warning | judge whether content is actually stale |
-| 7. Changelog Consistency | yes - duplicate versions, backwards dates | - |
-| 8. Namespace Conformance | yes - filenames, `name:`, `project:`, links | bulk migrations |
-| 9. Path Safety | yes - identifiers, containment, symlinks, case collisions | - |
-| 10. Content Safety | yes - frontmatter breakouts, fences, invisible chars, Mermaid directives | prompt-injection review, which no parser can do |
+| Check                        | Script                                                                   | Then do by hand                                     |
+| ---------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------- |
+| 1. Wiki-Link Resolution      | yes - resolves every `[[target]]` against node names and filenames       | review anything the resolver could not decide       |
+| 2. Bidirectional Backlinks   | yes - reads `related` on both sides                                      | fix through UPDATE, not by hand-editing             |
+| 3. Duplicate Related Entries | yes                                                                      | -                                                   |
+| 4. Implementation Files      | yes, when `--codebase` is correct                                        | confirm a missing file means "moved", not "deleted" |
+| 5. Frontmatter Completeness  | yes - required fields per type, plus `health.*` for entities             | -                                                   |
+| 6. Updated Date Freshness    | yes, > 90 days is a warning                                              | judge whether content is actually stale             |
+| 7. Changelog Consistency     | yes - duplicate versions, backwards dates                                | -                                                   |
+| 8. Namespace Conformance     | yes - filenames, `name:`, `project:`, links                              | bulk migrations                                     |
+| 9. Path Safety               | yes - identifiers, containment, symlinks, case collisions                | -                                                   |
+| 10. Content Safety           | yes - frontmatter breakouts, fences, invisible chars, Mermaid directives | prompt-injection review, which no parser can do     |
 
 If `scripts/validate_graph.py` is missing or Python is unavailable, run the checks below manually and say so in the report - do not claim a check passed when it was not run.
 
@@ -402,15 +402,15 @@ FAIL: 3 issues found:
 
 **Rules:**
 
-| Item                  | Must Match                                                                  | Fail If                                                                                      |
-| --------------------- | --------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Node filename         | `{project}.{name}.md`, `{name}` = `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$`   | name contains `..`, `/`, `\`, space, quote, `$`, backtick, `*`, `?`, control char, or leading `-` |
-| Name length           | 1-64 characters                                                             | empty, or longer than 64                                                                     |
-| Case                  | lowercase kebab-case                                                        | uppercase or underscore in the name                                                          |
-| Directory component   | `entities`, `concepts`, `decisions`, `constraints`, `processes`, or root     | nested or unexpected directory inside `{graph_path}`                                          |
-| Path containment      | resolved path starts with the resolved `{graph_path}`                        | resolved path escapes the graph root                                                         |
-| Symlink               | resolves to a regular file inside `{graph_path}`                            | symlink or junction pointing outside the graph, or a device/socket                            |
-| File type             | `.md`, `.base`, `.canvas`, `.json`, `.yml` in the graph                     | executable, script, or other binary in a node directory                                       |
+| Item                | Must Match                                                                 | Fail If                                                                                           |
+| ------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Node filename       | `{project}.{name}.md`, `{name}` = `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$` | name contains `..`, `/`, `\`, space, quote, `$`, backtick, `*`, `?`, control char, or leading `-` |
+| Name length         | 1-64 characters                                                            | empty, or longer than 64                                                                          |
+| Case                | lowercase kebab-case                                                       | uppercase or underscore in the name                                                               |
+| Directory component | `entities`, `concepts`, `decisions`, `constraints`, `processes`, or root   | nested or unexpected directory inside `{graph_path}`                                              |
+| Path containment    | resolved path starts with the resolved `{graph_path}`                      | resolved path escapes the graph root                                                              |
+| Symlink             | resolves to a regular file inside `{graph_path}`                           | symlink or junction pointing outside the graph, or a device/socket                                |
+| File type           | `.md`, `.base`, `.canvas`, `.json`, `.yml` in the graph                    | executable, script, or other binary in a node directory                                           |
 
 **Output:**
 
@@ -447,15 +447,15 @@ FAIL: 2 unsafe paths found:
 
 **Rules:**
 
-| Item                  | Must Match                                                              | Fail If                                                                       |
-| --------------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Frontmatter block     | Exactly one opening and one closing `---`, at the start of the file     | a value contains a `---` line, or a second `---` appears inside the block      |
-| YAML scalar safety    | Values parse as single scalars                                          | unquoted value contains `: `, ` #`, or a newline that starts a new key         |
-| Code fences           | Closing fence is longer than any backtick run inside the block          | block ends early, leaking content into the document                            |
-| Invisible characters  | No Cf category chars except `U+200D`                                    | bidi overrides (`U+202A`-`U+202E`, `U+2066`-`U+2069`), zero-width, `U+FEFF`   |
-| Mermaid output        | No `%%{` directive derived from entity content                          | directive injection in `.graph-sequence.md` / `.graph-relationships.md`        |
-| Bases output          | Formulas and filters match the template                                 | entity-derived expression or property path inside `.base`                      |
-| agent-context checks  | `Run:` entries inventoried                                            | (report only) list commands that would require confirmation before execution   |
+| Item                 | Must Match                                                          | Fail If                                                                      |
+| -------------------- | ------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Frontmatter block    | Exactly one opening and one closing `---`, at the start of the file | a value contains a `---` line, or a second `---` appears inside the block    |
+| YAML scalar safety   | Values parse as single scalars                                      | unquoted value contains `: `, `#`, or a newline that starts a new key        |
+| Code fences          | Closing fence is longer than any backtick run inside the block      | block ends early, leaking content into the document                          |
+| Invisible characters | No Cf category chars except `U+200D`                                | bidi overrides (`U+202A`-`U+202E`, `U+2066`-`U+2069`), zero-width, `U+FEFF`  |
+| Mermaid output       | No `%%{` directive derived from entity content                      | directive injection in `.graph-sequence.md` / `.graph-relationships.md`      |
+| Bases output         | Formulas and filters match the template                             | entity-derived expression or property path inside `.base`                    |
+| agent-context checks | `Run:` entries inventoried                                          | (report only) list commands that would require confirmation before execution |
 
 **Output:**
 

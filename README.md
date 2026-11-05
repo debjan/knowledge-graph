@@ -4,10 +4,11 @@ A proactive knowledge graph system for AI agents that maintains entities, decisi
 
 ## Features
 
-- **AUTO-QUERY**: Proactively load relevant context at session start
+- **AUTO-QUERY**: Load relevant context when the skill is invoked for a task
 - **ADD/UPDATE/DELETE/RENAME/SYNC/VERIFY**: Manage entity nodes with reference cleanup
 - **QUERY**: Load relevant entities with relevance scoring and budget awareness
 - **LIFECYCLE**: Detect stale entities, manage updates and deletions
+- **VERIFY**: Ten graph integrity checks, nine through the bundled `validate_graph.py`
 
 ## Optional Features
 
@@ -16,7 +17,11 @@ The following features are optional and can be safely deleted if not needed:
 - **Mermaid diagrams** (`assets/mermaid/`) - Sequence and relationship diagram generation
 - **Obsidian Bases** (`assets/bases/`) - Dashboard views
 
-To remove: delete the respective directories under `knowledge-graph/assets/`.
+To remove: delete the respective directories under `knowledge-graph/assets/`. The skill works without them; see the Compatibility section in [SKILL.md](./SKILL.md).
+
+## Requirements
+
+Nothing beyond file read/write/search is required. Optional: Python 3.9+ for the VERIFY validator, Obsidian for Bases, ripgrep for faster keyword search.
 
 ## Installation
 
@@ -29,6 +34,26 @@ git clone https://github.com/debjan/knowledge-graph ~/.agents/skills/knowledge-g
 
 ## Usage
 
-Initialize your project with `\knowledge-graph generate graph`
+There is no `generate graph` command - that was documented but never implemented. The skill **is** the workflow; initialize a project by asking for the first node:
+
+```
+> Add the auth module to the knowledge graph
+```
+
+That runs the ADD operation, which creates the folder structure, the first entity, `{project}.index.md`, the Bases dashboard and the Mermaid diagrams (Steps 8-15). Subsequent work is driven by the operation names: `add`, `update`, `delete`, `rename`, `query`, `sync`, `verify`.
+
+To check an existing graph:
+
+```bash
+python scripts/validate_graph.py "<vault>/<memory>/<project>" --codebase . --json
+```
 
 <img width="1550" height="1005" alt="image" src="https://github.com/user-attachments/assets/3db3351f-4510-4e95-a968-46af281158ce" />
+
+## Development
+
+```bash
+python -m unittest discover -s tests
+```
+
+The tests need PyYAML for the frontmatter checks; without it those cases skip.

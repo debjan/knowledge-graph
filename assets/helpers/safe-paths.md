@@ -23,12 +23,12 @@ Identifiers are validated as **single path components** against an allowlist. An
 
 Two different validation profiles apply, because two different things are being named.
 
-| Identifier                                                                             | Profile      | Rule                                                                                 |
-| -------------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------ |
-| `{project}`, `{name}`, `{entity-name}`, `{related}`, `{old-name}`, `{new-name}` | **created**  | `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$` (lowercase kebab-case, 1-64 chars)          |
-| `{memory}`                                                                             | **existing** | `^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$` (single component; **case preserved** as detected) |
-| `{type}`                                                                               | fixed        | one of `entities`, `concepts`, `decisions`, `constraints`, `processes`             |
-| `{vault}`                                                                              | absolute     | absolute path, from `OBSIDIAN_VAULT`, discovery, or explicit user input               |
+| Identifier                                                                      | Profile      | Rule                                                                                  |
+| ------------------------------------------------------------------------------- | ------------ | ------------------------------------------------------------------------------------- |
+| `{project}`, `{name}`, `{entity-name}`, `{related}`, `{old-name}`, `{new-name}` | **created**  | `^[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?$` (lowercase kebab-case, 1-64 chars)           |
+| `{memory}`                                                                      | **existing** | `^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$` (single component; **case preserved** as detected) |
+| `{type}`                                                                        | fixed        | one of `entities`, `concepts`, `decisions`, `constraints`, `processes`                |
+| `{vault}`                                                                       | absolute     | absolute path, from `OBSIDIAN_VAULT`, discovery, or explicit user input               |
 
 **Why two profiles.** The skill *creates* project ids and node names, so it can insist on lowercase kebab-case. It does **not** create the memory folder - that folder may already exist as `Memory`, `memory`, or `MEMORY`, and on a case-sensitive filesystem rewriting it silently produces a path that does not exist. So `{memory}` is validated as a safe single component while keeping its detected case verbatim.
 
@@ -43,14 +43,14 @@ Notes:
 
 Reject immediately, with no retry and no partial action, if any identifier contains:
 
-| Category         | Rejected values                                                       |
-| ---------------- | --------------------------------------------------------------------- |
-| Traversal        | `..`, `.`, `/`, `\`, drive prefixes (`C:`), UNC prefixes (`\\server`) |
+| Category         | Rejected values                                                                  |
+| ---------------- | -------------------------------------------------------------------------------- |
+| Traversal        | `..`, `.`, `/`, `\`, drive prefixes (`C:`), UNC prefixes (`\\server`)            |
 | Shell metachars  | `;` `&` `\|` `$` `` ` `` `<` `>` `(` `)` `{` `}` `[` `]` `*` `?` `!` `~` `#` `%` |
-| Quoting/escaping | `"` `'` and backslash escapes                                         |
-| Whitespace       | space, tab, newline, carriage return, NUL, any control character      |
-| Option injection | any value starting with `-` (would be parsed as a flag, e.g. `--force`) |
-| Absolute paths   | any value starting with `/`, `~`, or a drive/UNC prefix               |
+| Quoting/escaping | `"` `'` and backslash escapes                                                    |
+| Whitespace       | space, tab, newline, carriage return, NUL, any control character                 |
+| Option injection | any value starting with `-` (would be parsed as a flag, e.g. `--force`)          |
+| Absolute paths   | any value starting with `/`, `~`, or a drive/UNC prefix                          |
 
 Also reject identifiers that are empty, longer than 64 chars, or non-string.
 
@@ -114,17 +114,27 @@ rm "$(echo {user_input})"                            # command substitution
 find "{graph_path}" -name "{pattern}" -delete       # pattern-driven, unbounded
 ```
 
-**Windows:** `rm` resolves to `Remove-Item`, which has no `--`. Use `-LiteralPath` so wildcards are not expanded, and never combine it with `-Recurse`:
+**Windows equivalents.** PowerShell aliases `rm`/`mv` but not `mkdir -p`, `test`, or `--`. Every command in this skill therefore has an explicit PowerShell form:
 
-```powershell
-Remove-Item -LiteralPath "{graph_path}\entities\{project}.{entity-name}.md" -Confirm:$false
-```
+| Action          | POSIX                      | Windows                                                             |
+| --------------- | -------------------------- | ------------------------------------------------------------------- |
+| Delete one file | `rm -- "<path>"`           | `Remove-Item -LiteralPath "<path>" -Confirm:$false`                 |
+| Move / rename   | `mv -- "<old>" "<new>"`    | `Move-Item -LiteralPath "<old>" -Destination "<new>"`               |
+| Create dirs     | `mkdir -p "<a>" "<b>"`     | `New-Item -ItemType Directory -Force -Path "<a>","<b>" \| Out-Null` |
+| Exists check    | `test -f "<path>"`         | `Test-Path -LiteralPath "<path>" -PathType Leaf`                    |
+| Rollback        | `git checkout -- "<path>"` | `git checkout -- "<path>"` (same)                                   |
+
+`Remove-Item` and `Move-Item` must use `-LiteralPath` so wildcards are not expanded, and never `-Recurse`. Windows paths use `\` separators inside the literal.
+
+**Reading files:** never use `cat`, `Get-Content`, or `type` for graph content - use the Read tool, which cannot interpret the path as a command.
 
 **Rollback commands** (`git checkout`, `git restore`) take the same treatment: validate the file path, pass it as a single argument, and prefix with `--`:
 
 ```shell
 git checkout -- "{graph_path}/entities/{project}.{entity-name}.md"
 ```
+
+Rollback only applies when the graph directory is a git working tree; check first (`git -C "{graph_path}" rev-parse --is-inside-work-tree`).
 
 ## RULE S5: Fail Closed
 

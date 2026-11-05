@@ -96,16 +96,20 @@ If the Grep tool is used instead, pass it in literal/fixed-string mode (`fixed_s
 
 #### Proactive Retrieval (Auto-Query)
 
-For auto-query, use [keyword-extraction.md](../helpers/keyword-extraction.md) and [proactive-retrieval](#proactive-retrieval):
+For auto-query, do this before reading any helper:
 
-1. Extract keywords from current context (task, open files)
-2. Run ripgrep search if available
+1. Extract keywords from the current context (task, open files) - split on path separators, camelCase, and hyphens
+2. Run a fixed-string ripgrep search if available (see [Ripgrep Search](#ripgrep-search))
 3. Match results to entity triggers
 4. Merge with glob-based results
 
+Only read [keyword-extraction.md](../helpers/keyword-extraction.md) if the task needs more than that.
+
+**Load budget for QUERY:** read `ops/QUERY.md` + `helpers/safe-paths.md` first (path safety is not optional), then at most one helper when a step says you need it. A plain "what do we know about X" should never open four helpers before it opens an entity.
+
 ### Step 4: Compute Relevance Scores
 
-Use [relevance-scoring.md](../helpers/relevance-scoring.md):
+The formula is below; you do **not** need to load a helper to apply it. Read [relevance-scoring.md](../helpers/relevance-scoring.md) only if you want the worked examples or the reference implementation.
 
 For each matching entity:
 
@@ -132,18 +136,18 @@ For each matching entity:
 
 ### Step 6: Traverse Related Entities
 
-Use [graph-traversal.md](../helpers/graph-traversal.md):
+Read [graph-traversal.md](../helpers/graph-traversal.md) only for the cycle-handling rules when the graph is dense. The default is simple:
 
 1. For each wiki-link in `related`, load that entity
-2. Default depth: 2 levels
-3. Build a tree of related context
+2. Default depth: 2 levels - **stop at depth 2**; deeper traversal is opt-in ("with depth 3")
+3. Keep a visited set so a cycle cannot loop forever
 4. Compute relevance scores for traversed entities
 
 ### Step 7: Apply Token Budget
 
-Use [token-budget.md](../helpers/token-budget.md):
+Read [token-budget.md](../helpers/token-budget.md) only when you need exact counting heuristics. The rule is: **load less, earlier**.
 
-1. Count tokens in all loaded entities
+1. Estimate tokens for all loaded entities (a rough `chars / 4` is fine)
 2. If total exceeds budget:
    - Sort entities by relevance (descending)
    - Load top 70% budget as full detail
@@ -152,12 +156,16 @@ Use [token-budget.md](../helpers/token-budget.md):
 
 ### Step 8: Present Context Briefing
 
-```
-### Context Briefing
+This is the **single canonical output format** for a successful QUERY. Do not invent a second report.
 
-**Loaded:** {count} entities ({tokens} tokens)
-**Budget:** {budget} tokens
-**Compression:** {compressed_count} summarized, {omitted_count} omitted
+```
+### QUERY Complete
+
+**Matched:** {count} entities
+**Loaded:** {loaded} full, {compressed_count} summarized, {omitted_count} omitted
+**Tokens:** {tokens}/{budget}
+**Traversed:** {levels} levels
+**Sources:** {graph_path}
 
 ---
 
@@ -196,6 +204,8 @@ Use [token-budget.md](../helpers/token-budget.md):
 ---
 
 *{omitted_count} lower-relevance entities omitted. Use "load full context for {name}" to see all.*
+
+Every entity above is cited by its document path (RULE 2). Content is quoted verbatim (RULE 1).
 ```
 
 ### Step 9: Stale Entity Check (report only)
@@ -209,6 +219,7 @@ For each implementation file listed:
    ```
    Glob(pattern: "{implementation_file}")   # literal path, no shell involved
    ```
+
 2. If not found:
    - Warn: "⚠ [[{project}.{entity}]] may be stale: {file} not found"
    - Offer: "Mark this entity `needs_update`? [Yes] [No]" - only on yes does STEP 10b below run
@@ -336,23 +347,11 @@ Select one or create new?
 
 ## Output Format
 
-### Successful Load
+There is **one** success format: [Step 8](#step-8-present-context-briefing). Earlier drafts had a second "Successful Load" block with different field names; it was removed so an agent cannot report the same result two ways.
+
+After the briefing, ask once whether the context was useful - it is the signal that makes relevance scoring improve:
 
 ```
-### QUERY Complete
-
-**Matched:** {count} entities
-**Traversed:** {levels} levels
-**Related:** {related_count} entities loaded
-**Tokens:** {tokens}/{budget}
-**Compression:** {compressed} summarized, {omitted} omitted
-
----
-
-{context_briefing_for_each_entity}
-
----
-
 **Was this context helpful?** [Yes] [Partially] [No]
 ```
 

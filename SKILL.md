@@ -1,22 +1,23 @@
 ---
 name: knowledge-graph
 description: >
- Maintain a knowledge graph for this project: entities, decisions, constraints, and processes as linked
- Obsidian markdown nodes, with a proactive context load at the start of work and a graph update after
- non-trivial changes. Use this whenever the user says "remember this", "save to memory", "this is
- important", "add to the knowledge graph", "what do we know about", "load context for", "sync the graph",
- "verify the graph", "delete/rename entity", "check graph health", or asks for a project memory that
- survives across sessions - even when they never say "knowledge graph".
+ Maintain the project knowledge graph: entities, decisions, constraints and processes as linked
+ Obsidian markdown nodes, with a context load at the start of work and a graph update after non-trivial
+ changes. Use when the user refers to the graph or asks to persist project knowledge - "add to the
+ knowledge graph", "what do we know about <topic>", "load context for <module>", "sync the graph",
+ "verify the graph", "check graph health", "delete/rename entity" - or asks for project memory that
+ survives across sessions. Do not trigger on a bare "remember this" or "this is important" unless the
+ graph is already in play.
 
-# auto_invoke is advisory: harnesses that support an explicit trigger list may read it.
-# The description is the portable trigger - harnesses that ignore this block still load the skill.
+# auto_invoke is advisory: only harnesses that read an explicit trigger list act on it.
+# Phrases are deliberately graph-specific so ordinary conversation ("this is important",
+# "remember this") does not hijack the session. The description is the portable trigger.
 auto_invoke:
  # ADD
- - "remember this"
- - "save to memory"
- - "this is important"
  - "add to knowledge graph"
  - "create entity"
+ - "remember this in the graph"
+ - "save to the knowledge graph"
  # UPDATE
  - "update the graph"
  - "update entity"
@@ -33,16 +34,16 @@ auto_invoke:
  - "check the graph for"
  - "what entities relate to"
  - "show me the knowledge graph"
- # SYNC (bulk graph sync from codebase)
+ # SYNC
  - "sync the graph"
  - "synchronize with codebase"
  - "update graph from codebase"
- # VERIFY (graph integrity check)
+ # VERIFY
  - "verify graph"
+ - "verify knowledge graph"
  - "check graph integrity"
  - "validate knowledge graph"
- - "verify knowledge graph"
- # Health Check
+ # Health check
  - "check knowledge graph health"
  - "review stale entities"
  - "cleanup knowledge graph"
@@ -50,14 +51,12 @@ auto_invoke:
  - "generate mermaid"
  - "create mermaid diagram"
  - "visualize the graph"
- - "create sequence diagram"
  # Bases
  - "create bases"
- - "generate bases"
  - "create dashboard"
 
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash(rm:*), Bash(mv:*), Bash(mkdir:*), Bash(Remove-Item:*), Bash(Move-Item:*), Bash(New-Item:*), Bash(git checkout:*), Bash(git restore:*), Bash(obsidian:*), Bash(python:*)
-compatibility: Optional requirements are Obsidian and ripgrep
+compatibility: No hard dependencies. Optional - Obsidian (Bases/diagrams), ripgrep (faster search), Python 3.9+ (VERIFY validator)
 author: debjan
 license: MIT
 version: 1.0.0
@@ -75,8 +74,6 @@ This skill uses a modular assets architecture. Detailed workflows, helpers, and 
 - [mermaid](./assets/mermaid/) - Mermaid diagram generation
 - [bases](./assets/bases/) - Obsidian Bases integration
 - [specs](./assets/specs/) - agent-context block specification
-- [scripts](./scripts/) - `validate_graph.py`, the mechanical half of VERIFY (CHECK 1-10)
-- [tests](./tests/) - unittest suite for the validator
 
 See [README.md](./assets/README.md) for the directory index.
 
@@ -215,30 +212,30 @@ Frontmatter `allowed-tools` follows least privilege:
 
 Nothing here requires Obsidian to work. The node files are plain Markdown with YAML frontmatter; wiki-links are just `[[...]]` text. Obsidian adds navigation, and Bases/Mermaid add visuals.
 
-| Feature | Required | If absent |
-| ------- | -------- | --------- |
-| Node files, QUERY, ADD/UPDATE/DELETE/RENAME, VERIFY 1-8 | nothing beyond Read/Write/Glob/Grep | - |
-| `validate_graph.py` (VERIFY 1-10) | Python 3.9+ (PyYAML optional; without it CHECK 5/7 are skipped) | run the checks manually; say so in the report |
-| Bases dashboard, base validation | Obsidian + the `obsidian` CLI | warn and skip; never block |
-| Mermaid diagrams | a Mermaid renderer to view them | files are still written |
-| Faster keyword search | ripgrep | fall back to Grep/Glob |
-| `obsidian-markdown` / `obsidian-bases` skills | a host that allows skill-to-skill loading | apply the conventions manually |
+| Feature                                                 | Required                                                        | If absent                                     |
+| ------------------------------------------------------- | --------------------------------------------------------------- | --------------------------------------------- |
+| Node files, QUERY, ADD/UPDATE/DELETE/RENAME, VERIFY 1-8 | nothing beyond Read/Write/Glob/Grep                             | -                                             |
+| `validate_graph.py` (VERIFY 1-10)                       | Python 3.9+ (PyYAML optional; without it CHECK 5/7 are skipped) | run the checks manually; say so in the report |
+| Bases dashboard, base validation                        | Obsidian + the `obsidian` CLI                                   | warn and skip; never block                    |
+| Mermaid diagrams                                        | a Mermaid renderer to view them                                 | files are still written                       |
+| Faster keyword search                                   | ripgrep                                                         | fall back to Grep/Glob                        |
+| `obsidian-markdown` / `obsidian-bases` skills           | a host that allows skill-to-skill loading                       | apply the conventions manually                |
 
 Harness note: `auto_invoke` and `allowed-tools` are only meaningful on hosts that read them. The `description` is what triggers the skill everywhere else - that is why the trigger phrases live there too.
 
 ## Operation Detection
 
-| Operation      | Signals                                                                     | What It Does                                                                                                                                            |
-| -------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **AUTO-QUERY** | Skill invoked for a coding task                                             | Load context based on current work, before starting it                                                                                                  |
-| **ADD**        | "remember this", "save to memory", "create entity", "this is important"     | Create new entity nodes                                                                                                                                 |
-| **UPDATE**     | "update entity", "refresh entity", "update the graph"                       | Modify existing entity nodes                                                                                                                            |
-| **DELETE**     | "delete entity", "remove entity"                                            | Remove entity nodes with reference cleanup                                                                                                              |
-| **RENAME**     | "rename entity", "move entity"                                              | Rename entity while preserving history                                                                                                                  |
-| **QUERY**      | "load context", "what do we know", "check graph", "show knowledge graph"    | Load entities matching current work (within budget)                                                                                                     |
-| **SYNC**       | "sync the graph", "synchronize with codebase", "update graph from codebase" | Walk codebase, compare with entities, produce diff report for ADD/UPDATE/DELETE batch operations                                                        |
+| Operation      | Signals                                                                     | What It Does                                                                                                                                                                         |
+| -------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **AUTO-QUERY** | Skill invoked for a coding task                                             | Load context based on current work, before starting it                                                                                                                               |
+| **ADD**        | "remember this", "save to memory", "create entity", "this is important"     | Create new entity nodes                                                                                                                                                              |
+| **UPDATE**     | "update entity", "refresh entity", "update the graph"                       | Modify existing entity nodes                                                                                                                                                         |
+| **DELETE**     | "delete entity", "remove entity"                                            | Remove entity nodes with reference cleanup                                                                                                                                           |
+| **RENAME**     | "rename entity", "move entity"                                              | Rename entity while preserving history                                                                                                                                               |
+| **QUERY**      | "load context", "what do we know", "check graph", "show knowledge graph"    | Load entities matching current work (within budget)                                                                                                                                  |
+| **SYNC**       | "sync the graph", "synchronize with codebase", "update graph from codebase" | Walk codebase, compare with entities, produce diff report for ADD/UPDATE/DELETE batch operations                                                                                     |
 | **VERIFY**     | "verify graph", "check graph integrity", "validate knowledge graph"         | Run automated checks: wiki-links resolve, backlinks bidirectional, implementation files exist, frontmatter complete, `{project}.` namespace conformance, path safety, content safety |
-| **HEALTH**     | "check health", "review stale", "cleanup"                                   | Scan for stale/unused entities, offer batch operations                                                                                                  |
+| **HEALTH**     | "check health", "review stale", "cleanup"                                   | Scan for stale/unused entities, offer batch operations                                                                                                                               |
 
 **Disambiguation**: If intent is unclear, ask:
 

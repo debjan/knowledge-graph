@@ -31,7 +31,7 @@ frontmatter = {
 doc = "---\n" + yaml.safe_dump(frontmatter, sort_keys=False, allow_unicode=False) + "---\n\n" + body
 ```
 
-Hazardous unquoted scalars: values starting with `-`, `?`, `:`, `!`, `&`, `*`, `#`, `{`, `[`, `|`, `>`, `%`, `@`, `` ` ``, or containing `: ` / ` #`. A serializer handles all of them; hand-built YAML does not.
+Hazardous unquoted scalars: values starting with `-`, `?`, `:`, `!`, `&`, `*`, `#`, `{`, `[`, `|`, `>`, `%`, `@`, `` ` ``, or containing `:` / `#`. A serializer handles all of them; hand-built YAML does not.
 
 ## RULE C2: Block Frontmatter Escapes
 
@@ -95,13 +95,13 @@ HTML comments: strip `-->` from generated text so a value cannot close a comment
 
 Strip these from generated content, or reject the value and ask the user:
 
-| Range                | Name                        | Risk                                |
-| -------------------- | --------------------------- | ----------------------------------- |
-| `U+202A`-`U+202E`    | Bidi embedding/override     | Reorders displayed text (Trojan Source) |
-| `U+2066`-`U+2069`    | Bidi isolates               | Same, subtler                       |
-| `U+200B`-`U+200F`    | Zero-width characters       | Hidden content in names and links   |
-| `U+FEFF`             | Byte order mark / ZWNBSP    | Breaks prefix matching and file lookups |
-| `U+0000`-`U+001F`    | Control characters          | Truncates output, breaks parsers    |
+| Range             | Name                     | Risk                                    |
+| ----------------- | ------------------------ | --------------------------------------- |
+| `U+202A`-`U+202E` | Bidi embedding/override  | Reorders displayed text (Trojan Source) |
+| `U+2066`-`U+2069` | Bidi isolates            | Same, subtler                           |
+| `U+200B`-`U+200F` | Zero-width characters    | Hidden content in names and links       |
+| `U+FEFF`          | Byte order mark / ZWNBSP | Breaks prefix matching and file lookups |
+| `U+0000`-`U+001F` | Control characters       | Truncates output, breaks parsers        |
 
 Validation: `if any(unicodedata.category(c) == "Cf" and c != "\u200d" for c in value): reject`.
 
