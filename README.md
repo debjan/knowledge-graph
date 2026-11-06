@@ -37,18 +37,4 @@ There is no `generate graph` command - that was documented but never implemented
 
 That runs the ADD operation, which creates the folder structure, the first entity, `{project}.index.md`, the Bases dashboard and the Mermaid diagrams (Steps 8-15). Subsequent work is driven by the operation names: `add`, `update`, `delete`, `rename`, `query`, `sync`, `verify`.
 
-To check an existing graph:
-
-```bash
-python scripts/validate_graph.py "<vault>/<memory>/<project>" --codebase . --json
-```
-
 <img width="1550" height="1005" alt="image" src="https://github.com/user-attachments/assets/3db3351f-4510-4e95-a968-46af281158ce" />
-
-## Development
-
-```bash
-python -m unittest discover -s tests
-```
-
-The tests need PyYAML for the frontmatter checks; without it those cases skip.
