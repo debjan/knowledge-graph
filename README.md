@@ -25,12 +25,7 @@ Nothing beyond file read/write/search is required. Optional: Python 3.9+ for the
 
 ## Installation
 
-Clone as a skill for AI agents:
-
-```bash
-mkdir -p ~/.agents/skills
-git clone https://github.com/debjan/knowledge-graph ~/.agents/skills/knowledge-graph
-```
+Clone the repository in your agents skills folder.
 
 ## Usage
 
